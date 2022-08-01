@@ -2,6 +2,9 @@ package com.piotrdomagalski.planning.app_user;
 
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.mailing.EmailComposer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +15,12 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import static com.piotrdomagalski.planning.app.ConfigurationLibrary.USERS_RESULT_PER_PAGE;
 import static com.piotrdomagalski.planning.utlis.PasswordGenerator.generatePassword;
+
+/**
+ * Service class fo application user
+ */
 
 @Service
 public class AppUserService implements UserDetailsService {
@@ -123,4 +131,19 @@ public class AppUserService implements UserDetailsService {
         userRepository.save(appUser);
         return roleToUserForm;
     }
+
+    public Page<AppUserDto> getAllUsers(Integer page, Integer size) {
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? USERS_RESULT_PER_PAGE : size;
+        Page<AppUser> results = userRepository
+                .findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "username")));
+        return results == null ? Page.empty() : results.map(appUserTransformer::toUserDto);
+    }
+
+    public AppUserDto getUserById(Long id) {
+        AppUser appUser = userRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("No user found with id " + id));
+        return appUserTransformer.toUserDto(appUser);
+    }
+
 }

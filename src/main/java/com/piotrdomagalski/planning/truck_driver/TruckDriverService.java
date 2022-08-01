@@ -1,6 +1,5 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-import com.piotrdomagalski.planning.app.ConfigurationLibrary;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
@@ -13,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 
 import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TRUCKDRIVER_RESULTS_PER_PAGE;
+
+/**
+ * Service class for driver entity.
+ */
 
 @Service
 @Qualifier("truckDriverRest")

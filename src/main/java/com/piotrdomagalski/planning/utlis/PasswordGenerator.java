@@ -3,6 +3,10 @@ package com.piotrdomagalski.planning.utlis;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 
+/**
+ * Library generating random passwords for newly created users.
+ */
+
 public class PasswordGenerator {
 
     public static String generatePassword() {

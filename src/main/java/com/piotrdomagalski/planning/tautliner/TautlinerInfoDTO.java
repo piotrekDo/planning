@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.tautliner;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO class containing simplified information about not only the trailer itself but also carrier and truck.
+ */
+
 public class TautlinerInfoDTO {
     private String tautlinerPlates;
     private LocalDateTime techInspection;

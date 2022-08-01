@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.mailing;
 
+/**
+ * An enum containing information about specific mail boxes.
+ */
+
 enum Mailbox {
     MAILBOX_REGISTER("register.planning@piodom.com", "planning"),
     MAILBOX_PASSWORD("password.planning@piodom.com", "tatZyz-givgaz-xyqdo7");

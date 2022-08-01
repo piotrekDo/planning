@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.coupling_actions;
 
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller class for coupling actions within the program.
+ */
+
 @RestController
 @RequestMapping("/couple")
 class CouplingActionsController {

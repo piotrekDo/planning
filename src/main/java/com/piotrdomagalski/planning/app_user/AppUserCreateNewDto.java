@@ -6,9 +6,13 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
+/**
+ * DTO class acting as a data format for creating new users
+ */
+
 public class AppUserCreateNewDto {
     @NotBlank
-    @UserNameConstraint(message = "Username mist start with 3 letters. Can only contain letter, digits and underscore")
+    @UserNameConstraint(message = "Username must start with 3 letters. Can only contain letters, digits and underscore")
     private String username;
     @Email
     private String userEmail;

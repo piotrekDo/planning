@@ -1,5 +1,10 @@
 package com.piotrdomagalski.planning.truck_driver;
 
+/**
+ * Command class used to remove truck and carrier form driver entity.
+ * Used in services.
+ */
+
 public class ClearTruckDriverAction {
 
     private TruckDriverEntity driver;

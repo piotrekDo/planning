@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.piotrdomagalski.planning.utlis.StringUtlis.capitalize;
+
+/**
+ * Transform class for carrier entity, allowing to transform entity into one of DTO.
+ * Transform to entity methods are using capitalize method so all names starts with capital letter, nevertheless the user input.
+ */
+
 @Service
 class CarrierTransformer {
 
@@ -25,8 +32,8 @@ class CarrierTransformer {
     CarrierFullIDto toCarrierFullIDto(CarrierEntity carrier) {
         return new CarrierFullIDto(
                 carrier.getSap(),
-                carrier.getName(),
-                carrier.getOrigin(),
+                capitalize(carrier.getName()),
+                capitalize(carrier.getOrigin()),
                 carrier.getRate(),
                 carrier.getTrucks().stream().map(truckTransformer::toinfoDto).collect(Collectors.toList()),
                 carrier.getDrivers().stream().map(driverTransformer::entityToDriverInfoDto).collect(Collectors.toList()),
@@ -50,8 +57,8 @@ class CarrierTransformer {
     CarrierEntity newUpdateToEntity(CarrierNewUpdateDTO carrier) {
         return CarrierEntity.newCarrier(
                 carrier.getSap(),
-                carrier.getName(),
-                carrier.getOrigin(),
+                carrier.getName() != null ? capitalize(carrier.getName()) : null,
+                carrier.getOrigin() != null ? capitalize(carrier.getOrigin()) : null,
                 carrier.getRate()
         );
     }

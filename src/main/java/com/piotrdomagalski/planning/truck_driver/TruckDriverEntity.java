@@ -10,6 +10,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.util.Objects;
 
+/**
+ * Entity class for drivers.
+ */
+
 @Entity
 public class TruckDriverEntity extends DatabaseEntity implements Comparable<TruckDriverEntity> {
     private String fullName;

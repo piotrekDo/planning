@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.utlis;
 
+/**
+ * Utility class offering tools to manipulate string.
+ */
+
 public class StringUtlis {
 
     public static String capitalize(String string) {

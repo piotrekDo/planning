@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.app_user;
 
 import java.util.Objects;
 
+/**
+ * DTO class used as request body for requesting for token in order to change user password.
+ */
+
 public class PasswordChangeRequestDto {
     private String username;
     private String email;

@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Entity class for carriers.
+ * @JsonManagedReference allows ending endless inception of calling another carriers within embedded entities
+ */
+
 @Entity(name = "carriers")
 public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierEntity> {
     private String sap;

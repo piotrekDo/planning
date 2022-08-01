@@ -1,5 +1,10 @@
 package com.piotrdomagalski.planning.truck;
 
+/**
+ * Command class used to remove tautliner, driver and carreir form truck entity.
+ * Used in services.
+ */
+
 public class ClearTruckAction {
 
     private final TruckEntity truck;

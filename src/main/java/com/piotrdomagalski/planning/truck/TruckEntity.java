@@ -11,6 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.util.Objects;
 
+/**
+ * Entity model class for trucks.
+ */
+
 @Entity
 public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntity> {
     private String truckPlates;

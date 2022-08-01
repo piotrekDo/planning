@@ -6,6 +6,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+/**
+ * DTO class used as request object for creating new tautliners or editing them. Provides custom validation rules.
+ */
+
 public class TautlinerNewUpdateDTO {
 
     @NotNull(groups = {AddTautliner.class}, message = "Tautliner must be declared either XPO or not")

@@ -8,6 +8,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+/**
+ * DTO class used as request object for creating new drivers and update them. Provides custom validation rules.
+ */
+
 public class TruckDriverNewUpdateDTO {
     @NotBlank(groups = AddDriver.class, message = "Driver's name cannot be blank!")
     @Size(groups = {AddDriver.class, UpdateDriver.class}, min = 3, max = 100, message = "Driver's name must be between 3 anc 100 characters")

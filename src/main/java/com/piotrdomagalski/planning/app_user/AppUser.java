@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Entity class for application user
+ */
+
 @Entity(name = "users")
 public class AppUser {
     @Id

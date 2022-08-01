@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.utlis;
 
 import java.util.Date;
 
+/**
+ * Utility class offering tools to transform milliseconds.
+ */
+
 public class DateUtils {
 
     public static Date setMinutes(long minutes) {

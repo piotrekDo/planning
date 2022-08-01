@@ -6,6 +6,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+/**
+ * DTO class used as request object for creating new trucks or editing them. Provides custom validation rules.
+ */
+
 public class TruckNewUpdateDTO {
     @Size(groups = {AddTruck.class, UpdateTruck.class}, min = 3, max = 15, message = "Truck's plates must be between 3 and 15 characters")
     @PlatesConstrraint(groups = {AddTruck.class, UpdateTruck.class}, message = "Trucks's plates must start with letter, no special characters, eg. PO23211")

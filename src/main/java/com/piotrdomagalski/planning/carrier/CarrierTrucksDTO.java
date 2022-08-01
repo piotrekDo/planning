@@ -5,6 +5,10 @@ import com.piotrdomagalski.planning.truck.TruckInfoDTO;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO class returning all trucks available for specific carrier along with basic carrier information.
+ */
+
 public class CarrierTrucksDTO {
     private String sap;
     private String name;

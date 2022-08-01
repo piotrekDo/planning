@@ -13,9 +13,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This file is needed by Swagger, so we can configure authorization settings. Now we can use berer tokens to authorize requests
+ */
+
 @Configuration
 public class SwaggerConfig {
-
     private ApiKey apiKey() {
         return new ApiKey("JWT", "Authorization", "header");
     }
@@ -47,14 +50,13 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Planning",
                 "",
-                "3.0.0",
+                "3.0.1",
                 "Terms of service",
                 new Contact("Piotrek Domagalski", "", "piotr.domagalski@icloud.com"),
                 "",
                 "",
                 Collections.emptyList());
     }
-
 
 
 }

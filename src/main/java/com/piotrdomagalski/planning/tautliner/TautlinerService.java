@@ -11,6 +11,10 @@ import java.util.NoSuchElementException;
 
 import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TAUTLINER_RESULT_PER_PAGE;
 
+/**
+ * Service class for tautliner entity.
+ */
+
 @Service
 class TautlinerService {
 

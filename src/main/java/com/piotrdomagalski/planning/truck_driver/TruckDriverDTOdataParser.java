@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.truck_driver;
 
 import com.piotrdomagalski.planning.utlis.StringUtlis;
 
+/**
+ * Utility class providing tools to standardize data for data cohesion.
+ */
+
 public class TruckDriverDTOdataParser {
 
     static String fullNameParser(String input) {

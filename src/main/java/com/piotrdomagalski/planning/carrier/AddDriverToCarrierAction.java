@@ -3,6 +3,10 @@ package com.piotrdomagalski.planning.carrier;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
+/**
+ * Command class used to assign driver to specific carrier.
+ */
+
 class AddDriverToCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;

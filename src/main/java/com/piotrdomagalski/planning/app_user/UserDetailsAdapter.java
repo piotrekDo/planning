@@ -7,6 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Class used to translate application user to Spring security user.
+ */
+
 public class UserDetailsAdapter implements UserDetails {
 
     private final AppUser appUser;

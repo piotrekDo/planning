@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Service class for coupling actions.
+ */
 
 @Service
 class CouplingActionsService {

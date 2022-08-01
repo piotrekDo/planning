@@ -4,7 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+/**
+ * Controller for carrier entity allowing to obtain and post/put data.
+ * @RestController ensures response coding to JSON format.
+ */
 
 @RestController
 @RequestMapping("/carriers")
@@ -16,11 +19,25 @@ class CarrierController {
         this.carrierService = carrierService;
     }
 
+    /**
+     *
+     * @param page if not passed will return zeroth page.
+     * @param size if not passed will return default value.
+     * @return
+     */
+
     @GetMapping
     Page<CarrierFullIDto> getAllCarriersFull(@RequestParam(required = false) Integer page,
                                              @RequestParam(required = false) Integer size) {
         return carrierService.getAllCarriers(page, size);
     }
+
+    /**
+     *
+     * @param page if not passed will return zeroth page.
+     * @param size if not passed will return default value.
+     * @return
+     */
 
     @GetMapping("/all-short")
     Page<CarrierShortInfoDTO> getAllCarriersShort(@RequestParam(required = false) Integer page,

@@ -5,6 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository class for truck entity.
+ */
+
 @Repository
 public interface TruckRepository extends JpaRepository<TruckEntity, Long> {
 
