@@ -72,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/users/password-reset-request").permitAll();
         http.authorizeRequests().antMatchers("/users/password-change").permitAll();
         http.authorizeRequests().antMatchers("/users/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers("/favorites/**").hasAnyAuthority("USER");
         http.authorizeRequests().antMatchers(GET).hasAnyAuthority("USER");
         http.authorizeRequests().antMatchers(POST).hasAnyAuthority("USER");
         http.authorizeRequests().antMatchers(PUT).hasAnyAuthority("USER");
