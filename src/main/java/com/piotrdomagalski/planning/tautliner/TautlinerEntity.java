@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.tautliner;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.piotrdomagalski.planning.DatabaseEntity;
+import com.piotrdomagalski.planning.app.DatabaseEntity;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.sun.istack.NotNull;

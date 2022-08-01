@@ -1,16 +1,17 @@
 package com.piotrdomagalski.planning.carrier;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.piotrdomagalski.planning.DatabaseEntity;
+import com.piotrdomagalski.planning.app.DatabaseEntity;
+import com.piotrdomagalski.planning.app.DigitsOnly;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,10 @@ import java.util.Objects;
 
 @Entity(name = "carriers")
 public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierEntity> {
-    @Min(value = 6, message = "SAP must be 6 digits long!")
-    @Max(value = 6, message = "SAP must be 6 digits long!")
-    private Integer sap;
+    @NotBlank
+    @Length(min = 6, max = 6, message = "SAP must be 6 chracters long")
+    @DigitsOnly(message = "SAP must be numberic!")
+    private String sap;
 
     @NotBlank(message = "Name cannot be blank!")
     @Size(min = 3, max = 100, message = "Name must be between 3 anc 100 characters")
@@ -30,7 +32,7 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
     @Size(min = 3, max = 100, message = "Origin must be between 3 anc 100 characters")
     private String origin;
 
-    @Min(value = 0, message = "Rate cannot be negative!")
+    @Positive(message = "Rate cannot be negative!")
     private Double rate;
 
     @OneToMany(mappedBy = "carrier")
@@ -46,7 +48,18 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
     public CarrierEntity() {
     }
 
-    public CarrierEntity(Long id, Integer sap, String name, String origin, Double rate,
+    public CarrierEntity(String sap, String name, String origin, Double rate, List<TruckEntity> trucks,
+                         List<TruckDriverEntity> drivers, List<TautlinerEntity> tautliners) {
+        this.sap = sap;
+        this.name = name;
+        this.origin = origin;
+        this.rate = rate;
+        this.trucks = trucks;
+        this.drivers = drivers;
+        this.tautliners = tautliners;
+    }
+
+    public CarrierEntity(Long id, String sap, String name, String origin, Double rate,
                          List<TruckEntity> trucks, List<TruckDriverEntity> drivers, List<TautlinerEntity> tautliners) {
         super(id);
         this.sap = sap;
@@ -58,18 +71,7 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
         this.tautliners = tautliners;
     }
 
-    public CarrierEntity(Integer sap, String name, String origin, Double rate,
-                         List<TruckEntity> trucks, List<TruckDriverEntity> drivers, List<TautlinerEntity> tautliners) {
-        this.sap = sap;
-        this.name = name;
-        this.origin = origin;
-        this.rate = rate;
-        this.trucks = trucks;
-        this.drivers = drivers;
-        this.tautliners = tautliners;
-    }
-
-    public static CarrierEntity newCarrier(Integer sap, String name, String origin, Double rate) {
+    public static CarrierEntity newCarrier(String sap, String name, String origin, Double rate) {
         return new CarrierEntity(sap, name, origin, rate,
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
@@ -78,7 +80,7 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
     public String toString() {
         return "CarrierEntity{" +
                 super.toString() +
-                "sap=" + sap +
+                "sap='" + sap + '\'' +
                 ", name='" + name + '\'' +
                 ", origin='" + origin + '\'' +
                 ", rate=" + rate +
@@ -107,11 +109,11 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
         return this.name.compareTo(carrier2.getName());
     }
 
-    public Integer getSap() {
+    public String getSap() {
         return sap;
     }
 
-    public void setSap(Integer sap) {
+    public void setSap(String sap) {
         this.sap = sap;
     }
 

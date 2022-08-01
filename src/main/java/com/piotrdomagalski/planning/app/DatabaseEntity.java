@@ -1,4 +1,4 @@
-package com.piotrdomagalski.planning;
+package com.piotrdomagalski.planning.app;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
