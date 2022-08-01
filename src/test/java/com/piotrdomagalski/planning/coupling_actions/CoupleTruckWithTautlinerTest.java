@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.coupling_actions;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import org.junit.jupiter.api.Test;
@@ -103,5 +103,40 @@ class CoupleTruckWithTautlinerTest {
         assertEquals(truck, xpoTautliner.getTruck());
         assertNull(truck2.getTautliner());
     }
+
+    @Test
+    void coupleTruckWithTautliner_should_set_tautliner_to_null_if_only_truck_given() {
+        //given
+        CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);
+        TautlinerEntity tautlinerExisting = new TautlinerEntity(19L, false, "ABCD1235", null, carrier, truck);
+        truck.setTautliner(tautlinerExisting);
+
+        //when
+        boolean result = new CoupleTruckWithTautliner(truck, null).couple();
+
+        //then
+        assertTrue(result);
+        assertNull(truck.getTautliner());
+        assertNull(tautlinerExisting.getTruck());
+    }
+
+    @Test
+    void coupleTruckWithTautliner_should_set_truck_to_null_if_only_tautliner_given() {
+        //given
+        CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);
+        TautlinerEntity tautliner = new TautlinerEntity(19L, false, "ABCD1235", null, carrier, truck);
+        truck.setTautliner(tautliner);
+
+        //when
+        boolean result = new CoupleTruckWithTautliner(null, tautliner).couple();
+
+        //then
+        assertTrue(result);
+        assertNull(truck.getTautliner());
+        assertNull(tautliner.getTruck());
+    }
+
 
 }

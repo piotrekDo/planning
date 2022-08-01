@@ -18,6 +18,7 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 ## Version Log
 
+- 2.0.1 Uncoupling tuck/driver and truck/tautliner is now possible.
 - 2.0.0 Spring security added. Login required to use application.
 - 1.0.1 Posting new drivers and trucks requires now carrier's SAP instead of carrier's ID. Plus minor fixes.
 - 1.0.0 Initial version introducing basic CRUD operations and coupling trucks with drivers and tautliners.
@@ -314,6 +315,20 @@ Coupling requires delvering special pair-object by **put** method.
     }
 
 <br>
+
+### If you wish to uncouple truck from driver or truck from tautliner simply pass only the object you wish to uncouple
+> In example below we want to 'clear' the truck so it doesn't have any driver connected to it  
+>> */couple/truck-driver*
+> 
+>you can do the same with   
+>> */couple/truck-tautliner*
+
+    {
+        "truck": "string"
+    }
+
+<br>
+
 
 > **Switching organization's tautliner to another carrier**  
 > */couple/tautliner-carrier*

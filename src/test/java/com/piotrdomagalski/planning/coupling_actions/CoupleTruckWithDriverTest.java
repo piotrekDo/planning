@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.coupling_actions;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.junit.jupiter.api.Test;
@@ -63,6 +63,40 @@ class CoupleTruckWithDriverTest {
         assertThrows(IllegalOperationException.class, () -> new CoupleTruckWithDriver(driver, truck).couple());
         assertNull(truck.getTruckDriver());
         assertNull(driver.getTruck());
+    }
+
+    @Test
+    void coupleTruckWithDriver_should_set_driver_to_null_if_given_truck_only() {
+        //given
+        CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, null, null, null);
+        TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);
+        TruckDriverEntity driverExisting = new TruckDriverEntity(19L, "Test Driver2", "555-555-565", "ID123457", carrier, truck);
+        truck.setTruckDriver(driverExisting);
+
+        //when
+        boolean result = new CoupleTruckWithDriver(null, truck).couple();
+
+        //then
+        assertTrue(result);
+        assertNull(truck.getTruckDriver());
+        assertNull(driverExisting.getTruck());
+    }
+
+    @Test
+    void coupleTruckWIthDriver_should_set_truck_to_null_if_given_driver_only(){
+        //given
+        CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, null, null, null);
+        TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);
+        TruckDriverEntity driver = new TruckDriverEntity(19L, "Test Driver2", "555-555-565", "ID123457", carrier, truck);
+        truck.setTruckDriver(driver);
+
+        //when
+        boolean result = new CoupleTruckWithDriver(driver, null).couple();
+
+        //then
+        assertTrue(result);
+        assertNull(driver.getTruck());
+        assertNull(truck.getTruckDriver());
     }
 
 }
