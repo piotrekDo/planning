@@ -3,6 +3,7 @@ package com.piotrdomagalski.planning.carrier;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
+import com.piotrdomagalski.planning.truck.TruckModelService;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
 import java.util.NoSuchElementException;
@@ -44,17 +45,8 @@ public class CarrierModelService {
         TruckEntity truckEntity = truckToRemove.orElseThrow(
                 () -> new NoSuchElementException("Truck doesn't exist"));
 
-        if (truckEntity.getTautliner() != null) {
-            truckEntity.getTautliner().setTruck(null);
-            truckEntity.setTautliner(null);
-        }
+        new TruckModelService(truckEntity).clearTruck();
 
-        if (truckEntity.getTruckDriver() != null) {
-            truckEntity.getTruckDriver().setTruck(null);
-            truckEntity.setTruckDriver(null);
-        }
-
-        truckEntity.setCarrier(null);
         carrier.getTrucks().remove(truckEntity);
         return truckEntity;
     }

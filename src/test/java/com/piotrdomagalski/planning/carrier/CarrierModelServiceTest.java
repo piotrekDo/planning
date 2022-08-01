@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -74,9 +75,6 @@ class CarrierModelServiceTest {
         //then
         assertEquals(truckEntityById, result);
         assertEquals(0, carrier.getTrucks().size());
-        assertNull(result.getCarrier());
-        assertNull(result.getTautliner());
-        assertNull(result.getTruckDriver());
     }
 
     @Test
@@ -87,12 +85,4 @@ class CarrierModelServiceTest {
         //when + then
         assertThrows(NoSuchElementException.class, ()-> carrierModelService.removeDriver(driverId));
     }
-
-    @ParameterizedTest
-    @ArgumentsSource(CarrierRemoveDriverArgumentsProvider.class)
-    void removeDriver_should_remove_and_clear_driver(){
-
-    }
-
-
 }
