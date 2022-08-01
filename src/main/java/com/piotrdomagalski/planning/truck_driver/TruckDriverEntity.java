@@ -50,6 +50,10 @@ public class TruckDriverEntity extends DatabaseEntity implements Comparable<Truc
         this.truck = truck;
     }
 
+    public static TruckDriverEntity newTruckDriver(String fullName, String tel, String idDocument) {
+        return new TruckDriverEntity(fullName, tel, idDocument, null, null);
+    }
+
     @Override
     public String toString() {
         return "TruckDriverEntity{" +
