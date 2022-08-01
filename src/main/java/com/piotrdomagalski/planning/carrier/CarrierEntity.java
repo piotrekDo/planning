@@ -1,0 +1,165 @@
+package com.piotrdomagalski.planning.carrier;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.piotrdomagalski.planning.DatabaseEntity;
+import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
+import com.piotrdomagalski.planning.truck.TruckEntity;
+import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity(name = "carriers")
+public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierEntity> {
+    @Min(value = 6, message = "SAP must be 6 digits long!")
+    @Max(value = 6, message = "SAP must be 6 digits long!")
+    private Integer sap;
+
+    @NotBlank(message = "Name cannot be blank!")
+    @Size(min = 3, max = 100, message = "Name must be between 3 anc 100 characters")
+    private String name;
+
+    @NotBlank(message = "Origin cannot be blank!")
+    @Size(min = 3, max = 100, message = "Origin must be between 3 anc 100 characters")
+    private String origin;
+
+    @Min(value = 0, message = "Rate cannot be negative!")
+    private Double rate;
+
+    @OneToMany(mappedBy = "carrier")
+    @JsonManagedReference
+    private List<TruckEntity> trucks;
+    @OneToMany(mappedBy = "carrier")
+    @JsonManagedReference
+    private List<TruckDriverEntity> drivers;
+    @OneToMany()
+    @JsonManagedReference
+    private List<TautlinerEntity> tautliners;
+
+    public CarrierEntity() {
+    }
+
+    public CarrierEntity(Long id, Integer sap, String name, String origin, Double rate,
+                         List<TruckEntity> trucks, List<TruckDriverEntity> drivers, List<TautlinerEntity> tautliners) {
+        super(id);
+        this.sap = sap;
+        this.name = name;
+        this.origin = origin;
+        this.rate = rate;
+        this.trucks = trucks;
+        this.drivers = drivers;
+        this.tautliners = tautliners;
+    }
+
+    public CarrierEntity(Integer sap, String name, String origin, Double rate,
+                         List<TruckEntity> trucks, List<TruckDriverEntity> drivers, List<TautlinerEntity> tautliners) {
+        this.sap = sap;
+        this.name = name;
+        this.origin = origin;
+        this.rate = rate;
+        this.trucks = trucks;
+        this.drivers = drivers;
+        this.tautliners = tautliners;
+    }
+
+    public static CarrierEntity newCarrier(Integer sap, String name, String origin, Double rate) {
+        return new CarrierEntity(sap, name, origin, rate,
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
+    @Override
+    public String toString() {
+        return "CarrierEntity{" +
+                super.toString() +
+                "sap=" + sap +
+                ", name='" + name + '\'' +
+                ", origin='" + origin + '\'' +
+                ", rate=" + rate +
+                ", trucks=" + trucks +
+                ", drivers=" + drivers +
+                ", tautliners=" + tautliners +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CarrierEntity)) return false;
+        if (!super.equals(o)) return false;
+        CarrierEntity that = (CarrierEntity) o;
+        return Objects.equals(sap, that.sap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), sap);
+    }
+
+    @Override
+    public int compareTo(CarrierEntity carrier2) {
+        return this.name.compareTo(carrier2.getName());
+    }
+
+    public Integer getSap() {
+        return sap;
+    }
+
+    public void setSap(Integer sap) {
+        this.sap = sap;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    public List<TruckEntity> getTrucks() {
+        return trucks;
+    }
+
+    public void setTrucks(List<TruckEntity> trucks) {
+        this.trucks = trucks;
+    }
+
+    public List<TruckDriverEntity> getDrivers() {
+        return drivers;
+    }
+
+    public void setDrivers(List<TruckDriverEntity> drivers) {
+        this.drivers = drivers;
+    }
+
+    public List<TautlinerEntity> getTautliners() {
+        return tautliners;
+    }
+
+    public void setTautliners(List<TautlinerEntity> tautliners) {
+        this.tautliners = tautliners;
+    }
+}
