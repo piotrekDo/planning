@@ -87,7 +87,7 @@ class TautlinerIntegrationTest {
 
         //when
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -110,7 +110,7 @@ class TautlinerIntegrationTest {
     @Test
     void adding_truck_to_non_existing_carrier_should_return_not_found() throws Exception {
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -125,7 +125,7 @@ class TautlinerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with id: 1")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with sap: 123456")));
     }
 
     @Test

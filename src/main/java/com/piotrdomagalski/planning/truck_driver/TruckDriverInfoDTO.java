@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 public class TruckDriverInfoDTO {
-    long id;
+    private long id;
     private String fullName;
     private String tel;
     private String idDocument;

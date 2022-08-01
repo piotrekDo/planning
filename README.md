@@ -5,17 +5,17 @@ organization's property. Initial version of this tool allows you to add, edit, d
 couple trucks with drivers and tautliners. Coupling drivers with trucks is only available within the same carrier.
 Tautliners can be shared between different carriers if being organization's property. Provided with initializer, with H2
 database. Future realises will deliver security, enabling user login and authentication to all actions. Next I wish to
-implement logging service showing all coupling actions done and by whom.  
+implement logging service showing all coupling actions done and by whom.
 
 All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
-> **At current state initializer should be disabled before running all tests!**
 
 > **Please familiarize with Swagger at its standard end-point**
 >> */swagger-ui/*
 
 ## Version Log
 
+- 1.0.1. Posting new drivers and trucks requires now carrier's SAP instead of carrier's ID. Plus minor fixes.
 - 1.0.0. Initial version introducing basic CRUD operations and coupling trucks with drivers and tautliners.
 
 ## Getting data
@@ -26,10 +26,10 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 > is the default end-point for getting full data of carriers and their assets.
 
 */carriers/all-short*
-> allows to get handy information about carriers themself without collecting full assets data.
+> allows to get handy information about carriers themselves without collecting full assets data.
 
 */carriers/sap*
-> allows to get carrier by it's SAP number which is unique.
+> allows to get carrier by its SAP number which is unique.
 
 ### Truck
 
@@ -62,13 +62,13 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 ## Posting new data and validation rules
 
-Program provides simple formatting, capitalizing words such as carrier's name or driver's full name as well as truck and
-tautliner plates to keep united form. Driver's telephone number will be separated with "-" eg. 111-111-111.
+Program provides simple formatting, capitalizing words such as carrier's name or driver's full name as well as trucks
+and tautliners plates to keep united form. Driver's telephone number will be separated with "-" eg. 111-111-111.
 
 ### Carrier
 
 > SAP number
-> > Has to be unique, consisting 6 digits, no letters.
+> > Has to be unique, consisting 6 digits, no letters, special characters nor separators.
 
 > Name
 > > in range form 3 to 100 characters.
@@ -77,21 +77,22 @@ tautliner plates to keep united form. Driver's telephone number will be separate
 > > Representing just a carrier's origin, not full address. In range form 3 to 100 characters.
 
 > Rate
->> Representing carrier's standard rade per km.
+>> Representing carrier's standard rate per km.
 
 ### Truck
 
-When posting a new truck, carrier's id must be provided- trucks cannot exist without a carrier.
+When posting a new truck, carrier's SAP must be provided- trucks cannot exist without a carrier.
 
 > Plates
 >> Must be between 3 and 15 characters, starting with 2-3 letters. No blanks, or spaces/separators.
+> > Plates are unique
 
 > Mega /standard
 >> All truck should be declared either as low-decks or standard trucks.
 
 ### Tautliner
 
-When posting a tautliner, carrier's id mus be provided. If id is 0 or null tautliner will be considered as
+When posting a tautliner, carrier's SAP must be provided. If its 0 or null, then tautliner will be considered as
 organization's one with no specific carrier owning it. Such tautliner can be shared between all carriers.
 
 > Xpo
@@ -99,19 +100,20 @@ organization's one with no specific carrier owning it. Such tautliner can be sha
 
 > Plates
 >> Must be between 3 and 15 characters, starting with 2-3 letters. No blanks, or spaces/separators.
+> > Plates are unique
 
 > Technical inspection
 >> defines inspection deadline. Should be placed in format yyy-MM-dd.
 
 ### Truck driver
 
-When posting a new driver, carrier's id must be provided- drivers cannot exist withou a carrier.
+When posting a new driver, carrier's SAP must be provided- drivers cannot exist without a carrier.
 
 > Full name
 >> field joining both first name and last name for simplicity reasons. Should be between 3 and 100 characters.
 
 > Telephone number
->> Containing 9 digits only, please don't put any separators. Program will format it to united form.
+>> Containing 9 digits only, don't put any separators- program will format it to united form.
 
 > Driver's id document
 >> Must start with 2-3 letters. No separators, between 8-9 characters.
@@ -119,7 +121,7 @@ When posting a new driver, carrier's id must be provided- drivers cannot exist w
 ## Updating data
 
 Updating data takes place by sending an update object with null values for fields, we don't wish to update by put
-method. For example for editing only driver's telephone number a simple json will be enough: 
+method. For example for editing only driver's telephone number a simple json will be enough:
 
     {
         "tel": "777777777"
@@ -137,14 +139,14 @@ resulting in response body of updated object:
 
 ### Carriers
 
-When deleting carrier, all its truck ad driver will be deleted as well. Tautliners will be removed as well if belong to
-that specific carrier. Organization's tautliners will be uncoupled and remain within the program available to couple
-with another carrier.
+When deleting carrier, all its trucks ad drivers will be deleted as well. Tautliners will be removed as well, if belong
+to that specific carrier. Organization's tautliners however will be uncoupled and will remain within the program,
+available to couple with another carrier.
 
 ### Truck
 
-When deleting a truck it will be removed for driver, it's driver and tautliner will be uncoupled and remain within the
-program.
+When deleting a truck it will uncouple its driver and tautliner. Both will remain within the program for the same
+carrier.
 
 ### Driver
 

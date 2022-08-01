@@ -49,21 +49,26 @@ class TautlinerRestService {
                 new NoSuchElementException("No tautliner found with id:" + id));
     }
 
-    TautlinerInfoDTO addNewTautliner(Long carrierId, TautlinerNewUpdateDTO tautliner) {
+    TautlinerInfoDTO addNewTautliner(String carrierSap, TautlinerNewUpdateDTO tautliner) {
         tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Tautliner with plates %s already exists!", t.getTautlinerPlates()));
         });
 
-        if ((carrierId == null && !tautliner.getXpo()) || (carrierId != null && carrierId <= 0 && !tautliner.getXpo())) {
-            throw new IllegalOperationException("Non xpo tautliner must have any carrier!");
-        }
+        TautlinerEntity tautlinerEntity;
+        try {
+            if ((carrierSap == null && !tautliner.getXpo()) || (carrierSap != null && Long.parseLong(carrierSap) <= 0 && !tautliner.getXpo())) {
+                throw new IllegalOperationException("Non xpo tautliner must have any carrier!");
+            }
 
-        TautlinerEntity tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
+            tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
 
-        if (carrierId != null && carrierId > 0) {
-            CarrierEntity carrier = carrierRepository.findById(carrierId).orElseThrow(
-                    () -> new NoSuchElementException("No carrier found with id: " + carrierId));
-            carrierOperations.addTautliner(carrier, tautlinerEntity);
+            if (carrierSap != null && Long.parseLong(carrierSap) > 0) {
+                CarrierEntity carrier = carrierRepository.findBySap(carrierSap).orElseThrow(
+                        () -> new NoSuchElementException("No carrier found with sap: " + carrierSap));
+                carrierOperations.addTautliner(carrier, tautlinerEntity);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalOperationException(carrierSap + " is not a valid SAP number");
         }
 
         TautlinerEntity savedEntity = tautlinerRepository.save(tautlinerEntity);

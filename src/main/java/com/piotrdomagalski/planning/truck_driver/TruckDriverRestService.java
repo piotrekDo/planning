@@ -35,10 +35,10 @@ class TruckDriverRestService {
         return truckDriverRepository.findAll(Sort.by(Sort.Direction.ASC, "fullName"));
     }
 
-    TruckDriverNewUpdateDTO addNewDriver(Long carrierId, TruckDriverNewUpdateDTO driver) {
+    TruckDriverNewUpdateDTO addNewDriver(String carrierSap, TruckDriverNewUpdateDTO driver) {
         TruckDriverEntity truckDriverEntity = transformer.newUpdatDriverDtoToEntity(driver);
-        CarrierEntity carrierEntity = carrierRepository.findById(carrierId).orElseThrow(
-                () -> new NoSuchElementException("No carrier with id: " + carrierId));
+        CarrierEntity carrierEntity = carrierRepository.findBySap(carrierSap).orElseThrow(
+                () -> new NoSuchElementException("No carrier with sap: " + carrierSap));
         carrierOperations.addDriver(carrierEntity, truckDriverEntity);
         TruckDriverEntity save = truckDriverRepository.save(truckDriverEntity);
         return transformer.entityToNewUpdateDriverDto(save);

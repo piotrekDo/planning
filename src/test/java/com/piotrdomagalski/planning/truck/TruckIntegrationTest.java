@@ -88,7 +88,7 @@ class TruckIntegrationTest {
 
         //when
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -109,7 +109,7 @@ class TruckIntegrationTest {
     @Test
     void adding_truck_to_non_existing_carrier_should_return_not_found() throws Exception {
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -123,7 +123,7 @@ class TruckIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with id: 1")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with sap: 123456")));
     }
 
     @Test

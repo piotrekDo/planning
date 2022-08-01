@@ -25,9 +25,9 @@ class TruckController {
         return truckRestService.getTruckByPlates(plates);
     }
 
-    @PostMapping("/{carrierId}")
-    TruckInfoDTO addNewTruck(@PathVariable Long carrierId, @RequestBody @Validated(value = AddTruck.class) TruckNewUpdateDTO truck) {
-        return truckRestService.addNewTruck(carrierId, truck);
+    @PostMapping("/{carrierSap}")
+    TruckInfoDTO addNewTruck(@PathVariable String carrierSap, @RequestBody @Validated(value = AddTruck.class) TruckNewUpdateDTO truck) {
+        return truckRestService.addNewTruck(carrierSap, truck);
     }
 
     @DeleteMapping("/{plates}")

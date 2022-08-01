@@ -26,9 +26,9 @@ class TruckDriverController {
         return driverRestService.getTruckDriverById(id);
     }
 
-    @PostMapping("/{carrierId}")
-    TruckDriverNewUpdateDTO addNewDriver(@PathVariable Long carrierId, @RequestBody @Validated(value = AddDriver.class) TruckDriverNewUpdateDTO driver) {
-        return driverRestService.addNewDriver(carrierId, driver);
+    @PostMapping("/{carrierSap}")
+    TruckDriverNewUpdateDTO addNewDriver(@PathVariable String carrierSap, @RequestBody @Validated(value = AddDriver.class) TruckDriverNewUpdateDTO driver) {
+        return driverRestService.addNewDriver(carrierSap, driver);
     }
 
     @DeleteMapping("/{id}")

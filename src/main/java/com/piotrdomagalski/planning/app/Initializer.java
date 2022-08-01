@@ -8,16 +8,13 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck.TruckRepository;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverRepository;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 @Component
-@Profile("!test")
-public class Initializer implements ApplicationRunner {
+public class Initializer  {
 
 
     private final CarrierRepository carrierRepository;
@@ -33,8 +30,9 @@ public class Initializer implements ApplicationRunner {
         this.truckDriverRepository = truckDriverRepository;
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+
+    @PostConstruct
+    public void run() {
         CarrierEntity test_carrier = CarrierEntity.newCarrier("123456", "Test Carrier", "Testland", 1.2);
         carrierRepository.save(test_carrier);
 

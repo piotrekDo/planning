@@ -71,13 +71,13 @@ class TruckControllerTest {
     @Test
     void addNewTruck_should_provide_to_service_and_return_code_ok() throws Exception {
         //given
-        Long carrierId = 43L;
+        String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
         TruckInfoDTO truck = new TruckInfoDTO("AVB5690", true, "123456", "Test carrier", null, null, null, null, null, null, null);
-        Mockito.when(truckRestService.addNewTruck(carrierId, newUpdateDTO)).thenReturn(truck);
+        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenReturn(truck);
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "mega": true,
@@ -86,7 +86,7 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierId, newUpdateDTO);
+        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.truckPlates", equalTo("AVB5690")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.mega", equalTo(true)))
@@ -97,13 +97,13 @@ class TruckControllerTest {
     @Test
     void addNewTruck_should_return_bad_request_when_adding_to_non_existing_carrier() throws Exception {
         //given
-        Long carrierId = 123L;
+        String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
-        Mockito.when(truckRestService.addNewTruck(carrierId, newUpdateDTO)).thenThrow(
-                new NoSuchElementException("No carrier found with id: " + carrierId));
+        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
+                new NoSuchElementException("No carrier found with sap: " + carrierSap));
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "mega": true,
@@ -112,24 +112,24 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierId, newUpdateDTO);
+        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with id: " + carrierId)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with sap: " + carrierSap)));
     }
 
     @Test
     void addNewTruck_should_return_bad_request_when_adding_truck_with_existing_plates() throws Exception {
         //given
-        Long carrierId = 123L;
+        String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
-        Mockito.when(truckRestService.addNewTruck(carrierId, newUpdateDTO)).thenThrow(
+        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
                 new IllegalOperationException(String.format("Truck with plates %s already exists!", newUpdateDTO.getTruckPlates()))
         );
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "mega": true,
@@ -138,7 +138,7 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierId, newUpdateDTO);
+        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))

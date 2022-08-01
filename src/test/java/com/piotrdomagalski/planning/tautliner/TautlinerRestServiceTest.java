@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -117,7 +118,7 @@ class TautlinerRestServiceTest {
         Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates())).thenReturn(Optional.of(tautlinerEntity));
 
         //when + then
-        assertThrows(IllegalOperationException.class, () -> tautlinerRestService.addNewTautliner(12L, tautliner));
+        assertThrows(IllegalOperationException.class, () -> tautlinerRestService.addNewTautliner("123456", tautliner));
     }
 
     @Test
@@ -132,13 +133,13 @@ class TautlinerRestServiceTest {
     @Test
     void addNewTautliner_should_throw_an_exception_when_trying_to_add_to_non_existing_carrier() {
         //given
-        Long carrierId = 432L;
+        String carrierSap = "123456";
         TautlinerNewUpdateDTO tautlinerUpdate = new TautlinerNewUpdateDTO(true, "ABC1234", "10-10-2022");
         Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautlinerUpdate.getTautlinerPlates())).thenReturn(Optional.empty());
-        Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
+        Mockito.when(carrierRepository.findBySap(carrierSap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> tautlinerRestService.addNewTautliner(carrierId, tautlinerUpdate));
+        assertThrows(NoSuchElementException.class, () -> tautlinerRestService.addNewTautliner(carrierSap, tautlinerUpdate));
         Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
     }
 
@@ -163,6 +164,19 @@ class TautlinerRestServiceTest {
         Mockito.verify(tautlinerRepository).save(entity);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"das", "12 2345", "ds434", "12BNSA"})
+    void addNewTautliner_should_throw_an_exception_when_provided_carrierSap_is_not_valid(String carrierSap){
+        //given
+        TautlinerNewUpdateDTO tautlinerUpdate = new TautlinerNewUpdateDTO(true, "ABC1234", "10-10-2022");
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautlinerUpdate.getTautlinerPlates())).thenReturn(Optional.empty());
+
+        //when + then
+        IllegalOperationException exception = assertThrows(IllegalOperationException.class, () -> tautlinerRestService.addNewTautliner(carrierSap, tautlinerUpdate));
+        assertEquals(carrierSap + " is not a valid SAP number", exception.getMessage());
+        Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
+    }
+
 
     @ParameterizedTest
     @ArgumentsSource(TautlinerAddArgumentsProvider.class)
@@ -171,13 +185,13 @@ class TautlinerRestServiceTest {
         //given
         Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(input.getTautlinerPlates())).thenReturn(Optional.empty());
         Mockito.when(transformer.newUpdateDTOtoEntity(input)).thenReturn(entity);
-        Mockito.when(carrierRepository.findById(carrier.getId())).thenReturn(Optional.of(carrier));
+        Mockito.when(carrierRepository.findBySap(carrier.getSap())).thenReturn(Optional.of(carrier));
         Mockito.when(tautlinerRepository.save(entity)).thenReturn(entity);
         Mockito.when(transformer.entityToInfoDTO(entity)).thenReturn(tautlinerInfoDTO);
         Mockito.when(carrierOperations.addTautliner(carrier, entity)).thenReturn(true);
 
         //when
-        TautlinerInfoDTO result = tautlinerRestService.addNewTautliner(carrier.getId(), input);
+        TautlinerInfoDTO result = tautlinerRestService.addNewTautliner(carrier.getSap(), input);
 
         //then
         assertEquals(tautlinerInfoDTO, result);

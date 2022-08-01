@@ -115,14 +115,14 @@ class TruckRestServiceTest {
     @Test
     void addNewTruck_should_throw_an_exception_when_truck_witch_provided_plates_already_exists() {
         //given
-        Long carrierId = 12L;
+        String carrierSap = "123456";
         String plates = "TEST123";
         TruckEntity entity = new TruckEntity(1L, plates, true, null, null, null);
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
         Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
 
         //when + then
-        assertThrows(IllegalOperationException.class, () -> truckRestService.addNewTruck(carrierId, dto));
+        assertThrows(IllegalOperationException.class, () -> truckRestService.addNewTruck(carrierSap, dto));
         Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
     }
@@ -130,16 +130,16 @@ class TruckRestServiceTest {
     @Test
     void addNewTruck_should_throw_an_exception_when_adding_truck_to_non_existing_carrier() {
         //given
-        Long carrierId = 12L;
+        String carrierSap = "123456";
         String plates = "TEST123";
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
         Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
-        Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
+        Mockito.when(carrierRepository.findBySap(carrierSap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> truckRestService.addNewTruck(carrierId, dto));
+        assertThrows(NoSuchElementException.class, () -> truckRestService.addNewTruck(carrierSap, dto));
         Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
-        Mockito.verify(carrierRepository).findById(carrierId);
+        Mockito.verify(carrierRepository).findBySap(carrierSap);
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
     }
 
