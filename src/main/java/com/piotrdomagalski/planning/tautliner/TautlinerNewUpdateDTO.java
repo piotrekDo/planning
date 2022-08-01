@@ -11,7 +11,7 @@ public class TautlinerNewUpdateDTO {
     @NotNull(groups = {AddTautliner.class}, message = "Tautliner must be declared either XPO or not")
     private Boolean isXpo;
     @Size(groups = {AddTautliner.class, UpdateTautliner.class}, min = 3, max = 15, message = "Tautliner's plates must be between 3 and 15 characters")
-    @PlatesConstrraint(groups = {AddTautliner.class, UpdateTautliner.class}, message = "Tautliner's plates must start with 2-3 letters, eg. PO23211")
+    @PlatesConstrraint(groups = {AddTautliner.class, UpdateTautliner.class}, message = "Tautliner's plates must start with letter, no special characters, eg. PO23211")
     private String tautlinerPlates;
     @NotNull(groups = {AddTautliner.class}, message = "Tautliner shoud have technical inspection date declared")
     private String techInspection;

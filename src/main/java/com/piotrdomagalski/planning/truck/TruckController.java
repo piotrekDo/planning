@@ -1,9 +1,8 @@
 package com.piotrdomagalski.planning.truck;
 
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/trucks")
@@ -16,8 +15,9 @@ class TruckController {
     }
 
     @GetMapping
-    List<TruckInfoDTO> getAllTrucks() {
-        return truckService.getAllTrucks();
+    Page<TruckInfoDTO> getAllTrucks(@RequestParam(required = false) Integer page,
+                                    @RequestParam(required = false) Integer size) {
+        return truckService.getAllTrucks(page, size);
     }
 
     @GetMapping("/{plates}")

@@ -50,7 +50,7 @@ class TruckIntegrationTest {
     void requesting_all_trucks_where_no_truck_was_added_should_return_code_200_and_empty_list() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/trucks").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", equalTo(Collections.emptyList())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", equalTo(Collections.emptyList())));
     }
 
     @Test

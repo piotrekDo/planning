@@ -47,7 +47,7 @@ class TruckDriverIntegrationTest {
     void requesting_all_drivers_where_no_driver_was_added_should_return_code_200_and_empty_list() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/drivers").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", equalTo(Collections.emptyList())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", equalTo(Collections.emptyList())));
     }
 
     @Test

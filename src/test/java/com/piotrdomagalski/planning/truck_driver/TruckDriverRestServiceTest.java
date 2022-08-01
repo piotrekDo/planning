@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
@@ -79,10 +80,10 @@ class TruckDriverRestServiceTest {
     @Test
     void getAllTruckDrivers_should_return_an_empty_list_if_no_driver_is_present() {
         //when
-        List<TruckDriverEntity> result = truckDriverRestService.getAllTruckDrivers();
+        Page<TruckDriverInfoDTO> result = truckDriverRestService.getAllTruckDrivers(0, 10);
 
         //then
-        assertEquals(Collections.emptyList(), result);
+        assertEquals(Page.empty(), result);
     }
 
     @Test

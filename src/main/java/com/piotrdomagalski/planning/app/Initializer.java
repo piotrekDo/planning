@@ -51,14 +51,26 @@ public class Initializer {
         userRoleRepository.save(moderator);
         userRoleRepository.save(admin);
 
-        AppUser appAdmin = new AppUser("admin1", "piotr.domagalski@yahoo.com", "admin");
+        AppUser appAdmin = new AppUser("admin1", "fakeAdmin@fakemail.com", "admin");
         appAdmin.setUserPassword(passwordEncoder.encode(appAdmin.getUserPassword()));
         userRepository.save(appAdmin);
+
+        AppUser appModerator = new AppUser("mod1", "fakeMod@fakemail.com", "mod");
+        appModerator.setUserPassword(passwordEncoder.encode(appModerator.getUserPassword()));
+        userRepository.save(appModerator);
+
+        AppUser appUser = new AppUser("user1", "fakeUser@fakemail.com", "user");
+        appUser.setUserPassword(passwordEncoder.encode(appUser.getUserPassword()));
+        userRepository.save(appUser);
 
         userService.addRoleToUser(new RoleToUserForm("admin1", "USER"));
         userService.addRoleToUser(new RoleToUserForm("admin1", "MODERATOR"));
         userService.addRoleToUser(new RoleToUserForm("admin1", "ADMIN"));
 
+        userService.addRoleToUser(new RoleToUserForm("mod1", "USER"));
+        userService.addRoleToUser(new RoleToUserForm("mod1", "MODERATOR"));
+
+        userService.addRoleToUser(new RoleToUserForm("user1", "USER"));
 
         CarrierEntity test_carrier = CarrierEntity.newCarrier("123456", "Test Carrier", "Testland", 1.2);
         carrierRepository.save(test_carrier);

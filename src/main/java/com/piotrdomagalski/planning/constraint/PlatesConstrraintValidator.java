@@ -15,10 +15,6 @@ public class PlatesConstrraintValidator implements ConstraintValidator<PlatesCon
             return true;
         }
 
-        if (s.contains(" ")) {
-            return false;
-        }
-
-        return s.matches("^[a-zA-Z][a-zA-Z].*");
+        return s.matches("^[a-zA-Z][a-zA-Z0-9]([a-zA-Z0-9])*");
     }
 }

@@ -1,9 +1,12 @@
 package com.piotrdomagalski.planning.truck;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.tautliner.TautlinerDTOdataParser;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.springframework.stereotype.Service;
+
+import static com.piotrdomagalski.planning.tautliner.TautlinerDTOdataParser.platesParser;
 
 @Service
 public class TruckTransformer {
@@ -36,7 +39,7 @@ public class TruckTransformer {
 
     TruckEntity newUpdateToEntity(TruckNewUpdateDTO dto) {
         return TruckEntity.newTruck(
-                dto.getTruckPlates(),
+                dto.getTruckPlates() != null ? platesParser(dto.getTruckPlates()) : null,
                 dto.getMega()
         );
     }

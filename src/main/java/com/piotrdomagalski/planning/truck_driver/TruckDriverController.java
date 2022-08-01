@@ -1,10 +1,9 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/drivers")
@@ -17,8 +16,9 @@ class TruckDriverController {
     }
 
     @GetMapping
-    List<TruckDriverEntity> getAllDrivers() {
-        return driverService.getAllTruckDrivers();
+    Page<TruckDriverInfoDTO> getAllDrivers(@RequestParam(required = false) Integer page,
+                                           @RequestParam(required = false) Integer size) {
+        return driverService.getAllTruckDrivers(page, size);
     }
 
     @GetMapping("/{id}")

@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.tautliner;
 
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
+import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -40,17 +39,15 @@ class TautlinerRestServiceTest {
 
     @Test
     void getAllTautliners_should_return_an_empty_list_if_no_tatuliners_found() {
-        //whem
-        List<TautlinerInfoDTO> result = tautlinerRestService.getAllTautliners(null);
-
+        //when
+        Page<TautlinerInfoDTO> result = tautlinerRestService.getAllTautliners(null, 0, 10);
 
         //then
-        assertEquals(Collections.emptyList(), result);
+        assertEquals(Page.empty(), result);
     }
 
     @Test
     void getTautlinerByPlates_should_throw_an_exception_if_no_such_value_present() {
-
         //when + then
         assertThrows(NoSuchElementException.class, () -> tautlinerRestService.getTautlinerByPlates("ABC1234"));
     }

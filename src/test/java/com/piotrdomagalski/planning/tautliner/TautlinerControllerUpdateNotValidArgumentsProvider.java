@@ -22,7 +22,7 @@ class TautlinerControllerUpdateNotValidArgumentsProvider implements ArgumentsPro
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Tautliner's plates must be between 3 and 15 characters", "Tautliner's plates must start with 2-3 letters, eg. PO23211"}
+                        new String[]{"Tautliner's plates must be between 3 and 15 characters", "Tautliner's plates must start with letter, no special characters, eg. PO23211"}
                 ),
                 Arguments.of(
                         """
@@ -42,7 +42,7 @@ class TautlinerControllerUpdateNotValidArgumentsProvider implements ArgumentsPro
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Tautliner's plates must start with 2-3 letters, eg. PO23211"}
+                        new String[]{"Tautliner's plates must start with letter, no special characters, eg. PO23211"}
                 )
         );
     }

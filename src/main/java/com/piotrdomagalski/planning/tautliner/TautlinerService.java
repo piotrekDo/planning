@@ -1,17 +1,15 @@
 package com.piotrdomagalski.planning.tautliner;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
+import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+
+import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TAUTLINER_RESULT_PER_PAGE;
 
 @Service
 class TautlinerService {
@@ -29,14 +27,23 @@ class TautlinerService {
         this.carrierOperations = carrierOperations;
     }
 
-    List<TautlinerInfoDTO> getAllTautliners(Boolean isXpo) {
+    Page<TautlinerInfoDTO> getAllTautliners(Boolean isXpo, Integer page, Integer size) {
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         Example<TautlinerEntity> example = Example.of(
                 new TautlinerEntity(isXpo, null, null, null, null), matcher);
 
-        return tautlinerRepository.findAll(example, Sort.by(Sort.Direction.ASC, "tautlinerPlates")).stream()
-                .map(transformer::entityToInfoDTO)
-                .collect(Collectors.toList());
+        if (page != null && size != null && page == -1 && size == -1) {
+            Pageable wholePage = Pageable.unpaged();
+            return tautlinerRepository.findAll(example, wholePage).map(transformer::entityToInfoDTO);
+        }
+
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? TAUTLINER_RESULT_PER_PAGE : size;
+
+        Page<TautlinerEntity> results = tautlinerRepository.findAll(example, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "tautlinerPlates")));
+
+        return results == null ? Page.empty() : results.map(transformer::entityToInfoDTO);
+
     }
 
     TautlinerInfoDTO getTautlinerByPlates(String plates) {

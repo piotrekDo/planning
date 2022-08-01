@@ -1,14 +1,18 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.app.ConfigurationLibrary;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
+import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TRUCKDRIVER_RESULTS_PER_PAGE;
 
 @Service
 @Qualifier("truckDriverRest")
@@ -31,8 +35,11 @@ class TruckDriverService {
                 () -> new NoSuchElementException("No driver found with id: " + id)));
     }
 
-    List<TruckDriverEntity> getAllTruckDrivers() {
-        return truckDriverRepository.findAll(Sort.by(Sort.Direction.ASC, "fullName"));
+    Page<TruckDriverInfoDTO> getAllTruckDrivers(Integer page, Integer size) {
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? TRUCKDRIVER_RESULTS_PER_PAGE : size;
+        Page<TruckDriverEntity> results = truckDriverRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "fullName")));
+        return results == null ? Page.empty() : results.map(transformer::entityToDriverInfoDto);
     }
 
     TruckDriverNewUpdateDTO addNewDriver(String carrierSap, TruckDriverNewUpdateDTO driver) {

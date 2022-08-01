@@ -47,7 +47,7 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Planning",
                 "",
-                "2.0.0",
+                "3.0.0",
                 "Terms of service",
                 new Contact("Piotrek Domagalski", "", "piotr.domagalski@icloud.com"),
                 "",

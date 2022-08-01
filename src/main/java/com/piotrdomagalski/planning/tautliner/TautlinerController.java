@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.tautliner;
 
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +17,10 @@ import java.util.List;
     }
 
     @GetMapping
-    List<TautlinerInfoDTO> getAllTautliners(@RequestParam(required = false) Boolean isXpo){
-        return tautlinerService.getAllTautliners(isXpo);
+    Page<TautlinerInfoDTO> getAllTautliners(@RequestParam(required = false) Boolean isXpo,
+                                            @RequestParam(required = false) Integer page,
+                                            @RequestParam(required = false) Integer size){
+        return tautlinerService.getAllTautliners(isXpo, page, size);
     }
 
     @GetMapping("/{plates}")

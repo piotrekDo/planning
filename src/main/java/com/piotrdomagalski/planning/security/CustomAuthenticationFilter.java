@@ -2,9 +2,9 @@ package com.piotrdomagalski.planning.security;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.piotrdomagalski.planning.error.ErrorEntity;
 import com.piotrdomagalski.planning.app_user.AppUser;
 import com.piotrdomagalski.planning.app_user.UserDetailsAdapter;
+import com.piotrdomagalski.planning.error.ErrorEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -70,13 +72,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         UserDetailsAdapter user = (UserDetailsAdapter) authentication.getPrincipal();
+        List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(setHours(10))
+                .withExpiresAt(setHours(12))
                 .withIssuer(request.getRequestURL().toString())
-                .withClaim("roles", user.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()))
+                .withClaim("roles", roles)
                 .sign(getAlgorithm());
 
         String refreshToken = JWT.create()
@@ -87,10 +91,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
+        tokens.put("access_token_expires_at", LocalDateTime.now().plusHours(12).toString());
         tokens.put("refresh_token", refreshToken);
+        tokens.put("roles", roles.toString());
+        tokens.put("username", user.getUsername());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+
     }
-
-
 }

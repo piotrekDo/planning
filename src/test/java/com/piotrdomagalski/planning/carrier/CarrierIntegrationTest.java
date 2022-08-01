@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -43,14 +44,14 @@ class CarrierIntegrationTest {
     void requesting_all_carriers_where_no_carrier_was_added_should_return_code_200_and_empty_list() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/carriers").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", equalTo(Collections.emptyList())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", equalTo(Collections.emptyList())));
     }
 
     @Test
-    void requesting_all_carriers_short_where_no_carrier_was_added_should_return_code_200_and_empty_list() throws Exception {
+    void requesting_all_carriers_short_where_no_carrier_was_added_should_return_code_200_and_empty_page() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/carriers/all-short").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", equalTo(Collections.emptyList())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", equalTo(Collections.emptyList())));
     }
 
     @Test
