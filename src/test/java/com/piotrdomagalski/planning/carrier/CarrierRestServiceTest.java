@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckRepository;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverRepository;
@@ -23,41 +23,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(SpringExtension.class)
 class CarrierRestServiceTest {
 
-    @TestConfiguration
-    static class CarrierServiceTestingConfiguration {
-
-        @Bean
-        CarrierRestService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, CarrierOperations carrierOperations,
-                                              TruckRepository truckRepository, TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
-            return new CarrierRestService(carrierRepository, transformer, carrierOperations, truckRepository, driverRepository, tautlinerRepository);
-        }
-    }
-
     @Autowired
-    CarrierRestService carrierRestService;
-
+    CarrierService carrierService;
     @MockBean
     CarrierRepository carrierRepository;
-
     @MockBean
-    CarrierOperations carrierOperations;
-
+    CarrierActions carrierOperations;
     @MockBean
     CarrierTransformer transformer;
-
     @MockBean
     TruckRepository truckRepository;
-
     @MockBean
     TruckDriverRepository truckDriverRepository;
-
     @MockBean
     TautlinerRepository tautlinerRepository;
 
     @Test
     void getAllCarriers_should_return_an_empty_list_when_no_carriers_are_present() {
         //when
-        List<CarrierFullIDto> result = carrierRestService.getAllCarriers();
+        List<CarrierFullIDto> result = carrierService.getAllCarriers();
 
         //then
         assertEquals(Collections.emptyList(), result);
@@ -66,7 +50,7 @@ class CarrierRestServiceTest {
     @Test
     void getCarriersShortInfo_should_return_an_empty_list_when_no_carriers_are_present() {
         //when
-        List<CarrierShortInfoDTO> result = carrierRestService.getCarriersShortInfo();
+        List<CarrierShortInfoDTO> result = carrierService.getCarriersShortInfo();
 
         //then
         assertEquals(Collections.emptyList(), result);
@@ -78,7 +62,7 @@ class CarrierRestServiceTest {
         Long id = 66L;
         Mockito.when(carrierRepository.findById(id)).thenReturn(Optional.empty());
         //when + then
-        assertThrows(NoSuchElementException.class, () -> carrierRestService.getCarrierById(id));
+        assertThrows(NoSuchElementException.class, () -> carrierService.getCarrierById(id));
     }
 
     @Test
@@ -93,7 +77,7 @@ class CarrierRestServiceTest {
         Mockito.when(transformer.toCarrierFullIDto(carrier)).thenReturn(dto);
 
         //when
-        CarrierFullIDto result = carrierRestService.getCarrierById(id);
+        CarrierFullIDto result = carrierService.getCarrierById(id);
 
         //then
         assertEquals(dto, result);
@@ -107,7 +91,7 @@ class CarrierRestServiceTest {
         Mockito.when(carrierRepository.findBySap(sap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> carrierRestService.getCarrierBySap(sap));
+        assertThrows(NoSuchElementException.class, () -> carrierService.getCarrierBySap(sap));
     }
 
     @Test
@@ -122,7 +106,7 @@ class CarrierRestServiceTest {
         Mockito.when(transformer.toCarrierFullIDto(carrier)).thenReturn(dto);
 
         //when
-        CarrierFullIDto result = carrierRestService.getCarrierBySap(sap);
+        CarrierFullIDto result = carrierService.getCarrierBySap(sap);
 
         //then
         assertEquals(dto, result);
@@ -139,7 +123,7 @@ class CarrierRestServiceTest {
         Mockito.when(carrierRepository.findBySap(sap)).thenReturn(Optional.of(carrier));
 
         //when + then
-        assertThrows(IllegalOperationException.class, () -> carrierRestService.addNewCarrier(newCarrierDto));
+        assertThrows(IllegalOperationException.class, () -> carrierService.addNewCarrier(newCarrierDto));
         Mockito.verify(carrierRepository).findBySap(sap);
         Mockito.verify(carrierRepository, Mockito.never()).save(Mockito.any());
     }
@@ -151,7 +135,7 @@ class CarrierRestServiceTest {
         Mockito.when(carrierRepository.findBySap(sap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> carrierRestService.deleteCarrierBySap(sap));
+        assertThrows(NoSuchElementException.class, () -> carrierService.deleteCarrierBySap(sap));
         Mockito.verify(carrierRepository, Mockito.never()).delete(Mockito.any());
     }
 
@@ -167,7 +151,7 @@ class CarrierRestServiceTest {
         Mockito.when(carrierOperations.clear(carrier)).thenReturn(true);
 
         //when
-        CarrierShortInfoDTO result = carrierRestService.deleteCarrierBySap(sap);
+        CarrierShortInfoDTO result = carrierService.deleteCarrierBySap(sap);
 
         //then
         assertEquals(dto, result);
@@ -184,7 +168,7 @@ class CarrierRestServiceTest {
         Mockito.when(carrierRepository.findBySap(sap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> carrierRestService.updateCarrier(sap, updateCarrierDto));
+        assertThrows(NoSuchElementException.class, () -> carrierService.updateCarrier(sap, updateCarrierDto));
         Mockito.verify(carrierRepository).findBySap(sap);
         Mockito.verify(carrierRepository, Mockito.never()).save(Mockito.any());
     }
@@ -201,7 +185,7 @@ class CarrierRestServiceTest {
         Mockito.when(transformer.newUpdateToEntity(updateCarrierDto)).thenReturn(new CarrierEntity(null, "777777", null, null, null, null, null, null));
 
         //when + then
-        assertThrows(IllegalOperationException.class, () -> carrierRestService.updateCarrier(sap, updateCarrierDto));
+        assertThrows(IllegalOperationException.class, () -> carrierService.updateCarrier(sap, updateCarrierDto));
         Mockito.verify(carrierRepository, Mockito.never()).save(Mockito.any());
         Mockito.verify(carrierRepository).findBySap(sap);
         Mockito.verify(carrierRepository).findBySap(updateCarrierDto.getSap());
@@ -220,7 +204,7 @@ class CarrierRestServiceTest {
         Mockito.when(transformer.entityToNewUpdateDto(savedCarrier)).thenReturn(new CarrierNewUpdateDTO(savedCarrier.getSap(), savedCarrier.getName(), savedCarrier.getOrigin(), savedCarrier.getRate()));
 
         //when
-        CarrierNewUpdateDTO result = carrierRestService.updateCarrier(sap, dto);
+        CarrierNewUpdateDTO result = carrierService.updateCarrier(sap, dto);
 
         //then
         assertEquals(savedCarrier.getSap(), result.getSap());
@@ -229,5 +213,15 @@ class CarrierRestServiceTest {
         Mockito.verify(carrierRepository).save(foundBySap);
         Mockito.verify(transformer).entityToNewUpdateDto(savedCarrier);
 
+    }
+
+    @TestConfiguration
+    static class CarrierServiceTestingConfiguration {
+
+        @Bean
+        CarrierService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, CarrierActions carrierOperations,
+                                          TruckRepository truckRepository, TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
+            return new CarrierService(carrierRepository, transformer, carrierOperations, truckRepository, driverRepository, tautlinerRepository);
+        }
     }
 }

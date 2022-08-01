@@ -23,7 +23,7 @@ class RemoveTautlinerFromCarrierTest {
         String tautlinersPlates = "NON999";
 
         //when+then
-        assertThrows(NoSuchElementException.class, () -> new RemoveTautlinerFromCarrier(carrier, tautlinersPlates).execute());
+        assertThrows(NoSuchElementException.class, () -> new RemoveTautlinerFromCarrierAction(carrier, tautlinersPlates).execute());
     }
 
     @Test
@@ -36,7 +36,7 @@ class RemoveTautlinerFromCarrierTest {
         carrier.getTautliners().add(tautliner);
 
         //when
-        boolean result = new RemoveTautlinerFromCarrier(carrier, tautlinersPlates).execute();
+        boolean result = new RemoveTautlinerFromCarrierAction(carrier, tautlinersPlates).execute();
 
         //then
         assertTrue(result);

@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ class AddTruckToCarrierTest {
         TruckEntity truck = new TruckEntity(1L, "TEST1234", true, new CarrierEntity(), null, null);
 
         //when + then
-        assertThrows(IllegalOperationException.class, () -> new AddTruckToCarrier(new CarrierEntity(), truck).execute());
+        assertThrows(IllegalOperationException.class, () -> new AddTruckToCarrierAction(new CarrierEntity(), truck).execute());
     }
 
     @Test
@@ -30,7 +30,7 @@ class AddTruckToCarrierTest {
         TruckEntity truck = new TruckEntity(1L, "TEST1234", true, null, null, null);
 
         //when
-        boolean result = new AddTruckToCarrier(carrier, truck).execute();
+        boolean result = new AddTruckToCarrierAction(carrier, truck).execute();
 
         //then
         assertTrue(result);

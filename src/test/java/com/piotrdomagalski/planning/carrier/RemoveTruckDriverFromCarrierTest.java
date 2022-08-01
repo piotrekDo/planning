@@ -22,7 +22,7 @@ class RemoveTruckDriverFromCarrierTest {
         Long driversId = 432L;
 
         //when+then
-        assertThrows(NoSuchElementException.class, () -> new RemoveTruckDriverFromCarrier(carrier, driversId).execute());
+        assertThrows(NoSuchElementException.class, () -> new RemoveTruckDriverFromCarrierAction(carrier, driversId).execute());
     }
 
     @Test
@@ -35,7 +35,7 @@ class RemoveTruckDriverFromCarrierTest {
         carrier.getDrivers().add(driver);
 
         //when
-        boolean result = new RemoveTruckDriverFromCarrier(carrier, driversId).execute();
+        boolean result = new RemoveTruckDriverFromCarrierAction(carrier, driversId).execute();
 
         //then
         assertTrue(result);

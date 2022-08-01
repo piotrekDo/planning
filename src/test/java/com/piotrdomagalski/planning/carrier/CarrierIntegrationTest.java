@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class CarrierIntegrationTest {
 
     @Autowired
@@ -106,8 +108,17 @@ class CarrierIntegrationTest {
     }
 
     @Test
+    void deleteCarrierBySap_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/carriers/" + "123456").contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteCarrierBySap_should_return_code_200_and_delete_entity() throws Exception {
-        //given
         //given
         CarrierEntity carrierEntity = CarrierEntity.newCarrier("123456", "Test Carrier", "Testland", 1.2);
         carrierRepository.save(carrierEntity);
@@ -126,6 +137,7 @@ class CarrierIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteCarrierBySap_should_return_not_found_when_deleting_by_non_existing_sap() throws Exception {
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/carriers/" + "123456").contentType(MediaType.APPLICATION_JSON));

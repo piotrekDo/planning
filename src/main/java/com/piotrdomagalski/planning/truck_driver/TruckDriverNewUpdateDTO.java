@@ -1,8 +1,8 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 
-import com.piotrdomagalski.planning.app.DigitsOnly;
-import com.piotrdomagalski.planning.app.IdDocumentConstraint;
+import com.piotrdomagalski.planning.constraint.DigitsOnly;
+import com.piotrdomagalski.planning.constraint.IdDocumentConstraint;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

@@ -9,34 +9,34 @@ import java.util.List;
 @RequestMapping("/trucks")
 class TruckController {
 
-    private final TruckRestService truckRestService;
+    private final TruckService truckService;
 
-    TruckController(TruckRestService truckRestService) {
-        this.truckRestService = truckRestService;
+    TruckController(TruckService truckService) {
+        this.truckService = truckService;
     }
 
     @GetMapping
     List<TruckInfoDTO> getAllTrucks() {
-        return truckRestService.getAllTrucks();
+        return truckService.getAllTrucks();
     }
 
     @GetMapping("/{plates}")
     TruckInfoDTO getTruckByPlates(@PathVariable String plates) {
-        return truckRestService.getTruckByPlates(plates);
+        return truckService.getTruckByPlates(plates);
     }
 
     @PostMapping("/{carrierSap}")
     TruckInfoDTO addNewTruck(@PathVariable String carrierSap, @RequestBody @Validated(value = AddTruck.class) TruckNewUpdateDTO truck) {
-        return truckRestService.addNewTruck(carrierSap, truck);
+        return truckService.addNewTruck(carrierSap, truck);
     }
 
     @DeleteMapping("/{plates}")
     TruckEntity deleteTruckByPlates(@PathVariable String plates) {
-        return truckRestService.deleteTruckByPlates(plates);
+        return truckService.deleteTruckByPlates(plates);
     }
 
     @PutMapping("/{plates}")
     TruckNewUpdateDTO updateTruck(@PathVariable String plates, @RequestBody @Validated(value = UpdateTruck.class) TruckNewUpdateDTO dto) {
-        return truckRestService.updateTruck(plates, dto);
+        return truckService.updateTruck(plates, dto);
     }
 }

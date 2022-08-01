@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.truck;
 
-import com.piotrdomagalski.planning.app.PlatesConstrraint;
+import com.piotrdomagalski.planning.constraint.PlatesConstrraint;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

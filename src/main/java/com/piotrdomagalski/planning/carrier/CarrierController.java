@@ -9,39 +9,39 @@ import java.util.List;
 @RequestMapping("/carriers")
 class CarrierController {
 
-    private final CarrierRestService carrierRestService;
+    private final CarrierService carrierService;
 
-    public CarrierController(CarrierRestService carrierRestService) {
-        this.carrierRestService = carrierRestService;
+    public CarrierController(CarrierService carrierService) {
+        this.carrierService = carrierService;
     }
 
     @GetMapping
     List<CarrierFullIDto> getAllCarriersFull() {
-        return carrierRestService.getAllCarriers();
+        return carrierService.getAllCarriers();
     }
 
     @GetMapping("/all-short")
     List<CarrierShortInfoDTO> getAllCarriersShort() {
-        return carrierRestService.getCarriersShortInfo();
+        return carrierService.getCarriersShortInfo();
     }
 
     @GetMapping("/{sap}")
     CarrierFullIDto getCarrierBySap(@PathVariable String sap) {
-        return carrierRestService.getCarrierBySap(sap);
+        return carrierService.getCarrierBySap(sap);
     }
 
     @PostMapping
     CarrierNewUpdateDTO addNewCarrier(@RequestBody @Validated(value = AddCarrier.class) CarrierNewUpdateDTO carrier) {
-        return carrierRestService.addNewCarrier(carrier);
+        return carrierService.addNewCarrier(carrier);
     }
 
     @DeleteMapping("/{sap}")
     CarrierShortInfoDTO deleteCarrierBySap(@PathVariable String sap) {
-        return carrierRestService.deleteCarrierBySap(sap);
+        return carrierService.deleteCarrierBySap(sap);
     }
 
     @PutMapping("/{sap}")
     CarrierNewUpdateDTO updateCarrierBySap(@PathVariable String sap, @RequestBody @Validated(value = UpdateCarrier.class) CarrierNewUpdateDTO carrier) {
-        return carrierRestService.updateCarrier(sap, carrier);
+        return carrierService.updateCarrier(sap, carrier);
     }
 }

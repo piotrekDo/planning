@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +26,10 @@ class TruckDriverRestServiceTest {
     static class ReservationTestConfig {
 
         @Bean
-        TruckDriverRestService tautlinerRestService(TruckDriverRepository truckDriverRepository,
-                                                    CarrierRepository carrierRepository, TruckDriverTransformer transformer,
-                                                    CarrierOperations carrierOperations) {
-            return new TruckDriverRestService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
+        TruckDriverService tautlinerRestService(TruckDriverRepository truckDriverRepository,
+                                                CarrierRepository carrierRepository, TruckDriverTransformer transformer,
+                                                CarrierActions carrierOperations) {
+            return new TruckDriverService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
         }
     }
 
@@ -43,10 +43,10 @@ class TruckDriverRestServiceTest {
     TruckDriverTransformer transformer;
 
     @MockBean
-    CarrierOperations carrierOperations;
+    CarrierActions carrierOperations;
 
     @Autowired
-    TruckDriverRestService truckDriverRestService;
+    TruckDriverService truckDriverRestService;
 
 
     @Test

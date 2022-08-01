@@ -26,7 +26,7 @@ class ClearTautlinerTest {
         tautTruck.setTautliner(tautliner);
 
         //when
-        boolean result = new ClearTautliner(tautliner).execute();
+        boolean result = new ClearTautlinerAction(tautliner).execute();
 
         //then
         assertTrue(result);

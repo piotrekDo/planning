@@ -1,6 +1,7 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.app_user.AppUserService;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerInfoDTO;
 import com.piotrdomagalski.planning.truck.TruckInfoDTO;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -27,13 +30,20 @@ import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(CarrierController.class)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class CarrierControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    CarrierRestService carrierRestService;
+    AppUserService userService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
+
+    @MockBean
+    CarrierService carrierService;
 
     @Test
     void getCarrierBySap_should_return_code_200_and_response_body_when_carrier_found() throws Exception {
@@ -44,13 +54,13 @@ class CarrierControllerTest {
         TautlinerInfoDTO tautliner = new TautlinerInfoDTO("TAUT432", LocalDateTime.of(2022, 12, 24, 0, 0, 0), true, carrier.getName(), carrier.getSap(), null);
         carrier.getTrucks().add(truck);
         carrier.getTautliners().add(tautliner);
-        Mockito.when(carrierRestService.getCarrierBySap(sap)).thenReturn(carrier);
+        Mockito.when(carrierService.getCarrierBySap(sap)).thenReturn(carrier);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(carrierRestService).getCarrierBySap(sap);
+        Mockito.verify(carrierService).getCarrierBySap(sap);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo("Test Carrier")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.sap", equalTo("123456")))
@@ -65,14 +75,14 @@ class CarrierControllerTest {
     void getCarrierBySap_should_return_not_found_if_no_carrier_found() throws Exception {
         //given
         String sap = "123456";
-        Mockito.when(carrierRestService.getCarrierBySap(sap)).thenThrow(
+        Mockito.when(carrierService.getCarrierBySap(sap)).thenThrow(
                 new NoSuchElementException("No carrier found with id: " + sap));
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(carrierRestService).getCarrierBySap(sap);
+        Mockito.verify(carrierService).getCarrierBySap(sap);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
@@ -83,7 +93,7 @@ class CarrierControllerTest {
     void addNewCarrier_should_return_code_200_and_response_body() throws Exception {
         //given
         CarrierNewUpdateDTO carrier = new CarrierNewUpdateDTO("123456", "Test Carrier", "Testland", 1.2);
-        Mockito.when(carrierRestService.addNewCarrier(carrier)).thenReturn(carrier);
+        Mockito.when(carrierService.addNewCarrier(carrier)).thenReturn(carrier);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/carriers").contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +109,7 @@ class CarrierControllerTest {
                 ));
 
         //then
-        Mockito.verify(carrierRestService).addNewCarrier(carrier);
+        Mockito.verify(carrierService).addNewCarrier(carrier);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo("Test Carrier")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.origin", equalTo("Testland")))
@@ -111,7 +121,7 @@ class CarrierControllerTest {
     void addNewCarrier_should_return_bad_request_if_carrier_with_provided_sap_already_exists() throws Exception {
         //given
         CarrierNewUpdateDTO carrier = new CarrierNewUpdateDTO("123456", "Test Carrier", "Testland", 1.2);
-        Mockito.when(carrierRestService.addNewCarrier(carrier)).thenThrow(
+        Mockito.when(carrierService.addNewCarrier(carrier)).thenThrow(
                 new IllegalOperationException(String.format("Carrier with SAP number: %s already exists!", carrier.getSap())));
 
         //when
@@ -128,7 +138,7 @@ class CarrierControllerTest {
                 ));
 
         //then
-        Mockito.verify(carrierRestService).addNewCarrier(carrier);
+        Mockito.verify(carrierService).addNewCarrier(carrier);
         perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))
@@ -157,22 +167,35 @@ class CarrierControllerTest {
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.origin").value(containsInAnyOrder(detailsOrigin)));
         if (detailsRate != null)
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.rate").value(containsInAnyOrder(detailsRate)));
-        Mockito.verify(carrierRestService, Mockito.never()).addNewCarrier(Mockito.any());
+        Mockito.verify(carrierService, Mockito.never()).addNewCarrier(Mockito.any());
     }
 
     @Test
+    void deleteCarrierBySap_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //given
+        String sap = "123456";
+
+        //when + then
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON));
+
+        perform.andExpect(MockMvcResultMatchers.status().isForbidden());
+        Mockito.verify(carrierService, Mockito.never()).deleteCarrierBySap(Mockito.any());
+    }
+
+    @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteCarrierBySap_should_return_code_200_when_deleting_by_existing_sap() throws Exception {
         //given
         String sap = "123456";
         CarrierShortInfoDTO carrier = new CarrierShortInfoDTO(sap, "Test Trans", "Testland", 1.2, 0, 0);
-        Mockito.when(carrierRestService.deleteCarrierBySap(sap)).thenReturn(carrier);
+        Mockito.when(carrierService.deleteCarrierBySap(sap)).thenReturn(carrier);
 
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(carrierRestService).deleteCarrierBySap(sap);
+        Mockito.verify(carrierService).deleteCarrierBySap(sap);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.sap", equalTo("123456")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo("Test Trans")))
@@ -182,10 +205,11 @@ class CarrierControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteCarrier_should_return_not_found_if_deleting_by_non_existing_sap() throws Exception {
         //given
         String sap = "123456";
-        Mockito.when(carrierRestService.deleteCarrierBySap(sap)).thenThrow(
+        Mockito.when(carrierService.deleteCarrierBySap(sap)).thenThrow(
                 new NoSuchElementException("No carrier found with id: " + sap)
         );
 
@@ -204,14 +228,14 @@ class CarrierControllerTest {
     void updateCarrier_should_reutn_conde_200_and_response_body_if_updated(CarrierNewUpdateDTO updateDto, String updateJson, CarrierNewUpdateDTO result) throws Exception {
         //given
         String sap = "123456";
-        Mockito.when(carrierRestService.updateCarrier(sap, updateDto)).thenReturn(result);
+        Mockito.when(carrierService.updateCarrier(sap, updateDto)).thenReturn(result);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON)
                 .content(updateJson));
 
         //then
-        Mockito.verify(carrierRestService).updateCarrier(sap, updateDto);
+        Mockito.verify(carrierService).updateCarrier(sap, updateDto);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo(result.getName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.origin", equalTo(result.getOrigin())))
@@ -224,7 +248,7 @@ class CarrierControllerTest {
         //given
         String sap = "123456";
         CarrierNewUpdateDTO updateDTO = new CarrierNewUpdateDTO(null, "Lol Trans", "Testland", null);
-        Mockito.when(carrierRestService.updateCarrier(sap, updateDTO)).thenThrow(
+        Mockito.when(carrierService.updateCarrier(sap, updateDTO)).thenThrow(
                 new NoSuchElementException("No carrier found with id: " + sap));
 
         //when
@@ -248,7 +272,7 @@ class CarrierControllerTest {
         //given
         String sap = "123456";
         CarrierNewUpdateDTO updateDTO = new CarrierNewUpdateDTO("654321", "Lol Trans", "Testland", null);
-        Mockito.when(carrierRestService.updateCarrier(sap, updateDTO)).thenThrow(
+        Mockito.when(carrierService.updateCarrier(sap, updateDTO)).thenThrow(
                 new IllegalOperationException("Carrier with provided SAP already exists, SAP has to be unique"));
 
         //when
@@ -291,6 +315,6 @@ class CarrierControllerTest {
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.origin").value(containsInAnyOrder(detailsOrigin)));
         if (detailsRate != null)
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.rate").value(containsInAnyOrder(detailsRate)));
-        Mockito.verify(carrierRestService, Mockito.never()).addNewCarrier(Mockito.any());
+        Mockito.verify(carrierService, Mockito.never()).addNewCarrier(Mockito.any());
     }
 }

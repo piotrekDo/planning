@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.truck_driver;
 
+import com.piotrdomagalski.planning.app_user.AppUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,13 +25,20 @@ import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TruckDriverController.class)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class TruckDriverControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    TruckDriverRestService driverRestService;
+    AppUserService userService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
+
+    @MockBean
+    TruckDriverService driverRestService;
 
     @Test
     void getDriverById_should_return_driver_entity_if_id_is_correct() throws Exception {
@@ -135,6 +145,18 @@ class TruckDriverControllerTest {
     }
 
     @Test
+    void deleteDriver_byId_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //given
+        Long id = 1L;
+
+        //when + then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/drivers/" + id).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+        Mockito.verify(driverRestService, Mockito.never()).deleteTruckDriverById(Mockito.any());
+    }
+
+    @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteDriverById_should_throw_not_found_error_when_removing_by_non_existing_id() throws Exception {
         //given
         Long id = 1L;
@@ -151,6 +173,7 @@ class TruckDriverControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteDriverById_should_return_removed_driver_when_removal_action_was_successfull() throws Exception {
         //given
         Long id = 1L;
