@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity(name = "tautliners")
@@ -20,7 +21,7 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
     @Size(min = 3, max = 15, message = "Tautliner's plates must be between 3 and 15 characters")
     private String tautlinerPlates;
     @NotNull
-    private LocalDate techInspection;
+    private LocalDateTime techInspection;
     @ManyToOne
     @JsonBackReference
     private CarrierEntity carrier;
@@ -31,7 +32,7 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
     public TautlinerEntity() {
     }
 
-    public TautlinerEntity(Boolean isXpo, String tautlinerPlates, LocalDate techInspection, CarrierEntity carrier, TruckEntity truck) {
+    public TautlinerEntity(Boolean isXpo, String tautlinerPlates, LocalDateTime techInspection, CarrierEntity carrier, TruckEntity truck) {
         this.isXpo = isXpo;
         this.tautlinerPlates = tautlinerPlates;
         this.techInspection = techInspection;
@@ -39,7 +40,7 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
         this.truck = truck;
     }
 
-    public TautlinerEntity(Long id, Boolean isXpo, String tautlinerPlates, LocalDate techInspection, CarrierEntity carrier, TruckEntity truck) {
+    public TautlinerEntity(Long id, Boolean isXpo, String tautlinerPlates, LocalDateTime techInspection, CarrierEntity carrier, TruckEntity truck) {
         super(id);
         this.isXpo = isXpo;
         this.tautlinerPlates = tautlinerPlates;
@@ -48,7 +49,7 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
         this.truck = truck;
     }
 
-    public static TautlinerEntity newTautliner(Boolean isXpo, String tautlinerPlates, LocalDate techInspection) {
+    public static TautlinerEntity newTautliner(Boolean isXpo, String tautlinerPlates, LocalDateTime techInspection) {
         return new TautlinerEntity(isXpo, tautlinerPlates, techInspection, null, null);
     }
 
@@ -99,11 +100,11 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
         this.tautlinerPlates = tautlinerPlates;
     }
 
-    public LocalDate getTechInspection() {
+    public LocalDateTime getTechInspection() {
         return techInspection;
     }
 
-    public void setTechInspection(LocalDate techInspection) {
+    public void setTechInspection(LocalDateTime techInspection) {
         this.techInspection = techInspection;
     }
 

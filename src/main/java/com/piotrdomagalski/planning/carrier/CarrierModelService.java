@@ -2,6 +2,7 @@ package com.piotrdomagalski.planning.carrier;
 
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck.TruckModelService;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
@@ -83,6 +84,40 @@ public class CarrierModelService {
         truckDriverEntity.setCarrier(null);
         carrier.getDrivers().remove(truckDriverEntity);
         return truckDriverEntity;
+    }
+
+    public boolean addTautliner(TautlinerEntity tautliner) {
+        if (tautliner.getCarrier() != null) {
+            throw new IllegalOperationException(String.format("Tautliner with plates: %s, has carrier SAP: %s",
+                    tautliner.getTautlinerPlates(), tautliner.getCarrier().getSap()));
+        }
+
+        try {
+            carrier.getTautliners().add(tautliner);
+            tautliner.setCarrier(carrier);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public TautlinerEntity removrTautliner(String tautlinerPlates) {
+        Optional<TautlinerEntity> tautlinerToRemove = carrier.getTautliners().stream()
+                .filter(tautliner -> tautliner.getTautlinerPlates().equals(tautlinerPlates))
+                .findFirst();
+
+        TautlinerEntity tautlinerEntity = tautlinerToRemove.orElseThrow(
+                () -> new NoSuchElementException("Driver doesn't exist"));
+
+        if (tautlinerEntity.getTruck() != null) {
+            tautlinerEntity.getTruck().setTautliner(null);
+            tautlinerEntity.setTruck(null);
+        }
+
+        tautlinerEntity.setCarrier(null);
+        carrier.getTautliners().remove(tautlinerEntity);
+        return tautlinerEntity;
     }
 
 }
