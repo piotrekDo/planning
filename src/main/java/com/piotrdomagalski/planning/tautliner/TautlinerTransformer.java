@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.tautliner;
 
+import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,5 +33,4 @@ public class TautlinerTransformer {
                 entity.getTechInspection().toString()
         );
     }
-
 }

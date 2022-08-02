@@ -1,7 +1,5 @@
 package com.piotrdomagalski.planning.truck;
 
-import org.springframework.stereotype.Service;
-
 public class TruckModelService {
 
     private TruckEntity truck;

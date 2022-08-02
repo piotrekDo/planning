@@ -61,8 +61,8 @@ public class TruckDriverEntity extends DatabaseEntity implements Comparable<Truc
                 "fullName='" + fullName + '\'' +
                 ", tel='" + tel + '\'' +
                 ", idDocument='" + idDocument + '\'' +
-                ", carrier=" + carrier +
-                ", truck=" + truck +
+                ", carrier=" + (carrier.getName() != null ? carrier.getName() : null) +
+                ", truck=" + (truck.getTruckPlates() != null ? truck.getTruckPlates() : null) +
                 '}';
     }
 
