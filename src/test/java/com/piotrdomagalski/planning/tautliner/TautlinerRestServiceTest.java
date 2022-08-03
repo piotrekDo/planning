@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -116,6 +115,15 @@ class TautlinerRestServiceTest {
     }
 
     @Test
+    void addNewTautliner_should_throw_an_exception_when_adding_no_xpo_tautliner_with_null_carrier() {
+        //given
+        TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "10-10-2022");
+
+        //when + then
+        assertThrows(IllegalOperationException.class, () -> tautlinerRestService.addNewTautliner(null, tautliner));
+    }
+
+    @Test
     void addNewTautliner_should_throw_an_exception_when_trying_to_add_to_non_existing_carrier() {
         //given
         Long carrierId = 432L;
@@ -124,13 +132,13 @@ class TautlinerRestServiceTest {
         Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, ()-> tautlinerRestService.addNewTautliner(carrierId, tautlinerUpdate));
+        assertThrows(NoSuchElementException.class, () -> tautlinerRestService.addNewTautliner(carrierId, tautlinerUpdate));
         Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
     }
 
     @ParameterizedTest
     @ArgumentsSource(TautlinerAddArgumentsProvider.class)
-    void addNewTautliner_should_add_tautliner_with_no_carrier_if_carrier_was_null(TautlinerNewUpdateDTO input, TautlinerEntity entity){
+    void addNewTautliner_should_add_tautliner_with_no_carrier_if_carrier_was_null(TautlinerNewUpdateDTO input, TautlinerEntity entity) {
         //given
         Mockito.when(tautlinerRepository.findByTautlinerPlates(input.getTautlinerPlates())).thenReturn(Optional.empty());
         Mockito.when(transformer.newUpdateDTOtoEntity(input)).thenReturn(entity);

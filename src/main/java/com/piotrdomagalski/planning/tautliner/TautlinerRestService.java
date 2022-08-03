@@ -42,6 +42,10 @@ public class TautlinerRestService {
             throw new IllegalOperationException(String.format("Tautliner with plates %s already exists!", tautliner1.getTautlinerPlates()));
         });
 
+        if (carrierId == null && !tautliner.getXpo()) {
+            throw new IllegalOperationException("Non xpo tautliner must have any carrier!");
+        }
+
         TautlinerEntity tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
 
         if (carrierId != null) {
