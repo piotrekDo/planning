@@ -22,7 +22,7 @@ class TruckModelServiceTest {
 
     @BeforeEach
     void set() {
-        truckEntity = new TruckEntity("TEST123", null, null, null);
+        truckEntity = new TruckEntity("TEST123", true, null, null, null);
         truckModelService = new TruckModelService(truckEntity);
     }
 

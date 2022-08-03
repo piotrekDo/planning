@@ -2,9 +2,11 @@ package com.piotrdomagalski.planning.truck;
 
 public class TruckNewUpdateDTO {
     private String truckPlates;
+    private Boolean isMega;
 
-    public TruckNewUpdateDTO(String truckPlates) {
+    public TruckNewUpdateDTO(String truckPlates, Boolean isMega) {
         this.truckPlates = truckPlates;
+        this.isMega = isMega;
     }
 
     public String getTruckPlates() {
@@ -13,5 +15,13 @@ public class TruckNewUpdateDTO {
 
     public void setTruckPlates(String truckPlates) {
         this.truckPlates = truckPlates;
+    }
+
+    public Boolean getMega() {
+        return isMega;
+    }
+
+    public void setMega(Boolean mega) {
+        isMega = mega;
     }
 }

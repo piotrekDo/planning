@@ -4,6 +4,8 @@ import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -66,7 +68,7 @@ class TruckRestServiceTest {
     void getTruckById_should_return_en_existing_truck_by_id() {
         //given
         Long id = 32L;
-        TruckEntity entity = new TruckEntity(id, "TEST123", null, null, null);
+        TruckEntity entity = new TruckEntity(id, "TEST123", false, null, null, null);
         Mockito.when(truckRepository.findById(id)).thenReturn(Optional.of(entity));
 
         //when
@@ -91,7 +93,7 @@ class TruckRestServiceTest {
     void getTruckByPlates_should_return_en_existing_truck_by_plates() {
         //given
         String plates = "NO123456";
-        TruckEntity entity = new TruckEntity(1L, plates, null, null, null);
+        TruckEntity entity = new TruckEntity(1L, plates, false, null, null, null);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
 
         //when
@@ -107,8 +109,8 @@ class TruckRestServiceTest {
         //given
         Long carrierId = 12L;
         String plates = "TEST123";
-        TruckEntity entity = new TruckEntity(1L, plates, null, null, null);
-        TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates);
+        TruckEntity entity = new TruckEntity(1L, plates, true, null, null, null);
+        TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
 
         //when + then
@@ -122,7 +124,7 @@ class TruckRestServiceTest {
         //given
         Long carrierId = 12L;
         String plates = "TEST123";
-        TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates);
+        TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
         Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
 
@@ -149,7 +151,7 @@ class TruckRestServiceTest {
     void deleteTruck_should_delete_existing_truck() {
         //given
         String plates = "TEST4321";
-        TruckEntity entity = new TruckEntity(1L, plates, null, null, null);
+        TruckEntity entity = new TruckEntity(1L, plates, null, null, null, null);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
 
         //when
@@ -165,7 +167,7 @@ class TruckRestServiceTest {
     void updateTruck_should_throw_an_exceptipn_if_non_existing_id_provided() {
         //given
         String plates = "TEST1234";
-        TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078");
+        TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078", null);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
 
         //when + then
@@ -178,11 +180,11 @@ class TruckRestServiceTest {
     void updateTruck_should_throw_an_exception_if_tryingg_to_update_with_existing_plates() {
         //given
         String plates = "TEST1234";
-        TruckEntity entity = new TruckEntity(1L, plates, null, null, null);
-        TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078");
+        TruckEntity entity = new TruckEntity(1L, plates, true, null, null, null);
+        TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078", null);
         Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
         Mockito.when(truckRepository.findByTruckPlates(dto.getTruckPlates())).thenReturn(Optional.of(new TruckEntity()));
-        Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(new TruckEntity(dto.getTruckPlates(), null, null, null));
+        Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(new TruckEntity(dto.getTruckPlates(), dto.getMega(), null, null, null));
 
         //when + then
         assertThrows(IllegalOperationException.class, () -> truckRestService.updateTruck(plates, dto));
@@ -191,29 +193,26 @@ class TruckRestServiceTest {
         Mockito.verify(truckRepository).findByTruckPlates(dto.getTruckPlates());
     }
 
-    @Test
-    void updateTruck_should_update_truck_by_existing_id() {
-        String plates = "EXIST1234";
-        TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078");
-        TruckEntity exist1234 = new TruckEntity(13L, "EXIST1234", null, null, null);
-        TruckEntity dtoEntity = new TruckEntity(null, "LPO9078", null, null, null);
-        TruckEntity savedEntity = new TruckEntity(13L, "LPO9078", null, null, null);
-
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(exist1234));
-        Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(dtoEntity);
-        Mockito.when(truckRepository.findByTruckPlates(dtoEntity.getTruckPlates())).thenReturn(Optional.empty());
-        Mockito.when(truckRepository.save(exist1234)).thenReturn(savedEntity);
-        Mockito.when(transformer.entityToNewUpdateDto(savedEntity)).thenReturn(new TruckNewUpdateDTO("LPO9078"));
+    @ParameterizedTest
+    @ArgumentsSource(TruckUpdateArgumentsProvider.class)
+    void updateTruck_should_update_truck_by_existing_id(String plates, TruckNewUpdateDTO dto,
+                                                        TruckEntity foundByPlates, TruckEntity dtoTranslated,
+                                                        TruckEntity savedEntity) {
+        //given
+        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(foundByPlates));
+        Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(dtoTranslated);
+        Mockito.when(truckRepository.findByTruckPlates(dtoTranslated.getTruckPlates())).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.save(foundByPlates)).thenReturn(savedEntity);
+        Mockito.when(transformer.entityToNewUpdateDto(savedEntity)).thenReturn(new TruckNewUpdateDTO(savedEntity.getTruckPlates(), savedEntity.getMega()));
 
         //when
         TruckNewUpdateDTO result = truckRestService.updateTruck(plates, dto);
 
         //then
-        assertEquals("LPO9078", result.getTruckPlates());
+        assertEquals(savedEntity.getTruckPlates(), result.getTruckPlates());
         Mockito.verify(truckRepository).findByTruckPlates(plates);
         Mockito.verify(transformer).newUpdateToEntity(dto);
-        Mockito.verify(truckRepository).findByTruckPlates(dto.getTruckPlates());
-        Mockito.verify(truckRepository).save(exist1234);
+        Mockito.verify(truckRepository).save(foundByPlates);
         Mockito.verify(transformer).entityToNewUpdateDto(savedEntity);
     }
 

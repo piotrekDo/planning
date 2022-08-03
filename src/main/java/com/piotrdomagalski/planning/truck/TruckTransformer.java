@@ -7,13 +7,15 @@ public class TruckTransformer {
 
     TruckNewUpdateDTO entityToNewUpdateDto(TruckEntity entity) {
         return new TruckNewUpdateDTO(
-                entity.getTruckPlates()
+                entity.getTruckPlates(),
+                entity.getMega()
         );
     }
 
     TruckEntity newUpdateToEntity(TruckNewUpdateDTO dto) {
         return TruckEntity.newTruck(
-                dto.getTruckPlates()
+                dto.getTruckPlates(),
+                dto.getMega()
         );
     }
 }

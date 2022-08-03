@@ -19,7 +19,7 @@ public class TautlinerClearTautlinerArgumentsProvider implements ArgumentsProvid
                 //tautliner's carrier
                 Arguments.of(
                         new TautlinerEntity(1L, true, "TAUT123", LocalDateTime.now(), null, null),
-                        new TruckEntity(2L, "TRUCK123", null, null, null),
+                        new TruckEntity(2L, "TRUCK123", true, null, null, null),
                         new CarrierEntity(99L, "123456", "Test Carrier", "Testland", 1.2,
                                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
                 )

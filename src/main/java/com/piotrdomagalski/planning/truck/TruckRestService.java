@@ -38,7 +38,7 @@ public class TruckRestService {
     }
 
     TruckEntity addNewTruck(Long carrierId, TruckNewUpdateDTO truck) {
-        truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t->{
+        truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Truck with plates: %s already exists!", truck.getTruckPlates()));
         });
         TruckEntity truckEntity = transformer.newUpdateToEntity(truck);
@@ -59,11 +59,15 @@ public class TruckRestService {
         TruckEntity truckByPlates = getTruckByPlates(plates);
         TruckEntity truck = transformer.newUpdateToEntity(dto);
 
-        if (truck.getTruckPlates() != null && !truck.getTruckPlates().equals(truckByPlates.getTruckPlates())){
-            truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t-> {
+        if (truck.getTruckPlates() != null && !truck.getTruckPlates().equals(truckByPlates.getTruckPlates())) {
+            truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t -> {
                 throw new IllegalOperationException("Truck with provided plates already exists!, plates has to be unique");
             });
             truckByPlates.setTruckPlates(truck.getTruckPlates());
+        }
+
+        if (truck.getMega() != null && !truck.getMega().equals(truckByPlates.getMega())) {
+            truckByPlates.setMega(truck.getMega());
         }
 
         TruckEntity savedTruck = truckRepository.save(truckByPlates);

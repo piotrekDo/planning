@@ -37,13 +37,13 @@ class TruckRepositoryTest {
     void findByTruckPlates_should_return_optional_of_truck_entity_if_found() {
         //given
         String plates = "ASD432";
-        testEntityManager.persist(new TruckEntity(plates, null, null, null));
+        testEntityManager.persist(new TruckEntity(plates, false, null, null, null));
 
         //when
         Optional<TruckEntity> result = truckRepository.findByTruckPlates(plates);
 
         //then
-        assertEquals(Optional.of(new TruckEntity(1L, plates, null, null, null)), result);
+        assertEquals(Optional.of(new TruckEntity(1L, plates, false, null, null, null)), result);
     }
 
 }
