@@ -73,6 +73,9 @@ public class TautlinerRestService {
         }
 
         if (tautliner.getTautlinerPlates() != null && !tautliner.getTautlinerPlates().equals(tautlinerByPlates.getTautlinerPlates())) {
+            tautlinerRepository.findByTautlinerPlates(tautliner.getTautlinerPlates()).ifPresent(t->{
+                throw new IllegalOperationException(String.format("Tautliner with plates: %s already exists", tautliner.getTautlinerPlates()));
+            });
             tautlinerByPlates.setTautlinerPlates(tautliner.getTautlinerPlates());
         }
 

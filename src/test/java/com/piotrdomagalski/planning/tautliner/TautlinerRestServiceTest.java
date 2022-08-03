@@ -214,6 +214,24 @@ class TautlinerRestServiceTest {
         assertThrows(NoSuchElementException.class, () -> tautlinerRestService.updateTautlinerByPlates(plates, update));
     }
 
+    @Test
+    void updateTautliner_should_throw_an_exception_if_trying_to_change_plates_to_exising_one(){
+        //given
+        String tautlinerPlates = "FOUND123";
+        TautlinerNewUpdateDTO dto = new TautlinerNewUpdateDTO(false, "NEW12345", null);
+        TautlinerEntity tautlinerFound = new TautlinerEntity(12L, true, tautlinerPlates, LocalDateTime.now(), null, null);
+        Mockito.when(tautlinerRepository.findByTautlinerPlates(tautlinerPlates)).thenReturn(Optional.of(tautlinerFound));
+        Mockito.when(tautlinerRepository.findByTautlinerPlates(dto.getTautlinerPlates())).thenReturn(Optional.of(new TautlinerEntity()));
+        Mockito.when(transformer.newUpdateDTOtoEntity(dto)).thenReturn(new TautlinerEntity(false, "NEW12345", null, null, null));
+
+        //when + then
+        assertThrows(IllegalOperationException.class, ()-> tautlinerRestService.updateTautlinerByPlates(tautlinerPlates, dto));
+        Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(tautlinerRepository).findByTautlinerPlates(tautlinerPlates);
+        Mockito.verify(tautlinerRepository).findByTautlinerPlates(dto.getTautlinerPlates());
+
+    }
+
     @ParameterizedTest
     @ArgumentsSource(TautlinerUpdateTautlinerArgumentsProvider.class)
     void updateTautlinerByPlates_should_update_existing_tautliner(String plates, TautlinerEntity foundById,
