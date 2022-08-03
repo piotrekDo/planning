@@ -8,6 +8,7 @@ import java.util.Optional;
 @Repository
 public interface CarrierRepository extends JpaRepository<CarrierEntity, Long> {
 
-    Optional<CarrierEntity> findByName(String name);
+    Optional<CarrierEntity> findBySap(String sap);
+
 
 }
