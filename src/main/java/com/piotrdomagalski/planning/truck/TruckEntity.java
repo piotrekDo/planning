@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
-public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntity>{
+public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntity> {
     @Size(min = 3, max = 15, message = "Truck's plates must be between 3 and 15 characters")
     private String truckPlates;
     @ManyToOne
