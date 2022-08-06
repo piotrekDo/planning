@@ -8,20 +8,12 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 public class TruckDriverEntity extends DatabaseEntity implements Comparable<TruckDriverEntity> {
-    @NotBlank(message = "Driver's name cannot be blank!")
-    @Size(min = 3, max = 100, message = "Driver's name must be between 3 anc 100 characters")
     private String fullName;
-    @NotBlank(message = "Driver's tel cannot be blank!")
-    @Size(min = 9, max = 9, message = "Driver's tel should be 9 characters, NO SEPARATORS")
     private String tel;
-    @NotBlank(message = "Driver's id cannot be blank!")
-    @Size(min = 8, max = 9, message = "Driver's id should be 8 characters if passport, 9 if ID document, NO SEPARATORS")
     private String idDocument;
     @ManyToOne
     @JsonBackReference

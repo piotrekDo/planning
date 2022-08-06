@@ -2,48 +2,31 @@ package com.piotrdomagalski.planning.carrier;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.piotrdomagalski.planning.app.DatabaseEntity;
-import com.piotrdomagalski.planning.app.DigitsOnly;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "carriers")
 public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierEntity> {
-    @NotBlank
-    @Length(min = 6, max = 6, message = "SAP must be 6 chracters long")
-    @DigitsOnly(message = "SAP must be numberic!")
     private String sap;
-
-    @NotBlank(message = "Name cannot be blank!")
-    @Size(min = 3, max = 100, message = "Name must be between 3 anc 100 characters")
     private String name;
-
-    @NotBlank(message = "Origin cannot be blank!")
-    @Size(min = 3, max = 100, message = "Origin must be between 3 anc 100 characters")
     private String origin;
-
-    @Positive(message = "Rate cannot be negative!")
     private Double rate;
-
     @OneToMany(mappedBy = "carrier")
     @JsonManagedReference
-    private List<TruckEntity> trucks;
+    private List<TruckEntity> trucks = new ArrayList<>();
     @OneToMany(mappedBy = "carrier")
     @JsonManagedReference
-    private List<TruckDriverEntity> drivers;
-    @OneToMany()
+    private List<TruckDriverEntity> drivers = new ArrayList<>();
+    @OneToMany(mappedBy = "carrier")
     @JsonManagedReference
-    private List<TautlinerEntity> tautliners;
+    private List<TautlinerEntity> tautliners = new ArrayList<>();
 
     public CarrierEntity() {
     }

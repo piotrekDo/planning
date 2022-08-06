@@ -21,14 +21,16 @@ public class TautlinerAddArgumentsProvider implements ArgumentsProvider {
                         new TautlinerEntity(1L, true, "ABC1234",
                                 LocalDateTime.of(2022, 10, 10, 0, 0, 0),
                                 null, null),
-                        new CarrierEntity(15L, "123456", "Test carrier", "Testland", 1.3, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
+                        new CarrierEntity(15L, "123456", "Test carrier", "Testland", 1.3, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
+                        new TautlinerInfoDTO("ABC1234", LocalDateTime.of(2022, 10, 10, 0, 0, 0), true, "Test carrier", "123456", null)
                 ),
                 Arguments.of(
                         new TautlinerNewUpdateDTO(true, "CDE981", "05-05-2020"),
                         new TautlinerEntity(1L, true, "CDE981",
                                 LocalDateTime.of(2020, 5, 5, 0, 0, 0),
                                 null, null),
-                        new CarrierEntity(15L, "123456", "Test carrier", "Testland", 1.3, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
+                        new CarrierEntity(15L, "123456", "Test carrier", "Testland", 1.3, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
+                        new TautlinerInfoDTO("CDE981", LocalDateTime.of(2020, 5, 5, 0, 0, 0), true, "Test carrier", "123456", null)
                 )
         );
     }

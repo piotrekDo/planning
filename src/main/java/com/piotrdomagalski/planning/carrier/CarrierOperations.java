@@ -8,12 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarrierOperations {
 
-    CarrierCommand command;
-
-    public void setCommand(CarrierCommand command) {
-        this.command = command;
-    }
-
     public boolean clear(CarrierEntity carrier){
         return new ClearCarrier(carrier).execute();
     }

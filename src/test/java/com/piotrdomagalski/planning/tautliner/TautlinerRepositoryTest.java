@@ -1,6 +1,5 @@
 package com.piotrdomagalski.planning.tautliner;
 
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ class TautlinerRepositoryTest {
         testEntityManager.persist(tautlinerEntity);
 
         //when
-        Optional<TautlinerEntity> result = tautlinerRepository.findByTautlinerPlates("IOP963");
+        Optional<TautlinerEntity> result = tautlinerRepository.findByTautlinerPlatesIgnoreCase("IOP963");
 
         //then
         tautlinerEntity.setId(1L);
@@ -41,7 +39,7 @@ class TautlinerRepositoryTest {
     @Test
     void should_return_optional_empty_if_no_tautliner_with_provided_plates_exists() {
         //when
-        Optional<TautlinerEntity> result = tautlinerRepository.findByTautlinerPlates("IOP963");
+        Optional<TautlinerEntity> result = tautlinerRepository.findByTautlinerPlatesIgnoreCase("IOP963");
 
         //then
         assertEquals(Optional.empty(), result);

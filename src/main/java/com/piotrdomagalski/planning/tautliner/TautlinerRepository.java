@@ -8,6 +8,6 @@ import java.util.Optional;
 @Repository
 public interface TautlinerRepository extends JpaRepository<TautlinerEntity, Long> {
 
-    Optional<TautlinerEntity> findByTautlinerPlates(String plates);
+    Optional<TautlinerEntity> findByTautlinerPlatesIgnoreCase(String plates);
 
 }

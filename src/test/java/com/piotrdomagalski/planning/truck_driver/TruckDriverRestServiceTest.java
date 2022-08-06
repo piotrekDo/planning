@@ -63,14 +63,17 @@ class TruckDriverRestServiceTest {
         //given
         Long id = 32L;
         TruckDriverEntity entity = new TruckDriverEntity(32L, "Test driver", "555444333", "ID123456", null, null);
+        TruckDriverInfoDTO dto = new TruckDriverInfoDTO(id, "Test driver", "555444333", "ID123456", null, null, null);
         Mockito.when(truckDriverRepository.findById(id)).thenReturn(Optional.of(entity));
+        Mockito.when(transformer.entityToDriverInfoDto(entity)).thenReturn(dto);
 
         //when
-        TruckDriverEntity result = truckDriverRestService.getTruckDriverById(id);
+        TruckDriverInfoDTO result = truckDriverRestService.getTruckDriverById(id);
 
         //then
-        assertEquals(entity, result);
+        assertEquals(dto, result);
         Mockito.verify(truckDriverRepository).findById(id);
+        Mockito.verify(transformer).entityToDriverInfoDto(entity);
     }
 
     @Test

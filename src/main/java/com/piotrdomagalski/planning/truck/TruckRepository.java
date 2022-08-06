@@ -8,6 +8,6 @@ import java.util.Optional;
 @Repository
 public interface TruckRepository extends JpaRepository<TruckEntity, Long> {
 
-    Optional<TruckEntity> findByTruckPlates(String plates);
+    Optional<TruckEntity> findByTruckPlatesIgnoreCase(String plates);
 
 }

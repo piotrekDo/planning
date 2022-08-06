@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class TruckRestService {
@@ -25,44 +26,48 @@ public class TruckRestService {
         this.carrierOperations = carrierOperations;
     }
 
-    List<TruckEntity> getAllTrucks() {
-        return truckRepository.findAll(Sort.by(Sort.Direction.ASC, "truckPlates"));
+    List<TruckInfoDTO> getAllTrucks() {
+        return truckRepository.findAll(Sort.by(Sort.Direction.ASC, "truckPlates")).stream()
+                .map(transformer::toinfoDto)
+                .collect(Collectors.toList());
     }
 
-    TruckEntity getTruckById(Long id) {
-        return truckRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("No truck found with id: " + id));
+    TruckInfoDTO getTruckById(Long id) {
+        return transformer.toinfoDto(truckRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("No truck found with id: " + id)));
     }
 
-    TruckEntity getTruckByPlates(String plates) {
-        return truckRepository.findByTruckPlates(plates).orElseThrow(() ->
-                new NoSuchElementException("No truck found with plates: " + plates));
+    TruckInfoDTO getTruckByPlates(String plates) {
+        return transformer.toinfoDto(truckRepository.findByTruckPlatesIgnoreCase(plates).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + plates)));
     }
 
-    TruckEntity addNewTruck(Long carrierId, TruckNewUpdateDTO truck) {
-        truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t -> {
+    TruckInfoDTO addNewTruck(Long carrierId, TruckNewUpdateDTO truck) {
+        truckRepository.findByTruckPlatesIgnoreCase(truck.getTruckPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Truck with plates: %s already exists!", truck.getTruckPlates()));
         });
         TruckEntity truckEntity = transformer.newUpdateToEntity(truck);
         CarrierEntity carrierEntity = carrierRepository.findById(carrierId).orElseThrow(
                 () -> new NoSuchElementException("No carrier with id: " + carrierId));
         carrierOperations.addTruck(carrierEntity, truckEntity);
-        return truckRepository.save(truckEntity);
+        return transformer.toinfoDto(truckRepository.save(truckEntity));
     }
 
     TruckEntity deleteTruckByPlates(String plates) {
-        TruckEntity truckByPlates = getTruckByPlates(plates);
+        TruckEntity truckByPlates = truckRepository.findByTruckPlatesIgnoreCase(plates).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + plates));
         new ClearTruck(truckByPlates).execute();
         truckRepository.delete(truckByPlates);
         return truckByPlates;
     }
 
     TruckNewUpdateDTO updateTruck(String plates, TruckNewUpdateDTO dto) {
-        TruckEntity truckByPlates = getTruckByPlates(plates);
+        TruckEntity truckByPlates = truckRepository.findByTruckPlatesIgnoreCase(plates).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + plates));
         TruckEntity truck = transformer.newUpdateToEntity(dto);
 
         if (truck.getTruckPlates() != null && !truck.getTruckPlates().equals(truckByPlates.getTruckPlates())) {
-            truckRepository.findByTruckPlates(truck.getTruckPlates()).ifPresent(t -> {
+            truckRepository.findByTruckPlatesIgnoreCase(truck.getTruckPlates()).ifPresent(t -> {
                 throw new IllegalOperationException("Truck with provided plates already exists!, plates has to be unique");
             });
             truckByPlates.setTruckPlates(truck.getTruckPlates());

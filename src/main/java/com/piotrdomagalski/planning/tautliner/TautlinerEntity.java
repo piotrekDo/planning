@@ -2,25 +2,20 @@ package com.piotrdomagalski.planning.tautliner;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.piotrdomagalski.planning.app.DatabaseEntity;
+import com.piotrdomagalski.planning.app.PlatesConstrraint;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
-import com.sun.istack.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity(name = "tautliners")
 public class TautlinerEntity extends DatabaseEntity implements Comparable<TautlinerEntity> {
-    @NotNull
     private Boolean isXpo;
-    @Size(min = 3, max = 15, message = "Tautliner's plates must be between 3 and 15 characters")
     private String tautlinerPlates;
-    @NotNull
     private LocalDateTime techInspection;
     @ManyToOne
     @JsonBackReference
@@ -60,8 +55,8 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
                 "isXpo=" + isXpo +
                 ", tautlinerPlates='" + tautlinerPlates + '\'' +
                 ", techInspection=" + techInspection +
-                ", carrier=" + carrier +
-                ", truck=" + truck +
+                ", carrier=" + (carrier != null ? carrier.getName() : " no carrier") +
+                ", truck=" + (truck != null ? truck.getTruckPlates() : " no truck") +
                 '}';
     }
 

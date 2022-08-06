@@ -18,21 +18,21 @@ public class CarrierUpdateArgumentsProvider implements ArgumentsProvider {
                 //saved entity
                 Arguments.of(
                         "456456",
-                        new CarrierNewUpdateDTO("111222", null, null, 0),
+                        new CarrierNewUpdateDTO("111222", null, null, null),
                         new CarrierEntity(465L, "456456", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
                         new CarrierEntity(null, "111222", null, null, null, null, null, null),
                         new CarrierEntity(465L, "111222", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
                         ),
                 Arguments.of(
                         "456456",
-                        new CarrierNewUpdateDTO(null, "New name", null, 0),
+                        new CarrierNewUpdateDTO(null, "New name", null, null),
                         new CarrierEntity(465L, "456456", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
                         new CarrierEntity(null, null, "New name", null, null, null, null, null),
                         new CarrierEntity(465L, "456456", "New name", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
                 ),
                 Arguments.of(
                         "456456",
-                        new CarrierNewUpdateDTO(null, null, "New origin", 0),
+                        new CarrierNewUpdateDTO(null, null, "New origin", null),
                         new CarrierEntity(465L, "456456", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
                         new CarrierEntity(null, null, null, "New origin", null, null, null, null),
                         new CarrierEntity(465L, "111222", "Test carrier", "New origin", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())

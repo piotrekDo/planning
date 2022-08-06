@@ -27,7 +27,7 @@ class TruckRepositoryTest {
         String plates = "TEST123";
 
         //when
-        Optional<TruckEntity> result = truckRepository.findByTruckPlates(plates);
+        Optional<TruckEntity> result = truckRepository.findByTruckPlatesIgnoreCase(plates);
 
         //then
         assertEquals(Optional.empty(), result);
@@ -40,7 +40,7 @@ class TruckRepositoryTest {
         testEntityManager.persist(new TruckEntity(plates, false, null, null, null));
 
         //when
-        Optional<TruckEntity> result = truckRepository.findByTruckPlates(plates);
+        Optional<TruckEntity> result = truckRepository.findByTruckPlatesIgnoreCase(plates);
 
         //then
         assertEquals(Optional.of(new TruckEntity(1L, plates, false, null, null, null)), result);

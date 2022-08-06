@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -56,11 +55,11 @@ class TautlinerRestServiceTest {
     @Test
     void getAllTautliners_should_return_an_empty_list_if_no_tatuliners_found() {
         //whem
-        List<TautlinerEntity> result = tautlinerRestService.getAllTautliners();
+        List<TautlinerInfoDTO> result = tautlinerRestService.getAllTautliners(null);
+
 
         //then
         assertEquals(Collections.emptyList(), result);
-        Mockito.verify(tautlinerRepository).findAll(Sort.by(Sort.Direction.ASC, "tautlinerPlates"));
     }
 
     @Test
@@ -75,14 +74,17 @@ class TautlinerRestServiceTest {
         //given
         String plates = "ABC4321";
         TautlinerEntity tautlinerEntity = new TautlinerEntity(1L, true, "APL1234", null, null, null);
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(plates)).thenReturn(Optional.of(tautlinerEntity));
+        TautlinerInfoDTO tautlinerInfoDTO = new TautlinerInfoDTO(tautlinerEntity.getTautlinerPlates(), tautlinerEntity.getTechInspection(), tautlinerEntity.getXpo(), null, null, null);
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)).thenReturn(Optional.of(tautlinerEntity));
+        Mockito.when(transformer.entityToInfoDTO(tautlinerEntity)).thenReturn(tautlinerInfoDTO);
 
         //when
-        TautlinerEntity result = tautlinerRestService.getTautlinerByPlates(plates);
+        TautlinerInfoDTO result = tautlinerRestService.getTautlinerByPlates(plates);
 
         //then
-        assertEquals(tautlinerEntity, result);
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(plates);
+        assertEquals(tautlinerInfoDTO, result);
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(plates);
+        Mockito.verify(transformer).entityToInfoDTO(tautlinerEntity);
     }
 
     @Test
@@ -113,7 +115,7 @@ class TautlinerRestServiceTest {
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(true, "ABC1234", "10-10-2022");
         TautlinerEntity tautlinerEntity = new TautlinerEntity(1L, true, "ABC1234",
                 LocalDateTime.of(2022, 10, 10, 0, 0, 0), null, null);
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(tautliner.getTautlinerPlates())).thenReturn(Optional.of(tautlinerEntity));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates())).thenReturn(Optional.of(tautlinerEntity));
 
         //when + then
         assertThrows(IllegalOperationException.class, () -> tautlinerRestService.addNewTautliner(12L, tautliner));
@@ -133,7 +135,7 @@ class TautlinerRestServiceTest {
         //given
         Long carrierId = 432L;
         TautlinerNewUpdateDTO tautlinerUpdate = new TautlinerNewUpdateDTO(true, "ABC1234", "10-10-2022");
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(tautlinerUpdate.getTautlinerPlates())).thenReturn(Optional.empty());
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautlinerUpdate.getTautlinerPlates())).thenReturn(Optional.empty());
         Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
 
         //when + then
@@ -143,19 +145,21 @@ class TautlinerRestServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(TautlinerAddArgumentsProvider.class)
-    void addNewTautliner_should_add_tautliner_with_no_carrier_if_carrier_was_null(TautlinerNewUpdateDTO input, TautlinerEntity entity) {
+    void addNewTautliner_should_add_tautliner_with_no_carrier_if_carrier_was_null(TautlinerNewUpdateDTO input, TautlinerEntity entity,
+                                                                                  CarrierEntity carrier, TautlinerInfoDTO tautlinerInfoDTO) {
         //given
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(input.getTautlinerPlates())).thenReturn(Optional.empty());
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(input.getTautlinerPlates())).thenReturn(Optional.empty());
         Mockito.when(transformer.newUpdateDTOtoEntity(input)).thenReturn(entity);
         Mockito.when(tautlinerRepository.save(entity)).thenReturn(entity);
+        Mockito.when(transformer.entityToInfoDTO(entity)).thenReturn(tautlinerInfoDTO);
 
         //when
-        TautlinerEntity result = tautlinerRestService.addNewTautliner(null, input);
+        TautlinerInfoDTO result = tautlinerRestService.addNewTautliner(null, input);
 
         //then
-        assertEquals(entity, result);
+        assertEquals(tautlinerInfoDTO, result);
         assertNull(entity.getCarrier());
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(input.getTautlinerPlates());
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(input.getTautlinerPlates());
         Mockito.verify(transformer).newUpdateDTOtoEntity(input);
         Mockito.verify(tautlinerRepository).save(entity);
     }
@@ -163,22 +167,27 @@ class TautlinerRestServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(TautlinerAddArgumentsProvider.class)
-    void addNewTautliner_should_add_new_tatuliner_with_carrier(TautlinerNewUpdateDTO input, TautlinerEntity entity, CarrierEntity carrier) {
+    void addNewTautliner_should_add_new_tatuliner_with_carrier(TautlinerNewUpdateDTO input, TautlinerEntity entity,
+                                                               CarrierEntity carrier, TautlinerInfoDTO tautlinerInfoDTO) {
         //given
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(input.getTautlinerPlates())).thenReturn(Optional.empty());
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(input.getTautlinerPlates())).thenReturn(Optional.empty());
         Mockito.when(transformer.newUpdateDTOtoEntity(input)).thenReturn(entity);
         Mockito.when(carrierRepository.findById(carrier.getId())).thenReturn(Optional.of(carrier));
         Mockito.when(tautlinerRepository.save(entity)).thenReturn(entity);
+        Mockito.when(transformer.entityToInfoDTO(entity)).thenReturn(tautlinerInfoDTO);
         Mockito.when(carrierOperations.addTautliner(carrier, entity)).thenReturn(true);
 
         //when
-        TautlinerEntity result = tautlinerRestService.addNewTautliner(carrier.getId(), input);
+        TautlinerInfoDTO result = tautlinerRestService.addNewTautliner(carrier.getId(), input);
 
         //then
-        assertEquals(entity, result);
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(input.getTautlinerPlates());
+        assertEquals(tautlinerInfoDTO, result);
+        assertEquals(carrier.getSap(), result.getCarrierSap());
+        assertEquals(entity.getTautlinerPlates(), result.getTautlinerPlates());
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(input.getTautlinerPlates());
         Mockito.verify(transformer).newUpdateDTOtoEntity(input);
         Mockito.verify(tautlinerRepository).save(entity);
+        Mockito.verify(transformer).entityToInfoDTO(entity);
         Mockito.verify(carrierOperations).addTautliner(carrier, entity);
     }
 
@@ -186,7 +195,7 @@ class TautlinerRestServiceTest {
     void deleteTautlinerByPlates_should_throw_an_exception_if_no_record_found() {
         //given
         String plates = "TRE132";
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(plates)).thenReturn(Optional.empty());
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
 
         //when+then
         assertThrows(NoSuchElementException.class, () -> tautlinerRestService.deleteTautlinerByPlates(plates));
@@ -198,14 +207,14 @@ class TautlinerRestServiceTest {
         String plates = "TRE132";
         TautlinerEntity entity = new TautlinerEntity(1L, true, "TRE132",
                 LocalDateTime.of(2022, 10, 10, 0, 0, 0), null, null);
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(plates)).thenReturn(Optional.of(entity));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
 
         //when
         TautlinerEntity result = tautlinerRestService.deleteTautlinerByPlates(plates);
 
         //then
         assertEquals(entity, result);
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(plates);
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(plates);
         Mockito.verify(tautlinerRepository).delete(entity);
     }
 
@@ -225,15 +234,15 @@ class TautlinerRestServiceTest {
         String tautlinerPlates = "FOUND123";
         TautlinerNewUpdateDTO dto = new TautlinerNewUpdateDTO(false, "NEW12345", null);
         TautlinerEntity tautlinerFound = new TautlinerEntity(12L, true, tautlinerPlates, LocalDateTime.now(), null, null);
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(tautlinerPlates)).thenReturn(Optional.of(tautlinerFound));
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(dto.getTautlinerPlates())).thenReturn(Optional.of(new TautlinerEntity()));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautlinerPlates)).thenReturn(Optional.of(tautlinerFound));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(dto.getTautlinerPlates())).thenReturn(Optional.of(new TautlinerEntity()));
         Mockito.when(transformer.newUpdateDTOtoEntity(dto)).thenReturn(new TautlinerEntity(false, "NEW12345", null, null, null));
 
         //when + then
         assertThrows(IllegalOperationException.class, ()-> tautlinerRestService.updateTautlinerByPlates(tautlinerPlates, dto));
         Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(tautlinerPlates);
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(dto.getTautlinerPlates());
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(tautlinerPlates);
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(dto.getTautlinerPlates());
 
     }
 
@@ -245,7 +254,7 @@ class TautlinerRestServiceTest {
                                                                   TautlinerNewUpdateDTO expected) {
 
         //given
-        Mockito.when(tautlinerRepository.findByTautlinerPlates(plates)).thenReturn(Optional.of(foundById));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)).thenReturn(Optional.of(foundById));
         Mockito.when(transformer.newUpdateDTOtoEntity(provided)).thenReturn(translatedToEntity);
         Mockito.when(tautlinerRepository.save(foundById)).thenReturn(foundById);
         Mockito.when(transformer.entityToNewUpdateDTO(foundById)).thenReturn(expected);
@@ -255,7 +264,7 @@ class TautlinerRestServiceTest {
 
         //then
         assertEquals(expected, result);
-        Mockito.verify(tautlinerRepository).findByTautlinerPlates(plates);
+        Mockito.verify(tautlinerRepository).findByTautlinerPlatesIgnoreCase(plates);
         Mockito.verify(transformer).newUpdateDTOtoEntity(provided);
         Mockito.verify(tautlinerRepository).save(foundById);
         Mockito.verify(transformer).entityToNewUpdateDTO(foundById);

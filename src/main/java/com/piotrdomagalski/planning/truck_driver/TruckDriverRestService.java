@@ -3,6 +3,7 @@ package com.piotrdomagalski.planning.truck_driver;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Qualifier("truckDriverRest")
 public class TruckDriverRestService {
 
     private final TruckDriverRepository truckDriverRepository;
@@ -24,9 +26,9 @@ public class TruckDriverRestService {
         this.carrierOperations = carrierOperations;
     }
 
-    TruckDriverEntity getTruckDriverById(Long id) {
-        return truckDriverRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("No driver found with id: " + id));
+    TruckDriverInfoDTO getTruckDriverById(Long id) {
+        return transformer.entityToDriverInfoDto(truckDriverRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("No driver found with id: " + id)));
     }
 
     List<TruckDriverEntity> getAllTruckDrivers() {
@@ -43,15 +45,16 @@ public class TruckDriverRestService {
     }
 
     TruckDriverEntity deleteTruckDriverById(Long id) {
-        TruckDriverEntity truckDriverById = getTruckDriverById(id);
+        TruckDriverEntity truckDriverById = truckDriverRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("No driver found with id: " + id));
         new ClearTruckDriver(truckDriverById).execute();
         truckDriverRepository.delete(truckDriverById);
         return truckDriverById;
     }
 
     TruckDriverNewUpdateDTO updateTruckDriver(Long id, TruckDriverNewUpdateDTO driverDto) {
-        TruckDriverEntity truckDriverById = getTruckDriverById(id);
-        TruckDriverEntity driver = transformer.newUpdatDriverDtoToEntity(driverDto);
+        TruckDriverEntity truckDriverById = truckDriverRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("No driver found with id: " + id));        TruckDriverEntity driver = transformer.newUpdatDriverDtoToEntity(driverDto);
 
         if (driver.getFullName() != null && !driver.getFullName().equals(truckDriverById.getFullName())) {
             truckDriverById.setFullName(driver.getFullName());

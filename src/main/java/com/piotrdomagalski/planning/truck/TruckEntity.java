@@ -9,15 +9,11 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntity> {
-    @Size(min = 3, max = 15, message = "Truck's plates must be between 3 and 15 characters")
     private String truckPlates;
-    @NotNull(message = "Truck must be declared either mega or standard")
     private Boolean isMega;
     @ManyToOne
     @JsonBackReference
@@ -59,9 +55,9 @@ public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntit
                 super.toString() +
                 "truckPlates='" + truckPlates + '\'' +
                 ", isMega=" + isMega +
-                ", carrier=" + carrier +
-                ", truckDriver=" + truckDriver +
-                ", tautliner=" + tautliner +
+                ", carrier=" + (carrier != null ? carrier.getName() : " no carrier") +
+                ", truckDriver=" + (truckDriver != null ? truckDriver.getFullName() : " no driver") +
+                ", tautliner=" + (tautliner != null ? tautliner.getTautlinerPlates() :" no tautliner")+
                 '}';
     }
 

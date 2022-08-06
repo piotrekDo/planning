@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -52,7 +53,7 @@ class TruckRestServiceTest {
     @Test
     void getAllTrucks_should_return_an_empty_list_when_no_trucks_present() {
         //when
-        List<TruckEntity> result = truckRestService.getAllTrucks();
+        List<TruckInfoDTO> result = truckRestService.getAllTrucks();
 
         //then
         assertEquals(Collections.emptyList(), result);
@@ -73,13 +74,15 @@ class TruckRestServiceTest {
         //given
         Long id = 32L;
         TruckEntity entity = new TruckEntity(id, "TEST123", false, null, null, null);
+        TruckInfoDTO dto = new TruckInfoDTO("TEST123", false, null, null, null, null, null, null, null, null, null);
         Mockito.when(truckRepository.findById(id)).thenReturn(Optional.of(entity));
+        Mockito.when(transformer.toinfoDto(entity)).thenReturn(dto);
 
         //when
-        TruckEntity result = truckRestService.getTruckById(id);
+        TruckInfoDTO result = truckRestService.getTruckById(id);
 
         //then
-        assertEquals(entity, result);
+        assertEquals(dto, result);
         Mockito.verify(truckRepository).findById(id);
     }
 
@@ -87,7 +90,7 @@ class TruckRestServiceTest {
     void getTruckByPlates_should_throw_an_exception_when_there_is_no_truck_with_such_plates() {
         //given
         String plates = "NO123456";
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
 
         //when + then
         assertThrows(NoSuchElementException.class, () -> truckRestService.getTruckByPlates(plates));
@@ -98,14 +101,16 @@ class TruckRestServiceTest {
         //given
         String plates = "NO123456";
         TruckEntity entity = new TruckEntity(1L, plates, false, null, null, null);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
+        TruckInfoDTO dto = new TruckInfoDTO(plates, false, null, null, null, null, null, null, null, null, null);
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
+        Mockito.when(transformer.toinfoDto(entity)).thenReturn(dto);
 
         //when
-        TruckEntity result = truckRestService.getTruckByPlates(plates);
+        TruckInfoDTO result = truckRestService.getTruckByPlates(plates);
 
         //then
-        assertEquals(entity, result);
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        assertEquals(dto, result);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
     }
 
     @Test
@@ -115,11 +120,11 @@ class TruckRestServiceTest {
         String plates = "TEST123";
         TruckEntity entity = new TruckEntity(1L, plates, true, null, null, null);
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
 
         //when + then
         assertThrows(IllegalOperationException.class, () -> truckRestService.addNewTruck(carrierId, dto));
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
     }
 
@@ -129,12 +134,12 @@ class TruckRestServiceTest {
         Long carrierId = 12L;
         String plates = "TEST123";
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO(plates, true);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
         Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
 
         //when + then
         assertThrows(NoSuchElementException.class, () -> truckRestService.addNewTruck(carrierId, dto));
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(carrierRepository).findById(carrierId);
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
     }
@@ -143,7 +148,7 @@ class TruckRestServiceTest {
     void deleteTruck_Should_throw_an_exception_when_trying_to_delete_non_existing_truck() {
         //given
         String plates = "TEST4321";
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
 
         //when + then
         assertThrows(NoSuchElementException.class, () -> truckRestService.deleteTruckByPlates(plates));
@@ -156,14 +161,14 @@ class TruckRestServiceTest {
         //given
         String plates = "TEST4321";
         TruckEntity entity = new TruckEntity(1L, plates, null, null, null, null);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
 
         //when
         TruckEntity result = truckRestService.deleteTruckByPlates(plates);
 
         //then
         assertEquals(entity, result);
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(truckRepository).delete(entity);
     }
 
@@ -172,11 +177,11 @@ class TruckRestServiceTest {
         //given
         String plates = "TEST1234";
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078", null);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.empty());
 
         //when + then
         assertThrows(NoSuchElementException.class, () -> truckRestService.updateTruck(plates, dto));
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
     }
 
@@ -186,15 +191,15 @@ class TruckRestServiceTest {
         String plates = "TEST1234";
         TruckEntity entity = new TruckEntity(1L, plates, true, null, null, null);
         TruckNewUpdateDTO dto = new TruckNewUpdateDTO("LPO9078", null);
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(entity));
-        Mockito.when(truckRepository.findByTruckPlates(dto.getTruckPlates())).thenReturn(Optional.of(new TruckEntity()));
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(entity));
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(dto.getTruckPlates())).thenReturn(Optional.of(new TruckEntity()));
         Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(new TruckEntity(dto.getTruckPlates(), dto.getMega(), null, null, null));
 
         //when + then
         assertThrows(IllegalOperationException.class, () -> truckRestService.updateTruck(plates, dto));
         Mockito.verify(truckRepository, Mockito.never()).save(Mockito.any());
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
-        Mockito.verify(truckRepository).findByTruckPlates(dto.getTruckPlates());
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(dto.getTruckPlates());
     }
 
     @ParameterizedTest
@@ -203,9 +208,9 @@ class TruckRestServiceTest {
                                                         TruckEntity foundByPlates, TruckEntity dtoTranslated,
                                                         TruckEntity savedEntity) {
         //given
-        Mockito.when(truckRepository.findByTruckPlates(plates)).thenReturn(Optional.of(foundByPlates));
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(plates)).thenReturn(Optional.of(foundByPlates));
         Mockito.when(transformer.newUpdateToEntity(dto)).thenReturn(dtoTranslated);
-        Mockito.when(truckRepository.findByTruckPlates(dtoTranslated.getTruckPlates())).thenReturn(Optional.empty());
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(dtoTranslated.getTruckPlates())).thenReturn(Optional.empty());
         Mockito.when(truckRepository.save(foundByPlates)).thenReturn(savedEntity);
         Mockito.when(transformer.entityToNewUpdateDto(savedEntity)).thenReturn(new TruckNewUpdateDTO(savedEntity.getTruckPlates(), savedEntity.getMega()));
 
@@ -214,7 +219,7 @@ class TruckRestServiceTest {
 
         //then
         assertEquals(savedEntity.getTruckPlates(), result.getTruckPlates());
-        Mockito.verify(truckRepository).findByTruckPlates(plates);
+        Mockito.verify(truckRepository).findByTruckPlatesIgnoreCase(plates);
         Mockito.verify(transformer).newUpdateToEntity(dto);
         Mockito.verify(truckRepository).save(foundByPlates);
         Mockito.verify(transformer).entityToNewUpdateDto(savedEntity);

@@ -12,8 +12,10 @@ public class DigitsOnlyValidator implements ConstraintValidator<DigitsOnly, Stri
 
     @Override
     public boolean isValid(String string, ConstraintValidatorContext constraintValidatorContext) {
+        if (string == null)
+            return true;
         try {
-            Integer.parseInt(string);
+            Long.parseLong(string);
         } catch (Exception e) {
             return false;
         }

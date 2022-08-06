@@ -32,8 +32,10 @@ public class CarrierRestService {
         this.tautlinerRepository = tautlinerRepository;
     }
 
-    List<CarrierEntity> getAllCarriers() {
-        return carrierRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    List<CarrierFullIDto> getAllCarriers() {
+        return carrierRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
+                .map(transformer::toCarrierFullIDto)
+                .collect(Collectors.toList());
     }
 
     List<CarrierShortInfoDTO> getCarriersShortInfo() {
@@ -42,14 +44,14 @@ public class CarrierRestService {
                 .collect(Collectors.toList());
     }
 
-    CarrierEntity getCarrierById(Long id) {
-        return carrierRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("No carrier found with id: " + id));
+    CarrierFullIDto getCarrierById(Long id) {
+        return transformer.toCarrierFullIDto(carrierRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("No carrier found with id: " + id)));
     }
 
-    CarrierEntity getCarrierBySap(String sap) {
-        return carrierRepository.findBySap(sap).orElseThrow(
-                () -> new NoSuchElementException("No carrier found with id: " + sap));
+    CarrierFullIDto getCarrierBySap(String sap) {
+        return transformer.toCarrierFullIDto(carrierRepository.findBySap(sap).orElseThrow(
+                () -> new NoSuchElementException("No carrier found with id: " + sap)));
     }
 
     CarrierNewUpdateDTO addNewCarrier(CarrierNewUpdateDTO carrier) {
@@ -61,8 +63,9 @@ public class CarrierRestService {
         return transformer.entityToNewUpdateDto(savedEntity);
     }
 
-    CarrierEntity deleteCarrierBySap(String sap) {
-        CarrierEntity carrierBySap = getCarrierBySap(sap);
+    CarrierShortInfoDTO deleteCarrierBySap(String sap) {
+        CarrierEntity carrierBySap = carrierRepository.findBySap(sap).orElseThrow(
+                () -> new NoSuchElementException("No carrier found with id: " + sap));
         boolean cleanCarrier = carrierOperations.clear(carrierBySap);
         if (cleanCarrier) {
             driverRepository.deleteAll(carrierBySap.getDrivers());
@@ -74,11 +77,12 @@ public class CarrierRestService {
             throw new RuntimeException("Could not clean carrier!!");
         }
         carrierRepository.delete(carrierBySap);
-        return carrierBySap;
+        return transformer.entityToShortInfoDto(carrierBySap);
     }
 
     CarrierNewUpdateDTO updateCarrier(String sap, CarrierNewUpdateDTO dto) {
-        CarrierEntity carrierBySap = getCarrierBySap(sap);
+        CarrierEntity carrierBySap = carrierRepository.findBySap(sap).orElseThrow(
+                () -> new NoSuchElementException("No carrier found with id: " + sap));
         CarrierEntity carrier = transformer.newUpdateToEntity(dto);
 
         if (carrier.getSap() != null && !carrier.getSap().equals(carrierBySap.getSap())) {
