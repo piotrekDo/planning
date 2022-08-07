@@ -1,10 +1,10 @@
 package com.piotrdomagalski.planning.tautliner;
 
-public class TautlinerModelService {
+public class ClearTautliner {
 
     private TautlinerEntity tautliner;
 
-    public TautlinerModelService(TautlinerEntity tautliner) {
+    public ClearTautliner(TautlinerEntity tautliner) {
         this.tautliner = tautliner;
     }
 
@@ -12,7 +12,7 @@ public class TautlinerModelService {
         this.tautliner = tautliner;
     }
 
-    public boolean clearTautliner() {
+    public boolean execute() {
         try {
             if (tautliner.getTruck() != null) {
                 tautliner.getTruck().setTautliner(null);

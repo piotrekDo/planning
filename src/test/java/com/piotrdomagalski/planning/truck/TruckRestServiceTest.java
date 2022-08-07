@@ -1,6 +1,7 @@
 package com.piotrdomagalski.planning.truck;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,13 +29,16 @@ class TruckRestServiceTest {
 
         @Bean
         TruckRestService truckRestService(TruckRepository truckRepository, CarrierRepository carrierRepository,
-                                          TruckTransformer transformer) {
-            return new TruckRestService(truckRepository, carrierRepository, transformer);
+                                          TruckTransformer transformer, CarrierOperations carrierOperations) {
+            return new TruckRestService(truckRepository, carrierRepository, transformer, carrierOperations);
         }
     }
 
     @Autowired
     TruckRestService truckRestService;
+
+    @MockBean
+    CarrierOperations carrierOperations;
 
     @MockBean
     TruckTransformer transformer;

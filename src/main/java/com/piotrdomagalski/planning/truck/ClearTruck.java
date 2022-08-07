@@ -1,10 +1,10 @@
 package com.piotrdomagalski.planning.truck;
 
-public class TruckModelService {
+public class ClearTruck {
 
     private TruckEntity truck;
 
-    public TruckModelService(TruckEntity truck) {
+    public ClearTruck(TruckEntity truck) {
         this.truck = truck;
     }
 
@@ -12,7 +12,7 @@ public class TruckModelService {
         this.truck = truck;
     }
 
-    public boolean clearTruck() {
+    public boolean execute() {
         try {
             if (truck.getTautliner() != null) {
                 truck.getTautliner().setTruck(null);

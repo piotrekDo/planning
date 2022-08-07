@@ -2,7 +2,7 @@ package com.piotrdomagalski.planning.tautliner;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierModelService;
+import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,11 +16,14 @@ public class TautlinerRestService {
     private final TautlinerRepository tautlinerRepository;
     private final CarrierRepository carrierRepository;
     private final TautlinerTransformer transformer;
+    private final CarrierOperations carrierOperations;
 
-    public TautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository, TautlinerTransformer transformer) {
+    public TautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
+                                TautlinerTransformer transformer, CarrierOperations carrierOperations) {
         this.tautlinerRepository = tautlinerRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
+        this.carrierOperations = carrierOperations;
     }
 
     List<TautlinerEntity> getAllTautliners() {
@@ -51,7 +54,7 @@ public class TautlinerRestService {
         if (carrierId != null) {
             CarrierEntity carrier = carrierRepository.findById(carrierId).orElseThrow(
                     () -> new NoSuchElementException("No carrier found with id: " + carrierId));
-            new CarrierModelService(carrier).addTautliner(tautlinerEntity);
+            carrierOperations.addTautliner(carrier, tautlinerEntity);
         }
 
         return tautlinerRepository.save(tautlinerEntity);
@@ -59,7 +62,7 @@ public class TautlinerRestService {
 
     TautlinerEntity deleteTautlinerByPlates(String plates) {
         TautlinerEntity tautlinerByPlates = getTautlinerByPlates(plates);
-        new TautlinerModelService(tautlinerByPlates).clearTautliner();
+        new ClearTautliner(tautlinerByPlates).execute();
         tautlinerRepository.delete(tautlinerByPlates);
         return tautlinerByPlates;
     }

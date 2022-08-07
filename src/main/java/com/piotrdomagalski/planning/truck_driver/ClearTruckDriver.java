@@ -1,10 +1,10 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-public class TruckDriverModelService {
+public class ClearTruckDriver {
 
     private TruckDriverEntity driver;
 
-    public TruckDriverModelService(TruckDriverEntity driver) {
+    public ClearTruckDriver(TruckDriverEntity driver) {
         this.driver = driver;
     }
 
@@ -12,7 +12,7 @@ public class TruckDriverModelService {
         this.driver = driver;
     }
 
-    public boolean clearDriver() {
+    public boolean execute() {
         try {
             if (driver.getTruck() != null) {
                 driver.getTruck().setTruckDriver(null);

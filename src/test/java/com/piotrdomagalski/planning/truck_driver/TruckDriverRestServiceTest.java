@@ -1,6 +1,7 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,8 +26,10 @@ class TruckDriverRestServiceTest {
     static class ReservationTestConfig {
 
         @Bean
-        TruckDriverRestService tautlinerRestService(TruckDriverRepository truckDriverRepository, CarrierRepository carrierRepository, TruckDriverTransformer transformer) {
-            return new TruckDriverRestService(truckDriverRepository, carrierRepository, transformer);
+        TruckDriverRestService tautlinerRestService(TruckDriverRepository truckDriverRepository,
+                                                    CarrierRepository carrierRepository, TruckDriverTransformer transformer,
+                                                    CarrierOperations carrierOperations) {
+            return new TruckDriverRestService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
         }
     }
 
@@ -38,6 +41,9 @@ class TruckDriverRestServiceTest {
 
     @MockBean
     TruckDriverTransformer transformer;
+
+    @MockBean
+    CarrierOperations carrierOperations;
 
     @Autowired
     TruckDriverRestService truckDriverRestService;
@@ -95,23 +101,23 @@ class TruckDriverRestServiceTest {
         TruckDriverNewUpdateDTO driver = new TruckDriverNewUpdateDTO("Test one", "999000888", "ID123456");
         TruckDriverEntity entity = new TruckDriverEntity("Test one", "999000888", "ID123456", null, null);
         CarrierEntity carrier = new CarrierEntity(2L, "123456", "Test trans", "Testland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        TruckDriverEntity savedEntity = new TruckDriverEntity(1L, "Test one", "999000888", "ID123456", null, null);
+        TruckDriverEntity savedEntity = new TruckDriverEntity(1L, "Test one", "999000888", "ID123456", carrier, null);
         Mockito.when(transformer.newUpdatDriverDtoToEntity(driver)).thenReturn(entity);
         Mockito.when(carrierRepository.findById(carrier.getId())).thenReturn(Optional.of(carrier));
         Mockito.when(truckDriverRepository.save(entity)).thenReturn(savedEntity);
         Mockito.when(transformer.entityToNewUpdateDriverDto(savedEntity)).thenReturn(driver);
+        Mockito.when(carrierOperations.addDriver(carrier, entity)).thenReturn(true);
 
         //when
         TruckDriverNewUpdateDTO result = truckDriverRestService.addNewDriver(carrier.getId(), driver);
 
         //then
         assertEquals(driver, result);
-        assertEquals(carrier.getId(), entity.getCarrier().getId());
-        assertEquals(entity, entity.getCarrier().getDrivers().get(0));
         Mockito.verify(transformer).newUpdatDriverDtoToEntity(driver);
         Mockito.verify(carrierRepository).findById(carrier.getId());
         Mockito.verify(truckDriverRepository).save(entity);
         Mockito.verify(transformer).entityToNewUpdateDriverDto(savedEntity);
+        Mockito.verify(carrierOperations).addDriver(carrier, entity);
     }
 
     @Test

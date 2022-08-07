@@ -2,11 +2,13 @@ package com.piotrdomagalski.planning.tautliner;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -31,10 +33,13 @@ class TautlinerRestServiceTest {
 
         @Bean
         TautlinerRestService tautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                                                  TautlinerTransformer transformer) {
-            return new TautlinerRestService(tautlinerRepository, carrierRepository, transformer);
+                                                  TautlinerTransformer transformer, CarrierOperations carrierOperations) {
+            return new TautlinerRestService(tautlinerRepository, carrierRepository, transformer, carrierOperations);
         }
     }
+
+    @MockBean
+    CarrierOperations carrierOperations;
 
     @MockBean
     TautlinerRepository tautlinerRepository;
@@ -164,17 +169,17 @@ class TautlinerRestServiceTest {
         Mockito.when(transformer.newUpdateDTOtoEntity(input)).thenReturn(entity);
         Mockito.when(carrierRepository.findById(carrier.getId())).thenReturn(Optional.of(carrier));
         Mockito.when(tautlinerRepository.save(entity)).thenReturn(entity);
+        Mockito.when(carrierOperations.addTautliner(carrier, entity)).thenReturn(true);
 
         //when
         TautlinerEntity result = tautlinerRestService.addNewTautliner(carrier.getId(), input);
 
         //then
         assertEquals(entity, result);
-        assertEquals(carrier.getId(), result.getCarrier().getId());
-        assertEquals(result.getTautlinerPlates(), result.getCarrier().getTautliners().get(0).getTautlinerPlates());
         Mockito.verify(tautlinerRepository).findByTautlinerPlates(input.getTautlinerPlates());
         Mockito.verify(transformer).newUpdateDTOtoEntity(input);
         Mockito.verify(tautlinerRepository).save(entity);
+        Mockito.verify(carrierOperations).addTautliner(carrier, entity);
     }
 
     @Test

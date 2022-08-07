@@ -27,9 +27,9 @@ class CarrierRestServiceTest {
     static class CarrierServiceTestingConfiguration {
 
         @Bean
-        CarrierRestService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer,
+        CarrierRestService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, CarrierOperations carrierOperations,
                                               TruckRepository truckRepository, TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
-            return new CarrierRestService(carrierRepository, transformer, truckRepository, driverRepository, tautlinerRepository);
+            return new CarrierRestService(carrierRepository, transformer, carrierOperations, truckRepository, driverRepository, tautlinerRepository);
         }
     }
 
@@ -38,6 +38,9 @@ class CarrierRestServiceTest {
 
     @MockBean
     CarrierRepository carrierRepository;
+
+    @MockBean
+    CarrierOperations carrierOperations;
 
     @MockBean
     CarrierTransformer transformer;
@@ -153,6 +156,7 @@ class CarrierRestServiceTest {
         CarrierEntity carrier = new CarrierEntity(465L, sap, "Test carrier", "Carrierland", 1.2,
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         Mockito.when(carrierRepository.findBySap(sap)).thenReturn(Optional.of(carrier));
+        Mockito.when(carrierOperations.clear(carrier)).thenReturn(true);
 
         //when
         CarrierEntity result = carrierRestService.deleteCarrierBySap(sap);
@@ -161,6 +165,7 @@ class CarrierRestServiceTest {
         assertEquals(carrier, result);
         Mockito.verify(carrierRepository).findBySap(sap);
         Mockito.verify(carrierRepository).delete(carrier);
+        Mockito.verify(carrierOperations).clear(carrier);
     }
 
     @Test

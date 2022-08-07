@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierModelService;
+import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,13 @@ public class TruckDriverRestService {
     private final TruckDriverRepository truckDriverRepository;
     private final CarrierRepository carrierRepository;
     private final TruckDriverTransformer transformer;
+    private final CarrierOperations carrierOperations;
 
-    public TruckDriverRestService(TruckDriverRepository truckDriverRepository, CarrierRepository carrierRepository, TruckDriverTransformer transformer) {
+    public TruckDriverRestService(TruckDriverRepository truckDriverRepository, CarrierRepository carrierRepository, TruckDriverTransformer transformer, CarrierOperations carrierOperations) {
         this.truckDriverRepository = truckDriverRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
+        this.carrierOperations = carrierOperations;
     }
 
     TruckDriverEntity getTruckDriverById(Long id) {
@@ -35,14 +37,14 @@ public class TruckDriverRestService {
         TruckDriverEntity truckDriverEntity = transformer.newUpdatDriverDtoToEntity(driver);
         CarrierEntity carrierEntity = carrierRepository.findById(carrierId).orElseThrow(
                 () -> new NoSuchElementException("No carrier with id: " + carrierId));
-        new CarrierModelService(carrierEntity).addDriver(truckDriverEntity);
+        carrierOperations.addDriver(carrierEntity, truckDriverEntity);
         TruckDriverEntity save = truckDriverRepository.save(truckDriverEntity);
         return transformer.entityToNewUpdateDriverDto(save);
     }
 
     TruckDriverEntity deleteTruckDriverById(Long id) {
         TruckDriverEntity truckDriverById = getTruckDriverById(id);
-        new TruckDriverModelService(truckDriverById).clearDriver();
+        new ClearTruckDriver(truckDriverById).execute();
         truckDriverRepository.delete(truckDriverById);
         return truckDriverById;
     }

@@ -16,13 +16,17 @@ public class CarrierRestService {
 
     private final CarrierRepository carrierRepository;
     private final CarrierTransformer transformer;
+    private final CarrierOperations carrierOperations;
     private final TruckRepository truckRepository;
     private final TruckDriverRepository driverRepository;
     private final TautlinerRepository tautlinerRepository;
 
-    public CarrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, TruckRepository truckRepository, TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
+    public CarrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer,
+                              CarrierOperations carrierOperations, TruckRepository truckRepository,
+                              TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
+        this.carrierOperations = carrierOperations;
         this.truckRepository = truckRepository;
         this.driverRepository = driverRepository;
         this.tautlinerRepository = tautlinerRepository;
@@ -59,7 +63,7 @@ public class CarrierRestService {
 
     CarrierEntity deleteCarrierBySap(String sap) {
         CarrierEntity carrierBySap = getCarrierBySap(sap);
-        boolean cleanCarrier = new CarrierModelService(carrierBySap).clearCarrier();
+        boolean cleanCarrier = carrierOperations.clear(carrierBySap);
         if (cleanCarrier) {
             driverRepository.deleteAll(carrierBySap.getDrivers());
             truckRepository.deleteAll(carrierBySap.getTrucks());
