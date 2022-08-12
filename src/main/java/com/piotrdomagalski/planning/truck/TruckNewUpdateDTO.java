@@ -10,7 +10,7 @@ public class TruckNewUpdateDTO {
     @Size(groups = {AddTruck.class, UpdateTruck.class}, min = 3, max = 15, message = "Truck's plates must be between 3 and 15 characters")
     @PlatesConstrraint(groups = {AddTruck.class, UpdateTruck.class}, message = "Trucks's plates must start with 2-3 letters, eg. PO23211")
     private String truckPlates;
-    @NotNull(groups = {AddTruck.class, UpdateTruck.class}, message = "Truck must be declared either mega or standard")
+    @NotNull(groups = {AddTruck.class}, message = "Truck must be declared either mega or standard")
     private Boolean isMega;
 
     public TruckNewUpdateDTO(String truckPlates, Boolean isMega) {

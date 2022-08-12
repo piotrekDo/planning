@@ -2,7 +2,9 @@ package com.piotrdomagalski.planning.carrier;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerInfoDTO;
+import com.piotrdomagalski.planning.truck.TruckControllerUpdateArugmentsProvider;
 import com.piotrdomagalski.planning.truck.TruckInfoDTO;
+import com.piotrdomagalski.planning.truck.TruckNewUpdateDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -199,6 +201,26 @@ class CarrierControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with id: " + sap)));
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(CarrierControllerUpdateArugmentsProvider.class)
+    void updateCarrier_should_reutn_conde_200_and_response_body_if_updated(CarrierNewUpdateDTO updateDto, String updateJson, CarrierNewUpdateDTO result) throws Exception {
+        //given
+        String sap = "123456";
+        Mockito.when(carrierRestService.updateCarrier(sap, updateDto)).thenReturn(result);
+
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/carriers/" + sap).contentType(MediaType.APPLICATION_JSON)
+                .content(updateJson));
+
+        //then
+        Mockito.verify(carrierRestService).updateCarrier(sap, updateDto);
+        perform.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo(result.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.origin", equalTo(result.getOrigin())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rate", equalTo(result.getRate())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.sap", equalTo(result.getSap())));
+    }
+
     @Test
     void updateCarrier_should_return_not_found_when_updating_by_non_existing_sap() throws Exception {
         //given
@@ -250,7 +272,7 @@ class CarrierControllerTest {
 
     @ParameterizedTest
     @ArgumentsSource(ControllerUpdateCarrierArgumentsProvider.class)
-    void addNewTruck_should_return_bad_request_when_updating_not_valid_entry(String newTruckJson, int code,
+    void updateCarrier_should_return_bad_request_when_updating_not_valid_entry(String newTruckJson, int code,
                                                                            String msg,
                                                                            String[] detailsSap, String[] detailsName,
                                                                            String[] detailsOrigin, String[] detailsRate) throws Exception {

@@ -3,7 +3,6 @@ package com.piotrdomagalski.planning.truck;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,7 +36,7 @@ public class TruckController {
     }
 
     @PutMapping("/{plates}")
-    TruckNewUpdateDTO updateTruck(String plates, @Validated(value = UpdateTruck.class) TruckNewUpdateDTO dto) {
+    TruckNewUpdateDTO updateTruck(@PathVariable String plates, @RequestBody @Validated(value = UpdateTruck.class) TruckNewUpdateDTO dto) {
         return truckRestService.updateTruck(plates, dto);
     }
 }

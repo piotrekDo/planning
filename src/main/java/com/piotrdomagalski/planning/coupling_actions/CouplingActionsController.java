@@ -18,12 +18,12 @@ public class CouplingActionsController {
     }
 
     @PutMapping("/truck-tautliner")
-    TruckTautlinerCouple coupleTruckWithTautliner(TruckTautlinerCouple couple) {
+    TruckTautlinerCouple coupleTruckWithTautliner(@RequestBody TruckTautlinerCouple couple) {
         return couplingActionsService.coupleTruckTautliner(couple);
     }
 
     @PutMapping("/tautliner-carrier")
-    TautlinerCarrierCouple coupleTautlinerWithCarrier(TautlinerCarrierCouple couple) {
+    TautlinerCarrierCouple coupleTautlinerWithCarrier(@RequestBody TautlinerCarrierCouple couple) {
         return couplingActionsService.coupleTautlinerCarrier(couple);
     }
 }

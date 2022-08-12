@@ -64,12 +64,12 @@ public class TruckDriverEntity extends DatabaseEntity implements Comparable<Truc
         if (!(o instanceof TruckDriverEntity)) return false;
         if (!super.equals(o)) return false;
         TruckDriverEntity that = (TruckDriverEntity) o;
-        return Objects.equals(fullName, that.fullName) && Objects.equals(tel, that.tel) && Objects.equals(idDocument, that.idDocument);
+        return Objects.equals(fullName, that.fullName) && Objects.equals(tel, that.tel) && Objects.equals(idDocument, that.idDocument) && Objects.equals(carrier, that.carrier) && Objects.equals(truck, that.truck);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), fullName, tel, idDocument);
+        return Objects.hash(super.hashCode(), fullName, tel, idDocument, carrier, truck);
     }
 
     public String getFullName() {

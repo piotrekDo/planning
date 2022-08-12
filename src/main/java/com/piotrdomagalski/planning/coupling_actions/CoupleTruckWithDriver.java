@@ -16,7 +16,7 @@ public class CoupleTruckWithDriver  implements CoupleCommand{
 
     @Override
     public boolean couple() {
-        if (!driver.getCarrier().getSap().equals(truck.getCarrier().getSap()))
+        if (!driver.getCarrier().equals(truck.getCarrier()))
             throw new IllegalOperationException("Truck and driver must have the same carrier!");
 
         try {

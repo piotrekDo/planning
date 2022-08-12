@@ -15,8 +15,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -190,25 +188,42 @@ class TruckDriverControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No driver found with id: " + id)));
     }
 
-    @Test
-    void updateDriver_should_return_updated_driver_if_update_was_successfull() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(TruckDriverControllerUpdateArgumentsProvider.class)
+    void updateDriver_should_return_updated_driver_if_update_was_successfull(TruckDriverNewUpdateDTO updateDto, String json,
+                                                                             TruckDriverNewUpdateDTO resultDto) throws Exception {
         //given
         Long id = 321L;
-        TruckDriverNewUpdateDTO dto = new TruckDriverNewUpdateDTO("new name", null, null);
-        TruckDriverNewUpdateDTO result = new TruckDriverNewUpdateDTO("new name", "123456789", "ID123456");
-        Mockito.when(driverRestService.updateTruckDriver(id, dto)).thenReturn(result);
+        Mockito.when(driverRestService.updateTruckDriver(id, updateDto)).thenReturn(resultDto);
 
         //when+then
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/drivers/" + id).contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {
-                            "fullName": "new name"
-                        }
-                                """));
-        Mockito.verify(driverRestService).updateTruckDriver(id, dto);
-        perform.andExpect(MockMvcResultMatchers.jsonPath("$.fullName", equalTo(result.getFullName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tel", equalTo(result.getTel())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.idDocument", equalTo(result.getIdDocument())));
+                .content(json));
+        Mockito.verify(driverRestService).updateTruckDriver(id, updateDto);
+        perform.andExpect(MockMvcResultMatchers.jsonPath("$.fullName", equalTo(resultDto.getFullName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tel", equalTo(resultDto.getTel())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.idDocument", equalTo(resultDto.getIdDocument())));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(TruckDriverControllerUpdateNotValidArgumentsProvider.class)
+    void updateDriver_should_return_bad_request_if_updating_by_not_valid_values(String json, int code, String name,
+                                                                                String[] detailsName, String[] detailsTel, String[] detailsIdDoc) throws Exception {
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/drivers/" + 1).contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+
+        //then
+        Mockito.verify(driverRestService, Mockito.never()).updateTruckDriver(Mockito.any(), Mockito.any());
+        perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(code)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo(name)));
+        if (detailsName != null)
+            perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.fullName").value(containsInAnyOrder(detailsName)));
+        if (detailsTel != null)
+            perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.tel").value(containsInAnyOrder(detailsTel)));
+        if (detailsIdDoc != null)
+            perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.idDocument").value(containsInAnyOrder(detailsIdDoc)));
     }
 
 }

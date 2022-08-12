@@ -51,7 +51,7 @@ public class CarrierTransformer {
         return CarrierEntity.newCarrier(
                 carrier.getSap(),
                 carrier.getName(),
-                carrier.getName(),
+                carrier.getOrigin(),
                 carrier.getRate()
         );
     }

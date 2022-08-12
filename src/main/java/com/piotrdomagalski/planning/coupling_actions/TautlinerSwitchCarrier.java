@@ -23,7 +23,11 @@ public class TautlinerSwitchCarrier implements CoupleCommand {
             throw new IllegalOperationException("Cannot switch carrier for non-xpo trailer");
 
         try {
+            if (tautliner.getCarrier() != null) {
+                tautliner.getCarrier().getTautliners().remove(tautliner);
+            }
             tautliner.setCarrier(carrier);
+            carrier.getTautliners().add(tautliner);
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalOperationException("Could not switch carriers");
