@@ -2,9 +2,7 @@ package com.piotrdomagalski.planning.carrier;
 
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerInfoDTO;
-import com.piotrdomagalski.planning.truck.TruckControllerUpdateArugmentsProvider;
 import com.piotrdomagalski.planning.truck.TruckInfoDTO;
-import com.piotrdomagalski.planning.truck.TruckNewUpdateDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -273,9 +271,9 @@ class CarrierControllerTest {
     @ParameterizedTest
     @ArgumentsSource(ControllerUpdateCarrierArgumentsProvider.class)
     void updateCarrier_should_return_bad_request_when_updating_not_valid_entry(String newTruckJson, int code,
-                                                                           String msg,
-                                                                           String[] detailsSap, String[] detailsName,
-                                                                           String[] detailsOrigin, String[] detailsRate) throws Exception {
+                                                                               String msg,
+                                                                               String[] detailsSap, String[] detailsName,
+                                                                               String[] detailsOrigin, String[] detailsRate) throws Exception {
 
         String sap = "990990";
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/carriers/" + sap)
@@ -295,6 +293,4 @@ class CarrierControllerTest {
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.rate").value(containsInAnyOrder(detailsRate)));
         Mockito.verify(carrierRestService, Mockito.never()).addNewCarrier(Mockito.any());
     }
-
-
 }

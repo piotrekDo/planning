@@ -3,12 +3,12 @@ package com.piotrdomagalski.planning.carrier;
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
-public class AddDriverToCarrier implements CarrierCommand{
+class AddDriverToCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;
     private TruckDriverEntity driver;
 
-    public AddDriverToCarrier(CarrierEntity carrier, TruckDriverEntity driver) {
+    AddDriverToCarrier(CarrierEntity carrier, TruckDriverEntity driver) {
         this.carrier = carrier;
         this.driver = driver;
     }

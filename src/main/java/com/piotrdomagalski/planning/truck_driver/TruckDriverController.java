@@ -8,11 +8,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/drivers")
-public class TruckDriverController {
+class TruckDriverController {
 
     private final TruckDriverRestService driverRestService;
 
-    public TruckDriverController(@Qualifier("truckDriverRest") TruckDriverRestService driverRestService) {
+    TruckDriverController(@Qualifier("truckDriverRest") TruckDriverRestService driverRestService) {
         this.driverRestService = driverRestService;
     }
 
@@ -22,22 +22,22 @@ public class TruckDriverController {
     }
 
     @GetMapping("/{id}")
-    TruckDriverInfoDTO getDriverById(@PathVariable Long id){
+    TruckDriverInfoDTO getDriverById(@PathVariable Long id) {
         return driverRestService.getTruckDriverById(id);
     }
 
-    @PostMapping("/{carrierId}")
-    TruckDriverNewUpdateDTO addNewDriver(@PathVariable Long carrierId,  @RequestBody @Validated(value = AddDriver.class) TruckDriverNewUpdateDTO driver){
-        return driverRestService.addNewDriver(carrierId, driver);
+    @PostMapping("/{carrierSap}")
+    TruckDriverNewUpdateDTO addNewDriver(@PathVariable String carrierSap, @RequestBody @Validated(value = AddDriver.class) TruckDriverNewUpdateDTO driver) {
+        return driverRestService.addNewDriver(carrierSap, driver);
     }
 
     @DeleteMapping("/{id}")
-    TruckDriverEntity deleteDriverById(@PathVariable Long id){
+    TruckDriverEntity deleteDriverById(@PathVariable Long id) {
         return driverRestService.deleteTruckDriverById(id);
     }
 
     @PutMapping("/{id}")
-    TruckDriverNewUpdateDTO updateDriver(@PathVariable Long id, @RequestBody @Validated(value = UpdateDriver.class) TruckDriverNewUpdateDTO driverDto){
+    TruckDriverNewUpdateDTO updateDriver(@PathVariable Long id, @RequestBody @Validated(value = UpdateDriver.class) TruckDriverNewUpdateDTO driverDto) {
         return driverRestService.updateTruckDriver(id, driverDto);
     }
 }

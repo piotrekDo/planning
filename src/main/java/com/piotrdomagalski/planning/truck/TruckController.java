@@ -7,16 +7,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/trucks")
-public class TruckController {
+class TruckController {
 
     private final TruckRestService truckRestService;
 
-    public TruckController(TruckRestService truckRestService) {
+    TruckController(TruckRestService truckRestService) {
         this.truckRestService = truckRestService;
     }
 
     @GetMapping
-    List<TruckInfoDTO> getAllTrucks(){
+    List<TruckInfoDTO> getAllTrucks() {
         return truckRestService.getAllTrucks();
     }
 
@@ -25,13 +25,13 @@ public class TruckController {
         return truckRestService.getTruckByPlates(plates);
     }
 
-    @PostMapping("/{carrierId}")
-    TruckInfoDTO addNewTruck(@PathVariable Long carrierId, @RequestBody @Validated(value = AddTruck.class) TruckNewUpdateDTO truck){
-        return truckRestService.addNewTruck(carrierId, truck);
+    @PostMapping("/{carrierSap}")
+    TruckInfoDTO addNewTruck(@PathVariable String carrierSap, @RequestBody @Validated(value = AddTruck.class) TruckNewUpdateDTO truck) {
+        return truckRestService.addNewTruck(carrierSap, truck);
     }
 
     @DeleteMapping("/{plates}")
-    TruckEntity deleteTruckByPlates(@PathVariable String plates){
+    TruckEntity deleteTruckByPlates(@PathVariable String plates) {
         return truckRestService.deleteTruckByPlates(plates);
     }
 

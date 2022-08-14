@@ -7,11 +7,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tautliners")
-public class TautlinerController {
+ class TautlinerController {
 
     private final TautlinerRestService tautlinerRestService;
 
-    public TautlinerController(TautlinerRestService tautlinerRestService) {
+     TautlinerController(TautlinerRestService tautlinerRestService) {
         this.tautlinerRestService = tautlinerRestService;
     }
 
@@ -25,9 +25,9 @@ public class TautlinerController {
        return tautlinerRestService.getTautlinerByPlates(plates);
     }
 
-    @PostMapping("/{carrierId}")
-    TautlinerInfoDTO addNewTautliner(@PathVariable(required = false) Long carrierId, @RequestBody @Validated(value = AddTautliner.class) TautlinerNewUpdateDTO dto){
-        return tautlinerRestService.addNewTautliner(carrierId, dto);
+    @PostMapping("/{carrierSap}")
+    TautlinerInfoDTO addNewTautliner(@PathVariable(required = false) String carrierSap, @RequestBody @Validated(value = AddTautliner.class) TautlinerNewUpdateDTO dto){
+        return tautlinerRestService.addNewTautliner(carrierSap, dto);
     }
 
     @DeleteMapping("/{plates}")

@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CarrierTransformer {
+class CarrierTransformer {
 
     private final TruckTransformer truckTransformer;
     private final TruckDriverTransformer driverTransformer;
     private final TautlinerTransformer tautlinerTransformer;
 
-    public CarrierTransformer(TruckTransformer truckTransformer, TruckDriverTransformer driverTransformer, TautlinerTransformer tautlinerTransformer) {
+    CarrierTransformer(TruckTransformer truckTransformer, TruckDriverTransformer driverTransformer, TautlinerTransformer tautlinerTransformer) {
         this.truckTransformer = truckTransformer;
         this.driverTransformer = driverTransformer;
         this.tautlinerTransformer = tautlinerTransformer;

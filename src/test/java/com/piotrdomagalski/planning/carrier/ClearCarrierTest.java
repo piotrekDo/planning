@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -15,11 +16,9 @@ import java.time.LocalDateTime;
 @ExtendWith(SpringExtension.class)
 class ClearCarrierTest {
 
-
-
     @ParameterizedTest
     @ArgumentsSource(CarrierClearCarrierArgumentsProvider.class)
-    void clearCarrier_should_clear_carrier(){
+    void clearCarrier_should_clear_carrier() {
         //given
         CarrierEntity carrier = getCarrier();
         TruckDriverEntity driver = carrier.getDrivers().get(0);
@@ -43,13 +42,6 @@ class ClearCarrierTest {
         assertNull(truck.getTautliner());
 
     }
-
-
-
-
-
-
-
 
     private CarrierEntity getCarrier() {
         CarrierEntity test_carrier = CarrierEntity.newCarrier("123456", "Test Carrier", "Testland", 1.2);
@@ -101,5 +93,4 @@ class ClearCarrierTest {
 
         return test_carrier;
     }
-
 }

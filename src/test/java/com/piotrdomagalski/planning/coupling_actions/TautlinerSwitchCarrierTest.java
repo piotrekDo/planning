@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TautlinerSwitchCarrierTest {
 
     @Test
-    void tautlinerSwitchCarriers_should_switch_tautliners_carreir(){
+    void tautlinerSwitchCarriers_should_switch_tautliners_carreir() {
         //given
         CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         CarrierEntity carrier2 = new CarrierEntity(11L, "123457", "Test Carrier2", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -31,7 +31,7 @@ class TautlinerSwitchCarrierTest {
     }
 
     @Test
-    void tautlinerSwitchCarriers_should_throw_an_exception_if_tautliner_has_truck(){
+    void tautlinerSwitchCarriers_should_throw_an_exception_if_tautliner_has_truck() {
         //given
         CarrierEntity carrier = new CarrierEntity(11L, "123457", "Test Carrier2", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);
@@ -46,7 +46,7 @@ class TautlinerSwitchCarrierTest {
     }
 
     @Test
-    void tautlinerSwitchCarriers_should_throw_an_exception_if_tautliner_is_not_xpo(){
+    void tautlinerSwitchCarriers_should_throw_an_exception_if_tautliner_is_not_xpo() {
         //given
         CarrierEntity carrier = new CarrierEntity(11L, "123457", "Test Carrier2", "Testowo", 1.1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         TautlinerEntity tautliner = new TautlinerEntity(9L, false, "ABCD1235", null, carrier, null);

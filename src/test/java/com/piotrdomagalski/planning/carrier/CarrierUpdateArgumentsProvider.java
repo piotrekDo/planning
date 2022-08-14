@@ -22,7 +22,7 @@ public class CarrierUpdateArgumentsProvider implements ArgumentsProvider {
                         new CarrierEntity(465L, "456456", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
                         new CarrierEntity(null, "111222", null, null, null, null, null, null),
                         new CarrierEntity(465L, "111222", "Test carrier", "Carrierland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
-                        ),
+                ),
                 Arguments.of(
                         "456456",
                         new CarrierNewUpdateDTO(null, "New name", null, null),

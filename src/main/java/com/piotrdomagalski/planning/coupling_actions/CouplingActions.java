@@ -7,11 +7,11 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CouplingActions {
+class CouplingActions {
 
     private CoupleCommand coupleCommand;
 
-    public void setCoupleCommand(CoupleCommand coupleCommand) {
+    void setCoupleCommand(CoupleCommand coupleCommand) {
         this.coupleCommand = coupleCommand;
     }
 

@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.equalTo;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(CouplingActionsController.class)

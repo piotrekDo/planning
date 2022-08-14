@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import static com.piotrdomagalski.planning.truck_driver.TruckDriverDTOdataParser.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +15,7 @@ class TruckDriverDTOdataParserTest {
 
 
     @Test
-    void fullNameParser_test(){
+    void fullNameParser_test() {
         //given
         String input = " aNDrzeJ   kOWALski ";
         String expected = "Andrzej Kowalski";
@@ -27,7 +28,7 @@ class TruckDriverDTOdataParserTest {
     }
 
     @Test
-    void telParser_test(){
+    void telParser_test() {
         //given
         String input = "888999000";
         String expected = "888-999-000";
@@ -44,7 +45,5 @@ class TruckDriverDTOdataParserTest {
     void idDocument_Test(String input, String expected) {
         assertEquals(expected, idDocumentParser(input));
     }
-
-
 
 }

@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class CarrierRestService {
+class CarrierRestService {
 
     private final CarrierRepository carrierRepository;
     private final CarrierTransformer transformer;

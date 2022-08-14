@@ -230,6 +230,4 @@ class CarrierRestServiceTest {
         Mockito.verify(transformer).entityToNewUpdateDto(savedCarrier);
 
     }
-
-
 }

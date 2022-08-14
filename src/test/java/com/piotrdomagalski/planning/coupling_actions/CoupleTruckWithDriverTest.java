@@ -30,7 +30,7 @@ class CoupleTruckWithDriverTest {
     }
 
     @Test
-    void coupleTruckWithDriver_should_return_true_and_set_truck_for_driver_and_driver_for_truck_and_clean_existing_truck_and_driver(){
+    void coupleTruckWithDriver_should_return_true_and_set_truck_for_driver_and_driver_for_truck_and_clean_existing_truck_and_driver() {
         //given
         CarrierEntity carrier = new CarrierEntity(1L, "123456", "Test Carrier", "Testowo", 1.1, null, null, null);
         TruckEntity truck = new TruckEntity(12L, "TEST1234", true, carrier, null, null);

@@ -4,12 +4,12 @@ import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
-public class CoupleTruckWithDriver  implements CoupleCommand{
+class CoupleTruckWithDriver implements CoupleCommand {
 
     private TruckDriverEntity driver;
     private TruckEntity truck;
 
-    public CoupleTruckWithDriver(TruckDriverEntity driver, TruckEntity truck) {
+    CoupleTruckWithDriver(TruckDriverEntity driver, TruckEntity truck) {
         this.driver = driver;
         this.truck = truck;
     }

@@ -38,5 +38,4 @@ class AddTruckToCarrierTest {
         assertEquals(truck, carrier.getTrucks().get(0));
         assertEquals(carrier, truck.getCarrier());
     }
-
 }

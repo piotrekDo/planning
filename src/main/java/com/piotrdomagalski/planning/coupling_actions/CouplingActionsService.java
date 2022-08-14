@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 
 
 @Service
-public class CouplingActionsService {
+class CouplingActionsService {
 
     private final CouplingActions couplingActions;
     private final CarrierRepository carrierRepository;
@@ -23,8 +23,8 @@ public class CouplingActionsService {
     private final TautlinerRepository tautlinerRepository;
 
 
-    public CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository,
-                                  TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository) {
+    CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository,
+                           TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository) {
         this.couplingActions = couplingActions;
         this.carrierRepository = carrierRepository;
         this.truckDriverRepository = truckDriverRepository;

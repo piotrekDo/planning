@@ -37,7 +37,7 @@ public class TautlinerTransformer {
     TautlinerEntity newUpdateDTOtoEntity(TautlinerNewUpdateDTO dto) {
         return TautlinerEntity.newTautliner(
                 dto.getXpo(),
-                dto.getTautlinerPlates() != null? platesParser(dto.getTautlinerPlates()) : null,
+                dto.getTautlinerPlates() != null ? platesParser(dto.getTautlinerPlates()) : null,
                 dto.getTechInspection() != null ? LocalDateTime.parse(dto.getTechInspection(), formatter) : null
         );
     }

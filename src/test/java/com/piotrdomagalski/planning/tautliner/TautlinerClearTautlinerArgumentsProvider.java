@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-public class TautlinerClearTautlinerArgumentsProvider implements ArgumentsProvider {
+class TautlinerClearTautlinerArgumentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

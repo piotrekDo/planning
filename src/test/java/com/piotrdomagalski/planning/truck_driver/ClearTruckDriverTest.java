@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClearTruckDriverTest {
 
     @Test
-    void clearTruckDriver_should_clean_driver_and_truck_and_carrier(){
+    void clearTruckDriver_should_clean_driver_and_truck_and_carrier() {
         //given
         CarrierEntity carrier = new CarrierEntity(990L, "123456", "Test carrier", "Testland", 1.1,
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>());

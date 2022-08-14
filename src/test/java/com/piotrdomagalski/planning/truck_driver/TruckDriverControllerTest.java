@@ -68,13 +68,13 @@ class TruckDriverControllerTest {
     @Test
     void addNewDriver_should_be_provided_to_service() throws Exception {
         //given
-        Long carrierId = 21L;
+        String carrierSap = "123456";
         TruckDriverNewUpdateDTO driverDto = new TruckDriverNewUpdateDTO("Test one", "999000888", "ID123456");
         TruckDriverNewUpdateDTO result = new TruckDriverNewUpdateDTO("Test One", "999-000-888", "ID123456");
-        Mockito.when(driverRestService.addNewDriver(carrierId, driverDto)).thenReturn(result);
+        Mockito.when(driverRestService.addNewDriver(carrierSap, driverDto)).thenReturn(result);
 
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/drivers/" + carrierId)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/drivers/" + carrierSap)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -83,7 +83,7 @@ class TruckDriverControllerTest {
                             "tel": "999000888"
                         }
                         """));
-        Mockito.verify(driverRestService).addNewDriver(carrierId, driverDto);
+        Mockito.verify(driverRestService).addNewDriver(carrierSap, driverDto);
         perform.andExpect(MockMvcResultMatchers.jsonPath("$.fullName", equalTo("Test One")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tel", equalTo("999-000-888")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.idDocument", equalTo("ID123456")));
@@ -91,12 +91,12 @@ class TruckDriverControllerTest {
 
     @Test
     void addNewDriver_should_return_bad_request_when_adding_to_non_existing_carrier() throws Exception {
-        Long carrierId = 21L;
+        String carrierSap = "123456";
         TruckDriverNewUpdateDTO driverDto = new TruckDriverNewUpdateDTO("Test one", "999000888", "ID123456");
-        Mockito.when(driverRestService.addNewDriver(carrierId, driverDto)).thenThrow(new NoSuchElementException("No carrier with id: " + carrierId));
+        Mockito.when(driverRestService.addNewDriver(carrierSap, driverDto)).thenThrow(new NoSuchElementException("No carrier with sap: " + carrierSap));
 
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/drivers/" + carrierId)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/drivers/" + carrierSap)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -105,12 +105,12 @@ class TruckDriverControllerTest {
                             "tel": "999000888"
                         }
                                 """));
-        Mockito.verify(driverRestService).addNewDriver(carrierId, driverDto);
+        Mockito.verify(driverRestService).addNewDriver(carrierSap, driverDto);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with id: " + carrierId)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with sap: " + carrierSap)));
     }
 
     @ParameterizedTest

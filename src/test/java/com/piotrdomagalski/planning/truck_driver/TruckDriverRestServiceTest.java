@@ -86,14 +86,14 @@ class TruckDriverRestServiceTest {
     }
 
     @Test
-    void addTruckDriver_will_throw_an_exception_when_wrong_carrier_provided(){
+    void addTruckDriver_will_throw_an_exception_when_wrong_carrier_provided() {
         //given
-        Long carrierId = 22L;
+        String carrierSap = "123456";
         TruckDriverNewUpdateDTO driver = new TruckDriverNewUpdateDTO("Test one", "999000888", "ID123456");
-        Mockito.when(carrierRepository.findById(carrierId)).thenReturn(Optional.empty());
+        Mockito.when(carrierRepository.findBySap(carrierSap)).thenReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, ()-> truckDriverRestService.addNewDriver(carrierId, driver));
+        assertThrows(NoSuchElementException.class, () -> truckDriverRestService.addNewDriver(carrierSap, driver));
         Mockito.verify(truckDriverRepository, Mockito.never()).save(Mockito.any());
 
     }
@@ -106,18 +106,18 @@ class TruckDriverRestServiceTest {
         CarrierEntity carrier = new CarrierEntity(2L, "123456", "Test trans", "Testland", 1.2, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         TruckDriverEntity savedEntity = new TruckDriverEntity(1L, "Test one", "999000888", "ID123456", carrier, null);
         Mockito.when(transformer.newUpdatDriverDtoToEntity(driver)).thenReturn(entity);
-        Mockito.when(carrierRepository.findById(carrier.getId())).thenReturn(Optional.of(carrier));
+        Mockito.when(carrierRepository.findBySap(carrier.getSap())).thenReturn(Optional.of(carrier));
         Mockito.when(truckDriverRepository.save(entity)).thenReturn(savedEntity);
         Mockito.when(transformer.entityToNewUpdateDriverDto(savedEntity)).thenReturn(driver);
         Mockito.when(carrierOperations.addDriver(carrier, entity)).thenReturn(true);
 
         //when
-        TruckDriverNewUpdateDTO result = truckDriverRestService.addNewDriver(carrier.getId(), driver);
+        TruckDriverNewUpdateDTO result = truckDriverRestService.addNewDriver(carrier.getSap(), driver);
 
         //then
         assertEquals(driver, result);
         Mockito.verify(transformer).newUpdatDriverDtoToEntity(driver);
-        Mockito.verify(carrierRepository).findById(carrier.getId());
+        Mockito.verify(carrierRepository).findBySap(carrier.getSap());
         Mockito.verify(truckDriverRepository).save(entity);
         Mockito.verify(transformer).entityToNewUpdateDriverDto(savedEntity);
         Mockito.verify(carrierOperations).addDriver(carrier, entity);

@@ -5,12 +5,12 @@ import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
-public class CoupleTruckWithTautliner implements CoupleCommand{
+class CoupleTruckWithTautliner implements CoupleCommand {
 
     private final TruckEntity truck;
     private final TautlinerEntity tautliner;
 
-    public CoupleTruckWithTautliner(TruckEntity truck, TautlinerEntity tautliner) {
+    CoupleTruckWithTautliner(TruckEntity truck, TautlinerEntity tautliner) {
         this.truck = truck;
         this.tautliner = tautliner;
     }

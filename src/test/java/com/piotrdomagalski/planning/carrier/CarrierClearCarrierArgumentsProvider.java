@@ -1,6 +1,5 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.truck.TruckEntity;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class CarrierClearCarrierArgumentsProvider implements ArgumentsProvider {
+class CarrierClearCarrierArgumentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class TruckDriverGetAllArgumentsProvider implements ArgumentsProvider {
+class TruckDriverGetAllArgumentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

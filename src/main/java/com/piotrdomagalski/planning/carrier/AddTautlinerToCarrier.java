@@ -3,12 +3,12 @@ package com.piotrdomagalski.planning.carrier;
 import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 
-public class AddTautlinerToCarrier implements CarrierCommand{
+class AddTautlinerToCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;
     private TautlinerEntity tautliner;
 
-    public AddTautlinerToCarrier(CarrierEntity carrier, TautlinerEntity tautliner) {
+    AddTautlinerToCarrier(CarrierEntity carrier, TautlinerEntity tautliner) {
         this.carrier = carrier;
         this.tautliner = tautliner;
     }

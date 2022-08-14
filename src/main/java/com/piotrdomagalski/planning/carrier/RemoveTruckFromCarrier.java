@@ -6,12 +6,12 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class RemoveTruckFromCarrier implements CarrierCommand{
+class RemoveTruckFromCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;
     private String truckPlates;
 
-    public RemoveTruckFromCarrier(CarrierEntity carrier, String truckPlates) {
+    RemoveTruckFromCarrier(CarrierEntity carrier, String truckPlates) {
         this.carrier = carrier;
         this.truckPlates = truckPlates;
     }

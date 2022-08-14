@@ -73,15 +73,15 @@ class TautlinerControllerTest {
     @Test
     void addNewTautliner_to_carier_should_provide_to_service_and_return_code_ok() throws Exception {
         //given
-        Long carrierId = 43L;
+        String carrierSap = "123456";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "2022-11-10");
         TautlinerEntity tautlinerEntity = new TautlinerEntity(12L, tautliner.getXpo(), tautliner.getTautlinerPlates(), LocalDateTime.of(2022, 11, 10, 0, 0, 0), null, null);
-        CarrierEntity carrier = new CarrierEntity(carrierId, "123456", "Test Carrier", "TestLand", 1.2, null, null, List.of(tautlinerEntity));
+        CarrierEntity carrier = new CarrierEntity(99L, carrierSap, "Test Carrier", "TestLand", 1.2, null, null, List.of(tautlinerEntity));
         TautlinerInfoDTO info = new TautlinerInfoDTO(tautlinerEntity.getTautlinerPlates(), tautlinerEntity.getTechInspection(), tautlinerEntity.getXpo(), carrier.getName(), carrier.getSap(), null);
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierId, tautliner)).thenReturn(info);
+        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenReturn(info);
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "xpo": false,
@@ -91,7 +91,7 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierId, tautliner);
+        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.xpo", equalTo(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tautlinerPlates", equalTo("ABC1234")))
@@ -103,13 +103,13 @@ class TautlinerControllerTest {
     @Test
     void addNewTautliner_should_return_bad_request_when_adding_to_non_existing_carrier() throws Exception {
         //given
-        Long carrierId = 123L;
+        String carrierSap = "123456";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "2022-11-10");
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierId, tautliner)).thenThrow(
-                new NoSuchElementException("No carrier found with id: " + carrierId));
+        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenThrow(
+                new NoSuchElementException("No carrier found with sap: " + carrierSap));
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "xpo": false,
@@ -119,24 +119,24 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierId, tautliner);
+        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with id: " + carrierId)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with sap: " + carrierSap)));
     }
 
     @Test
     void addNewTautliner_should_return_bad_request_when_adding_tautliner_with_existing_plates() throws Exception {
         //given
-        Long carrierId = 123L;
+        String carrierSap = "123456";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "2022-11-10");
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierId, tautliner)).thenThrow(
+        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenThrow(
                 new IllegalOperationException(String.format("Tautliner with plates %s already exists!", tautliner.getTautlinerPlates()))
         );
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierId).contentType(MediaType.APPLICATION_JSON)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
                             "xpo": false,
@@ -146,7 +146,7 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierId, tautliner);
+        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))

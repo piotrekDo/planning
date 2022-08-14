@@ -6,12 +6,12 @@ import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class RemoveTautlinerFromCarrier implements CarrierCommand{
+class RemoveTautlinerFromCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;
     private String tautlinerPlates;
 
-    public RemoveTautlinerFromCarrier(CarrierEntity carrier, String tautlinerPlates) {
+    RemoveTautlinerFromCarrier(CarrierEntity carrier, String tautlinerPlates) {
         this.carrier = carrier;
         this.tautlinerPlates = tautlinerPlates;
     }

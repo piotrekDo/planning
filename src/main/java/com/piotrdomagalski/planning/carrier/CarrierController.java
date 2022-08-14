@@ -7,7 +7,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/carriers")
-public class CarrierController {
+class CarrierController {
 
     private final CarrierRestService carrierRestService;
 

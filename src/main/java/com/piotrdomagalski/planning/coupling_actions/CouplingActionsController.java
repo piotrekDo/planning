@@ -4,11 +4,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/couple")
-public class CouplingActionsController {
+class CouplingActionsController {
 
     private final CouplingActionsService couplingActionsService;
 
-    public CouplingActionsController(CouplingActionsService couplingActionsService) {
+    CouplingActionsController(CouplingActionsService couplingActionsService) {
         this.couplingActionsService = couplingActionsService;
     }
 

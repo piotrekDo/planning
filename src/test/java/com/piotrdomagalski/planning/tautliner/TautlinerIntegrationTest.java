@@ -3,9 +3,6 @@ package com.piotrdomagalski.planning.tautliner;
 import com.piotrdomagalski.planning.PlanningApplication;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
-import com.piotrdomagalski.planning.truck.TruckEntity;
-import com.piotrdomagalski.planning.truck.TruckIntegrationTestUpdateArugmentsProvider;
-import com.piotrdomagalski.planning.truck.TruckNewUpdateDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class TautlinerIntegrationTest {
+class TautlinerIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -90,7 +87,7 @@ public class TautlinerIntegrationTest {
 
         //when
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -113,7 +110,7 @@ public class TautlinerIntegrationTest {
     @Test
     void adding_truck_to_non_existing_carrier_should_return_not_found() throws Exception {
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -128,7 +125,7 @@ public class TautlinerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with id: 1")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier found with sap: 123456")));
     }
 
     @Test

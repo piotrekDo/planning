@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.stream.Stream;
 
-public class TruckDriverUpdateArgumentsProvider implements ArgumentsProvider {
+class TruckDriverUpdateArgumentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(
@@ -21,7 +21,7 @@ public class TruckDriverUpdateArgumentsProvider implements ArgumentsProvider {
                         new TruckDriverNewUpdateDTO("New name", null, null),
                         new TruckDriverEntity(null, "New name", null, null, null, null),
                         new TruckDriverNewUpdateDTO("New name", "999666111", "ID123456")
-                        ),
+                ),
                 Arguments.of(
                         90L,
                         new TruckDriverEntity(90L, "Blasphemy Crackerdong", "999666111", "ID123456", null, null),

@@ -12,14 +12,14 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class TruckRestService {
+class TruckRestService {
 
     private final TruckRepository truckRepository;
     private final CarrierRepository carrierRepository;
     private final TruckTransformer transformer;
     private final CarrierOperations carrierOperations;
 
-    public TruckRestService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierOperations carrierOperations) {
+    TruckRestService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierOperations carrierOperations) {
         this.truckRepository = truckRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
@@ -42,13 +42,13 @@ public class TruckRestService {
                 new NoSuchElementException("No truck found with plates: " + plates)));
     }
 
-    TruckInfoDTO addNewTruck(Long carrierId, TruckNewUpdateDTO truck) {
+    TruckInfoDTO addNewTruck(String carrierSap, TruckNewUpdateDTO truck) {
         truckRepository.findByTruckPlatesIgnoreCase(truck.getTruckPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Truck with plates: %s already exists!", truck.getTruckPlates()));
         });
         TruckEntity truckEntity = transformer.newUpdateToEntity(truck);
-        CarrierEntity carrierEntity = carrierRepository.findById(carrierId).orElseThrow(
-                () -> new NoSuchElementException("No carrier with id: " + carrierId));
+        CarrierEntity carrierEntity = carrierRepository.findBySap(carrierSap).orElseThrow(
+                () -> new NoSuchElementException("No carrier with sap: " + carrierSap));
         carrierOperations.addTruck(carrierEntity, truckEntity);
         return transformer.toinfoDto(truckRepository.save(truckEntity));
     }

@@ -14,15 +14,15 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class TautlinerRestService {
+class TautlinerRestService {
 
     private final TautlinerRepository tautlinerRepository;
     private final CarrierRepository carrierRepository;
     private final TautlinerTransformer transformer;
     private final CarrierOperations carrierOperations;
 
-    public TautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                                TautlinerTransformer transformer, CarrierOperations carrierOperations) {
+    TautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
+                         TautlinerTransformer transformer, CarrierOperations carrierOperations) {
         this.tautlinerRepository = tautlinerRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
@@ -32,7 +32,7 @@ public class TautlinerRestService {
     List<TautlinerInfoDTO> getAllTautliners(Boolean isXpo) {
         ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
         Example<TautlinerEntity> example = Example.of(
-                new TautlinerEntity(isXpo, null, null, null,null), matcher);
+                new TautlinerEntity(isXpo, null, null, null, null), matcher);
 
         return tautlinerRepository.findAll(example, Sort.by(Sort.Direction.ASC, "tautlinerPlates")).stream()
                 .map(transformer::entityToInfoDTO)
@@ -49,21 +49,26 @@ public class TautlinerRestService {
                 new NoSuchElementException("No tautliner found with id:" + id));
     }
 
-    TautlinerInfoDTO addNewTautliner(Long carrierId, TautlinerNewUpdateDTO tautliner) {
+    TautlinerInfoDTO addNewTautliner(String carrierSap, TautlinerNewUpdateDTO tautliner) {
         tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Tautliner with plates %s already exists!", t.getTautlinerPlates()));
         });
 
-        if ((carrierId == null && !tautliner.getXpo()) || (carrierId!= null && carrierId <= 0 && !tautliner.getXpo())) {
-            throw new IllegalOperationException("Non xpo tautliner must have any carrier!");
-        }
+        TautlinerEntity tautlinerEntity;
+        try {
+            if ((carrierSap == null && !tautliner.getXpo()) || (carrierSap != null && Long.parseLong(carrierSap) <= 0 && !tautliner.getXpo())) {
+                throw new IllegalOperationException("Non xpo tautliner must have any carrier!");
+            }
 
-        TautlinerEntity tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
+            tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
 
-        if (carrierId != null && carrierId > 0) {
-            CarrierEntity carrier = carrierRepository.findById(carrierId).orElseThrow(
-                    () -> new NoSuchElementException("No carrier found with id: " + carrierId));
-            carrierOperations.addTautliner(carrier, tautlinerEntity);
+            if (carrierSap != null && Long.parseLong(carrierSap) > 0) {
+                CarrierEntity carrier = carrierRepository.findBySap(carrierSap).orElseThrow(
+                        () -> new NoSuchElementException("No carrier found with sap: " + carrierSap));
+                carrierOperations.addTautliner(carrier, tautlinerEntity);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalOperationException(carrierSap + " is not a valid SAP number");
         }
 
         TautlinerEntity savedEntity = tautlinerRepository.save(tautlinerEntity);

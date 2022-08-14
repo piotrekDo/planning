@@ -50,6 +50,6 @@ public class ErrorHandler {
     ResponseEntity<ErrorEntity<String>> handleDateTimeParseException(DateTimeParseException e) {
         return new ResponseEntity<>(new ErrorEntity<>(HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-               "Incorrect date provided:" + e.getMessage()), HttpStatus.BAD_REQUEST);
+                "Incorrect date provided:" + e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

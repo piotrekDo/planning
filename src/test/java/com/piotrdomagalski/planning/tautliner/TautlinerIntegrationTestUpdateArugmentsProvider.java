@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-public class TautlinerIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
+class TautlinerIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

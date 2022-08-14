@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-public class CarrierIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
+class CarrierIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

@@ -12,7 +12,7 @@ class MyStringUtlisTest {
 
     @ParameterizedTest
     @ArgumentsSource(MyStringUtlisCapitalizeArgumentsProvider.class)
-    void capitalize_test(String input, String expected){
+    void capitalize_test(String input, String expected) {
         assertEquals(expected, MyStringUtlis.capitalize(input));
     }
 

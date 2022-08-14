@@ -42,5 +42,4 @@ class RemoveTruckDriverFromCarrierTest {
         assertEquals(Collections.emptyList(), carrier.getDrivers());
         assertNull(driver.getCarrier());
     }
-
 }

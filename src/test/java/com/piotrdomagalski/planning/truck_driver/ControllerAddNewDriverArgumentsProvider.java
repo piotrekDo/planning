@@ -4,11 +4,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
-public class ControllerAddNewDriverArgumentsProvider implements ArgumentsProvider {
+class ControllerAddNewDriverArgumentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(
@@ -123,7 +121,7 @@ public class ControllerAddNewDriverArgumentsProvider implements ArgumentsProvide
                         null,
                         null,
                         new String[]{"ID document has to start with letters, no separators"}
-                        ),
+                ),
                 Arguments.of(
                         """
                                 {
@@ -137,7 +135,7 @@ public class ControllerAddNewDriverArgumentsProvider implements ArgumentsProvide
                         null,
                         null,
                         new String[]{"ID document has to start with letters, no separators"}
-                        ),
+                ),
                 Arguments.of(
                         """
                                 {

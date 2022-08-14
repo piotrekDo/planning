@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class TruckIntegrationTest {
+class TruckIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -89,7 +88,7 @@ public class TruckIntegrationTest {
 
         //when
         //when+then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -110,7 +109,7 @@ public class TruckIntegrationTest {
     @Test
     void adding_truck_to_non_existing_carrier_should_return_not_found() throws Exception {
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + 1)
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + "123456")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -124,7 +123,7 @@ public class TruckIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with id: 1")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No carrier with sap: 123456")));
     }
 
     @Test

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class CarrierIntegrationTest {
+class CarrierIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -205,5 +205,4 @@ public class CarrierIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("Carrier with provided SAP already exists, SAP has to be unique")));
     }
-
 }

@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-public interface CarrierCommand {
+interface CarrierCommand {
 
     boolean execute();
 

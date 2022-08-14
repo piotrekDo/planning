@@ -3,15 +3,14 @@ package com.piotrdomagalski.planning.carrier;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
-import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 
-public class ClearCarrier implements CarrierCommand {
+ class ClearCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;
 
-    public ClearCarrier(CarrierEntity carrier) {
+     ClearCarrier(CarrierEntity carrier) {
         this.carrier = carrier;
     }
 

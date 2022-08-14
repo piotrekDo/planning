@@ -42,5 +42,4 @@ class RemoveTruckFromCarrierTest {
         assertEquals(Collections.emptyList(), carrier.getTrucks());
         assertNull(truck.getCarrier());
     }
-
 }

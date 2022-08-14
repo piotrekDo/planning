@@ -4,12 +4,12 @@ import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 
-public class TautlinerSwitchCarrier implements CoupleCommand {
+class TautlinerSwitchCarrier implements CoupleCommand {
 
     private final CarrierEntity carrier;
     private final TautlinerEntity tautliner;
 
-    public TautlinerSwitchCarrier(CarrierEntity carrier, TautlinerEntity tautliner) {
+    TautlinerSwitchCarrier(CarrierEntity carrier, TautlinerEntity tautliner) {
         this.carrier = carrier;
         this.tautliner = tautliner;
     }

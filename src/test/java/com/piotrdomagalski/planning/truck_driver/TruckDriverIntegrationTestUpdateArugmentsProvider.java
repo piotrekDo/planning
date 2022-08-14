@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.stream.Stream;
 
-public class TruckDriverIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
+class TruckDriverIntegrationTestUpdateArugmentsProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
         return Stream.of(

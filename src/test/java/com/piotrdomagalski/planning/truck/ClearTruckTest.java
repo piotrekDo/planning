@@ -18,9 +18,9 @@ class ClearTruckTest {
     @ParameterizedTest
     @ArgumentsSource(TruckClearTruckArgumentsProvider.class)
     void clearTruckCommand_should_set_null_to_carrier_and_truck_and_driver_and_clean_them_as_well(TruckEntity truck,
-                                                                                           CarrierEntity carrier,
-                                                                                           TruckDriverEntity driver,
-                                                                                           TautlinerEntity tautliner) {
+                                                                                                  CarrierEntity carrier,
+                                                                                                  TruckDriverEntity driver,
+                                                                                                  TautlinerEntity tautliner) {
         //given
         truck.setCarrier(carrier);
         truck.setTruckDriver(driver);

@@ -43,5 +43,4 @@ class RemoveTautlinerFromCarrierTest {
         assertEquals(Collections.emptyList(), carrier.getTautliners());
         assertNull(tautliner.getCarrier());
     }
-
 }

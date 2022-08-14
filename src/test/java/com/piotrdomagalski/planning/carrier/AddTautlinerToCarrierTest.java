@@ -38,5 +38,4 @@ class AddTautlinerToCarrierTest {
         assertEquals(tautliner, carrier.getTautliners().get(0));
         assertEquals(carrier, tautliner.getCarrier());
     }
-
 }
