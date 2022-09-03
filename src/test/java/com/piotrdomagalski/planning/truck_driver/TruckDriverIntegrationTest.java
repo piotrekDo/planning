@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class TruckDriverIntegrationTest {
 
     @Autowired
@@ -93,6 +95,7 @@ class TruckDriverIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteDriverById_should_return_code_200_and_delete_entity() throws Exception {
         //given
         TruckDriverEntity truckDriverEntity = TruckDriverEntity.newTruckDriver("Test Driver", "444-444-444", "ID123456");
@@ -111,6 +114,7 @@ class TruckDriverIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteDriverById_should_return_not_found_when_deleting_by_non_existing_id() throws Exception {
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/drivers/" + 1).contentType(MediaType.APPLICATION_JSON));
@@ -121,6 +125,13 @@ class TruckDriverIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.details", equalTo("No driver found with id: 1")));
+    }
+
+    @Test
+    void deleteDriverById_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/drivers/" + 1).contentType(MediaType.APPLICATION_JSON));
+        perform.andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @ParameterizedTest

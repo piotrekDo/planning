@@ -1,6 +1,7 @@
 package com.piotrdomagalski.planning.truck;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.app_user.AppUserService;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,13 +26,20 @@ import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TruckController.class)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class TruckControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    TruckRestService truckRestService;
+    AppUserService userService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
+
+    @MockBean
+    TruckService truckService;
 
     @Test
     void getTruckByPlates_should_return_code_200_and_response_body_if_such_plates_exists() throws Exception {
@@ -37,13 +47,13 @@ class TruckControllerTest {
         String plates = "ABC1234";
         TruckInfoDTO truck = new TruckInfoDTO(plates, true, "123456", "Test carrier", null, null, null, null, null, null, null);
 
-        Mockito.when(truckRestService.getTruckByPlates(plates)).thenReturn(truck);
+        Mockito.when(truckService.getTruckByPlates(plates)).thenReturn(truck);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get(("/trucks/" + plates)).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(truckRestService).getTruckByPlates(plates);
+        Mockito.verify(truckService).getTruckByPlates(plates);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.truckPlates", equalTo("ABC1234")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.mega", equalTo(true)))
@@ -54,14 +64,14 @@ class TruckControllerTest {
     void getTruckByPlates_should_return_not_found_if_no_such_plates_found() throws Exception {
         //given
         String plates = "ABC1234";
-        Mockito.when(truckRestService.getTruckByPlates(plates)).thenThrow(
+        Mockito.when(truckService.getTruckByPlates(plates)).thenThrow(
                 new NoSuchElementException("No truck found with plates: " + plates));
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/trucks/" + plates).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(truckRestService).getTruckByPlates(plates);
+        Mockito.verify(truckService).getTruckByPlates(plates);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
@@ -74,7 +84,7 @@ class TruckControllerTest {
         String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
         TruckInfoDTO truck = new TruckInfoDTO("AVB5690", true, "123456", "Test carrier", null, null, null, null, null, null, null);
-        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenReturn(truck);
+        Mockito.when(truckService.addNewTruck(carrierSap, newUpdateDTO)).thenReturn(truck);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/trucks/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +96,7 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
+        Mockito.verify(truckService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.truckPlates", equalTo("AVB5690")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.mega", equalTo(true)))
@@ -99,7 +109,7 @@ class TruckControllerTest {
         //given
         String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
-        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
+        Mockito.when(truckService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
                 new NoSuchElementException("No carrier found with sap: " + carrierSap));
 
         //when
@@ -112,7 +122,7 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
+        Mockito.verify(truckService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
@@ -124,7 +134,7 @@ class TruckControllerTest {
         //given
         String carrierSap = "123456";
         TruckNewUpdateDTO newUpdateDTO = new TruckNewUpdateDTO("avb5690", true);
-        Mockito.when(truckRestService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
+        Mockito.when(truckService.addNewTruck(carrierSap, newUpdateDTO)).thenThrow(
                 new IllegalOperationException(String.format("Truck with plates %s already exists!", newUpdateDTO.getTruckPlates()))
         );
 
@@ -138,7 +148,7 @@ class TruckControllerTest {
                                 """));
 
         //then
-        Mockito.verify(truckRestService).addNewTruck(carrierSap, newUpdateDTO);
+        Mockito.verify(truckService).addNewTruck(carrierSap, newUpdateDTO);
         perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))
@@ -161,31 +171,45 @@ class TruckControllerTest {
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.truckPlates").value(containsInAnyOrder(detailsTruckPlates)));
         if (detailsIsMega != null)
             perform.andExpect(MockMvcResultMatchers.jsonPath("$.details.mega").value(containsInAnyOrder(detailsIsMega)));
-        Mockito.verify(truckRestService, Mockito.never()).addNewTruck(Mockito.any(), Mockito.any());
+        Mockito.verify(truckService, Mockito.never()).addNewTruck(Mockito.any(), Mockito.any());
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteTruck_should_return_code_200_when_deleting_by_existing_plates() throws Exception {
         //given
         String truckPlates = "ABCD1234";
         TruckEntity truckEntity = new TruckEntity(12L, truckPlates, false, null, null, null);
-        Mockito.when(truckRestService.deleteTruckByPlates(truckPlates)).thenReturn(truckEntity);
+        Mockito.when(truckService.deleteTruckByPlates(truckPlates)).thenReturn(truckEntity);
 
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/trucks/" + truckPlates).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(truckRestService).deleteTruckByPlates(truckPlates);
+        Mockito.verify(truckService).deleteTruckByPlates(truckPlates);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.truckPlates", equalTo(truckPlates)));
     }
 
     @Test
+    void deleteTruck_byId_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //given
+        String truckPlates = "ABCD1234";
+
+        //when + then
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/trucks/" + truckPlates).contentType(MediaType.APPLICATION_JSON));
+
+        perform.andExpect(MockMvcResultMatchers.status().isForbidden());
+        Mockito.verify(truckService, Mockito.never()).deleteTruckByPlates(Mockito.any());
+    }
+
+    @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteTruck_should_return_not_found_if_deleting_by_non_existing_plates() throws Exception {
         //given
         String truckPlates = "ABCD1234";
-        Mockito.when(truckRestService.deleteTruckByPlates(truckPlates)).thenThrow(
+        Mockito.when(truckService.deleteTruckByPlates(truckPlates)).thenThrow(
                 new NoSuchElementException("No truck found with plates: " + truckPlates)
         );
 
@@ -203,14 +227,14 @@ class TruckControllerTest {
     @ArgumentsSource(TruckControllerUpdateArugmentsProvider.class)
     void updateTruck_should_reutn_conde_200_and_response_body_if_updated(String plates, TruckNewUpdateDTO updateDto, String updateJson, TruckNewUpdateDTO result) throws Exception {
         //given
-        Mockito.when(truckRestService.updateTruck(plates, updateDto)).thenReturn(result);
+        Mockito.when(truckService.updateTruck(plates, updateDto)).thenReturn(result);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/trucks/" + plates).contentType(MediaType.APPLICATION_JSON)
                 .content(updateJson));
 
         //then
-        Mockito.verify(truckRestService).updateTruck(plates, updateDto);
+        Mockito.verify(truckService).updateTruck(plates, updateDto);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.truckPlates", equalTo(result.getTruckPlates())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.mega", equalTo(result.getMega())));
@@ -221,7 +245,7 @@ class TruckControllerTest {
         //given
         String plates = "TRUCK1234";
         TruckNewUpdateDTO updateDTO = new TruckNewUpdateDTO("TEST1234", null);
-        Mockito.when(truckRestService.updateTruck(plates, updateDTO)).thenThrow(
+        Mockito.when(truckService.updateTruck(plates, updateDTO)).thenThrow(
                 new NoSuchElementException("No truck found with plates: " + plates)
         );
 
@@ -234,7 +258,7 @@ class TruckControllerTest {
                         """));
 
         //then
-        Mockito.verify(truckRestService).updateTruck(plates, updateDTO);
+        Mockito.verify(truckService).updateTruck(plates, updateDTO);
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
@@ -247,7 +271,7 @@ class TruckControllerTest {
         //given
         String plates = "TRUCK1234";
         TruckNewUpdateDTO updateDTO = new TruckNewUpdateDTO("TEST1234", null);
-        Mockito.when(truckRestService.updateTruck(plates, updateDTO)).thenThrow(
+        Mockito.when(truckService.updateTruck(plates, updateDTO)).thenThrow(
                 new IllegalOperationException("Truck with provided plates already exists!, plates has to be unique")
         );
 
@@ -260,7 +284,7 @@ class TruckControllerTest {
                         """));
 
         //then
-        Mockito.verify(truckRestService).updateTruck(plates, updateDTO);
+        Mockito.verify(truckService).updateTruck(plates, updateDTO);
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
@@ -276,7 +300,7 @@ class TruckControllerTest {
                 .content(json));
 
         //then
-        Mockito.verify(truckRestService, Mockito.never()).updateTruck(Mockito.any(), Mockito.any());
+        Mockito.verify(truckService, Mockito.never()).updateTruck(Mockito.any(), Mockito.any());
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(code)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo(name)))

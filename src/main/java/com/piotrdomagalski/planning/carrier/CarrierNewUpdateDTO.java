@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.app.DigitsOnly;
+import com.piotrdomagalski.planning.constraint.DigitsOnly;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;

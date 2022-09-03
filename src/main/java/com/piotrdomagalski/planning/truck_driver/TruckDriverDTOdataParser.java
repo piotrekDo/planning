@@ -1,12 +1,12 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-import com.piotrdomagalski.planning.my_utlis.MyStringUtlis;
+import com.piotrdomagalski.planning.utlis.StringUtlis;
 
 public class TruckDriverDTOdataParser {
 
     static String fullNameParser(String input) {
         input = input.replaceAll("( )+", " ");
-        return MyStringUtlis.capitalize(input.trim());
+        return StringUtlis.capitalize(input.trim());
     }
 
     static String telParser(String input) {

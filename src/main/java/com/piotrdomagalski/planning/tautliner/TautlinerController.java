@@ -9,35 +9,35 @@ import java.util.List;
 @RequestMapping("/tautliners")
  class TautlinerController {
 
-    private final TautlinerRestService tautlinerRestService;
+    private final TautlinerService tautlinerService;
 
-     TautlinerController(TautlinerRestService tautlinerRestService) {
-        this.tautlinerRestService = tautlinerRestService;
+     TautlinerController(TautlinerService tautlinerService) {
+        this.tautlinerService = tautlinerService;
     }
 
     @GetMapping
     List<TautlinerInfoDTO> getAllTautliners(@RequestParam(required = false) Boolean isXpo){
-        return tautlinerRestService.getAllTautliners(isXpo);
+        return tautlinerService.getAllTautliners(isXpo);
     }
 
     @GetMapping("/{plates}")
     TautlinerInfoDTO getTautlinerByPlates(@PathVariable String plates) {
-       return tautlinerRestService.getTautlinerByPlates(plates);
+       return tautlinerService.getTautlinerByPlates(plates);
     }
 
     @PostMapping("/{carrierSap}")
     TautlinerInfoDTO addNewTautliner(@PathVariable(required = false) String carrierSap, @RequestBody @Validated(value = AddTautliner.class) TautlinerNewUpdateDTO dto){
-        return tautlinerRestService.addNewTautliner(carrierSap, dto);
+        return tautlinerService.addNewTautliner(carrierSap, dto);
     }
 
     @DeleteMapping("/{plates}")
     TautlinerEntity deleteTautlinerByPlates(@PathVariable String plates){
-        return tautlinerRestService.deleteTautlinerByPlates(plates);
+        return tautlinerService.deleteTautlinerByPlates(plates);
     }
 
     @PutMapping("/{plates}")
     TautlinerNewUpdateDTO updateTautlinerByPlates(@PathVariable String plates, @RequestBody @Validated(value = UpdateTautliner.class) TautlinerNewUpdateDTO dto){
-        return tautlinerRestService.updateTautlinerByPlates(plates, dto);
+        return tautlinerService.updateTautlinerByPlates(plates, dto);
     }
 
 }

@@ -1,7 +1,8 @@
 package com.piotrdomagalski.planning.tautliner;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.app_user.AppUserService;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -26,26 +29,33 @@ import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TautlinerController.class)
+@WithMockUser(username = "Test", authorities = {"USER"})
 class TautlinerControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    TautlinerRestService tautlinerRestService;
+    AppUserService userService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
+
+    @MockBean
+    TautlinerService tautlinerService;
 
     @Test
     void getTautlinerByPlates_should_return_tautliner_entity_if_plates_are_correct() throws Exception {
         //given
         String plates = "ABC1234";
         TautlinerInfoDTO tautliner = new TautlinerInfoDTO(plates, LocalDateTime.of(2022, 11, 11, 0, 0, 0), true, null, null, null);
-        Mockito.when(tautlinerRestService.getTautlinerByPlates(plates)).thenReturn(tautliner);
+        Mockito.when(tautlinerService.getTautlinerByPlates(plates)).thenReturn(tautliner);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get(("/tautliners/" + plates)).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(tautlinerRestService).getTautlinerByPlates(plates);
+        Mockito.verify(tautlinerService).getTautlinerByPlates(plates);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.xpo", equalTo(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tautlinerPlates", equalTo(plates)))
@@ -56,14 +66,14 @@ class TautlinerControllerTest {
     void getTatulinerByPlates_should_return_not_found_if_no_such_plates_found() throws Exception {
         //given
         String plates = "ABC1234";
-        Mockito.when(tautlinerRestService.getTautlinerByPlates(plates)).thenThrow(
+        Mockito.when(tautlinerService.getTautlinerByPlates(plates)).thenThrow(
                 new NoSuchElementException("No tautliner found with plates: " + plates));
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/tautliners/" + plates).contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Mockito.verify(tautlinerRestService).getTautlinerByPlates(plates);
+        Mockito.verify(tautlinerService).getTautlinerByPlates(plates);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
@@ -78,7 +88,7 @@ class TautlinerControllerTest {
         TautlinerEntity tautlinerEntity = new TautlinerEntity(12L, tautliner.getXpo(), tautliner.getTautlinerPlates(), LocalDateTime.of(2022, 11, 10, 0, 0, 0), null, null);
         CarrierEntity carrier = new CarrierEntity(99L, carrierSap, "Test Carrier", "TestLand", 1.2, null, null, List.of(tautlinerEntity));
         TautlinerInfoDTO info = new TautlinerInfoDTO(tautlinerEntity.getTautlinerPlates(), tautlinerEntity.getTechInspection(), tautlinerEntity.getXpo(), carrier.getName(), carrier.getSap(), null);
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenReturn(info);
+        Mockito.when(tautlinerService.addNewTautliner(carrierSap, tautliner)).thenReturn(info);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/tautliners/" + carrierSap).contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +101,7 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
+        Mockito.verify(tautlinerService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.xpo", equalTo(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tautlinerPlates", equalTo("ABC1234")))
@@ -105,7 +115,7 @@ class TautlinerControllerTest {
         //given
         String carrierSap = "123456";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "2022-11-10");
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenThrow(
+        Mockito.when(tautlinerService.addNewTautliner(carrierSap, tautliner)).thenThrow(
                 new NoSuchElementException("No carrier found with sap: " + carrierSap));
 
         //when
@@ -119,7 +129,7 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
+        Mockito.verify(tautlinerService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Not Found")))
@@ -131,7 +141,7 @@ class TautlinerControllerTest {
         //given
         String carrierSap = "123456";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(false, "ABC1234", "2022-11-10");
-        Mockito.when(tautlinerRestService.addNewTautliner(carrierSap, tautliner)).thenThrow(
+        Mockito.when(tautlinerService.addNewTautliner(carrierSap, tautliner)).thenThrow(
                 new IllegalOperationException(String.format("Tautliner with plates %s already exists!", tautliner.getTautlinerPlates()))
         );
 
@@ -146,7 +156,7 @@ class TautlinerControllerTest {
                                 """));
 
         //then
-        Mockito.verify(tautlinerRestService).addNewTautliner(carrierSap, tautliner);
+        Mockito.verify(tautlinerService).addNewTautliner(carrierSap, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("Bad Request")))
@@ -154,11 +164,24 @@ class TautlinerControllerTest {
     }
 
     @Test
+    void deleteTautliner_should_return_code_403_if_attempted_by_not_allowed_user() throws Exception {
+        //given
+        String tautlinerPlates = "ABCD1234";
+
+        //when + then
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/tautliners/" + tautlinerPlates).contentType(MediaType.APPLICATION_JSON));
+
+        perform.andExpect(MockMvcResultMatchers.status().isForbidden());
+        Mockito.verify(tautlinerService, Mockito.never()).deleteTautlinerByPlates(Mockito.any());
+    }
+
+    @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteTautliner_should_return_code_200_when_deleting_by_existing_plates() throws Exception {
         //given
         String tautlinerPlates = "ABCD1234";
         TautlinerEntity tautlinerEntity = new TautlinerEntity(true, tautlinerPlates, null, null, null);
-        Mockito.when(tautlinerRestService.deleteTautlinerByPlates(tautlinerPlates)).thenReturn(tautlinerEntity);
+        Mockito.when(tautlinerService.deleteTautlinerByPlates(tautlinerPlates)).thenReturn(tautlinerEntity);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.delete("/tautliners/" + tautlinerPlates).contentType(MediaType.APPLICATION_JSON));
@@ -166,14 +189,15 @@ class TautlinerControllerTest {
         //then
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tautlinerPlates", equalTo(tautlinerPlates)));
-        Mockito.verify(tautlinerRestService).deleteTautlinerByPlates(tautlinerPlates);
+        Mockito.verify(tautlinerService).deleteTautlinerByPlates(tautlinerPlates);
     }
 
     @Test
+    @WithMockUser(username = "Test", authorities = {"MODERATOR"})
     void deleteTautliner_should_return_not_found_if_deleting_by_non_existing_plates() throws Exception {
         //given
         String tautlinerPlates = "ABCD1234";
-        Mockito.when(tautlinerRestService.deleteTautlinerByPlates(tautlinerPlates)).thenThrow(
+        Mockito.when(tautlinerService.deleteTautlinerByPlates(tautlinerPlates)).thenThrow(
                 new NoSuchElementException("No tautliner found with plates: " + tautlinerPlates)
         );
 
@@ -192,14 +216,14 @@ class TautlinerControllerTest {
     void updateTruck_should_reutn_conde_200_and_response_body_if_updated(TautlinerNewUpdateDTO updateDto, String updateJson, TautlinerNewUpdateDTO result) throws Exception {
         //given
         String plates = "TAUT1234";
-        Mockito.when(tautlinerRestService.updateTautlinerByPlates(plates, updateDto)).thenReturn(result);
+        Mockito.when(tautlinerService.updateTautlinerByPlates(plates, updateDto)).thenReturn(result);
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/tautliners/" + plates).contentType(MediaType.APPLICATION_JSON)
                 .content(updateJson));
 
         //then
-        Mockito.verify(tautlinerRestService).updateTautlinerByPlates(plates, updateDto);
+        Mockito.verify(tautlinerService).updateTautlinerByPlates(plates, updateDto);
         perform.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tautlinerPlates", equalTo(result.getTautlinerPlates())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.techInspection", equalTo(result.getTechInspection())))
@@ -211,7 +235,7 @@ class TautlinerControllerTest {
         //given
         String plates = "TAUT1234";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(true, "TAUT1234", null);
-        Mockito.when(tautlinerRestService.updateTautlinerByPlates(plates, tautliner)).thenThrow(
+        Mockito.when(tautlinerService.updateTautlinerByPlates(plates, tautliner)).thenThrow(
                 new NoSuchElementException("No tautliner found with plates: " + plates)
         );
 
@@ -225,7 +249,7 @@ class TautlinerControllerTest {
                         """));
 
         //then
-        Mockito.verify(tautlinerRestService).updateTautlinerByPlates(plates, tautliner);
+        Mockito.verify(tautlinerService).updateTautlinerByPlates(plates, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(404)))
@@ -238,7 +262,7 @@ class TautlinerControllerTest {
         //given
         String plates = "TAUT1234";
         TautlinerNewUpdateDTO tautliner = new TautlinerNewUpdateDTO(null, "NEW12345", null);
-        Mockito.when(tautlinerRestService.updateTautlinerByPlates(plates, tautliner)).thenThrow(
+        Mockito.when(tautlinerService.updateTautlinerByPlates(plates, tautliner)).thenThrow(
                 new IllegalOperationException(String.format("Tautliner with plates: %s already exists", tautliner.getTautlinerPlates())));
 
 
@@ -251,7 +275,7 @@ class TautlinerControllerTest {
                         """));
 
         //then
-        Mockito.verify(tautlinerRestService).updateTautlinerByPlates(plates, tautliner);
+        Mockito.verify(tautlinerService).updateTautlinerByPlates(plates, tautliner);
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(400)))
@@ -267,7 +291,7 @@ class TautlinerControllerTest {
                 .content(json));
 
         //then
-        Mockito.verify(tautlinerRestService, Mockito.never()).updateTautlinerByPlates(Mockito.any(), Mockito.any());
+        Mockito.verify(tautlinerService, Mockito.never()).updateTautlinerByPlates(Mockito.any(), Mockito.any());
         perform.andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", equalTo(code)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo(name)))

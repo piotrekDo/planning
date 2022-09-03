@@ -1,9 +1,9 @@
 package com.piotrdomagalski.planning.tautliner;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierOperations;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,30 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 class TautlinerRestServiceTest {
 
-    @TestConfiguration
-    static class ReservationTestConfig {
-
-        @Bean
-        TautlinerRestService tautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                                                  TautlinerTransformer transformer, CarrierOperations carrierOperations) {
-            return new TautlinerRestService(tautlinerRepository, carrierRepository, transformer, carrierOperations);
-        }
-    }
-
     @MockBean
     CarrierOperations carrierOperations;
-
     @MockBean
     TautlinerRepository tautlinerRepository;
-
     @MockBean
     CarrierRepository carrierRepository;
-
     @MockBean
     TautlinerTransformer transformer;
-
     @Autowired
-    TautlinerRestService tautlinerRestService;
+    TautlinerService tautlinerRestService;
 
     @Test
     void getAllTautliners_should_return_an_empty_list_if_no_tatuliners_found() {
@@ -166,7 +152,7 @@ class TautlinerRestServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"das", "12 2345", "ds434", "12BNSA"})
-    void addNewTautliner_should_throw_an_exception_when_provided_carrierSap_is_not_valid(String carrierSap){
+    void addNewTautliner_should_throw_an_exception_when_provided_carrierSap_is_not_valid(String carrierSap) {
         //given
         TautlinerNewUpdateDTO tautlinerUpdate = new TautlinerNewUpdateDTO(true, "ABC1234", "10-10-2022");
         Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautlinerUpdate.getTautlinerPlates())).thenReturn(Optional.empty());
@@ -176,7 +162,6 @@ class TautlinerRestServiceTest {
         assertEquals(carrierSap + " is not a valid SAP number", exception.getMessage());
         Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
     }
-
 
     @ParameterizedTest
     @ArgumentsSource(TautlinerAddArgumentsProvider.class)
@@ -282,6 +267,16 @@ class TautlinerRestServiceTest {
         Mockito.verify(tautlinerRepository).save(foundById);
         Mockito.verify(transformer).entityToNewUpdateDTO(foundById);
 
+    }
+
+    @TestConfiguration
+    static class ReservationTestConfig {
+
+        @Bean
+        TautlinerService tautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
+                                              TautlinerTransformer transformer, CarrierOperations carrierOperations) {
+            return new TautlinerService(tautlinerRepository, carrierRepository, transformer, carrierOperations);
+        }
     }
 
 }

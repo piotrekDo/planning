@@ -26,10 +26,10 @@ class TruckDriverRestServiceTest {
     static class ReservationTestConfig {
 
         @Bean
-        TruckDriverRestService tautlinerRestService(TruckDriverRepository truckDriverRepository,
-                                                    CarrierRepository carrierRepository, TruckDriverTransformer transformer,
-                                                    CarrierOperations carrierOperations) {
-            return new TruckDriverRestService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
+        TruckDriverService tautlinerRestService(TruckDriverRepository truckDriverRepository,
+                                                CarrierRepository carrierRepository, TruckDriverTransformer transformer,
+                                                CarrierOperations carrierOperations) {
+            return new TruckDriverService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
         }
     }
 
@@ -46,7 +46,7 @@ class TruckDriverRestServiceTest {
     CarrierOperations carrierOperations;
 
     @Autowired
-    TruckDriverRestService truckDriverRestService;
+    TruckDriverService truckDriverRestService;
 
 
     @Test

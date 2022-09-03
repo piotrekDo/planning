@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.app.IllegalOperationException;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
 class AddTruckToCarrier implements CarrierCommand {

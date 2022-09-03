@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.app;
 
+import com.piotrdomagalski.planning.app_user.*;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
@@ -8,6 +9,7 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck.TruckRepository;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -21,18 +23,43 @@ public class Initializer {
     private final TruckRepository truckRepository;
     private final TautlinerRepository tautlinerRepository;
     private final TruckDriverRepository truckDriverRepository;
+    private final AppUserService userService;
+    private final AppUserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public Initializer(CarrierRepository carrierRepository, TruckRepository truckRepository,
-                       TautlinerRepository tautlinerRepository, TruckDriverRepository truckDriverRepository) {
+                       TautlinerRepository tautlinerRepository, TruckDriverRepository truckDriverRepository,
+                       AppUserService userService, AppUserRepository userRepository,
+                       UserRoleRepository userRoleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.carrierRepository = carrierRepository;
         this.truckRepository = truckRepository;
         this.tautlinerRepository = tautlinerRepository;
         this.truckDriverRepository = truckDriverRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     @PostConstruct
     public void run() {
+        UserRole user = new UserRole("USER");
+        UserRole moderator = new UserRole("MODERATOR");
+        UserRole admin = new UserRole("ADMIN");
+        userRoleRepository.save(user);
+        userRoleRepository.save(moderator);
+        userRoleRepository.save(admin);
+
+        AppUser appAdmin = new AppUser("admin1", "piotr.domagalski@yahoo.com", "admin");
+        appAdmin.setUserPassword(passwordEncoder.encode(appAdmin.getUserPassword()));
+        userRepository.save(appAdmin);
+
+        userService.addRoleToUser(new RoleToUserForm("admin1", "USER"));
+        userService.addRoleToUser(new RoleToUserForm("admin1", "MODERATOR"));
+        userService.addRoleToUser(new RoleToUserForm("admin1", "ADMIN"));
+
+
         CarrierEntity test_carrier = CarrierEntity.newCarrier("123456", "Test Carrier", "Testland", 1.2);
         carrierRepository.save(test_carrier);
 
