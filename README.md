@@ -7,56 +7,185 @@ Tautliners can be shared between different carriers if being organization's prop
 database. Future realises will deliver security, enabling user login and authentication to all actions. Next I wish to
 implement logging service showing all coupling actions done and by whom.
 
+> *Security was provided since update 2.0.0*
+
 All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 
 > **Please familiarize with Swagger at its standard end-point**
->> */swagger-ui/*
+>> */swagger-ui/*  
+> > *at this point swagger offers authorization, however bearer token should be obtained with another http client e.g. Postman*
 
 ## Version Log
 
-- 1.0.1. Posting new drivers and trucks requires now carrier's SAP instead of carrier's ID. Plus minor fixes.
-- 1.0.0. Initial version introducing basic CRUD operations and coupling trucks with drivers and tautliners.
+- 2.0.0 Spring security added. Login required to use application.
+- 1.0.1 Posting new drivers and trucks requires now carrier's SAP instead of carrier's ID. Plus minor fixes.
+- 1.0.0 Initial version introducing basic CRUD operations and coupling trucks with drivers and tautliners.
+
+## Security
+
+Since update 2.0.0 Spring Security was introduced. Security is handled by JWT tokens obtained at login. Access tokens
+are valid for 10 hours, <u>**refresh tokens**</u> are generated as well, but <u>**not supported yet**</u>
+> All user's passwords are encrypted.  
+> Username must be unique  
+> User email must be unique
+> All new users are registered with USER as default role. Different roles can be added by ADMIN.
+
+Authorization is based on roles. Currently, three roles exists:
+
+- USER -has permission to view, edit and add new data, except other users.
+- MODERATOR -has permission to delete data except other users
+- ADMIN -has permission to register new users, delete users and manage their roles.
+
+Due to data nature of present application, open registration of new users is not allowed. Only ADMIN users are allowed
+to do so. Program is pre-configured with one ADMIN user. Newly created account will have generated password, sent to
+user email, password is not known to creator. We urge to change password as soon as account was generated!
+
+### Login
+
+#### */login*
+
+> is the default end-point for login. Requires credentials of username and password
+
+**post request**
+
+        {
+        "username" : "string",
+        "userPassword" : "string"
+        }
+
+If everything went well, API will return JSON containing tokens:
+
+        {
+            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJyb2xlcyI6WyJVU0VSIiwiTU9ERVJBVE9SIiwiQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoxNjYyMjc3MTk1fQ.GH78rE6tSJ2vwjVH8sjAywh6irUxsONWG_cDR5LlGv4",
+            "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjE2NjIzMjM5OTV9.4loHgX97dwGuupyug3T2TTM5wM-PrrLuzOZB6pZDypw"
+        }
+
+### Adding users
+
+#### */users/save*
+
+> allowed only to ADMIN users. Requires username and user email. Username and email mus be unique.
+
+**post request**
+
+        {
+            "userEmail": "string",
+            "username": "string"
+        }
+
+### Delete user
+
+#### */users/delete-user*
+
+> allowed only to ADMIN users. Requires username. Use with caution.
+
+**delete request**
+
+        {
+            "username": "string"
+        }
+
+### Adding new role to user
+
+#### */users/role/add-to-user*
+
+> allowed only to ADMIN users. Requires username and role name.
+
+**post request**
+
+        {
+            "roleName": "string",
+            "username": "string"
+        }
+
+### Removing role from user
+
+#### */users/role/remove-from-user*
+
+> allowed only to ADMIN users. USER role cannot be removed. Requires username and role.
+
+**post request**
+
+        {
+            "roleName": "string",
+            "username": "string"
+        } 
+
+### Resetting user password
+
+#### */users/password-reset-request*
+
+Password reset requires providing credentials in form of username and user mail.
+
+**post request**
+
+        {
+            "email": "string",
+            "username": "string"
+        }
+
+Password reset token is then sent to user mail, its required to rest password. Token is valid for 30 minutes. After
+obtaining token send **post request**
+
+#### */users/password-change*
+
+**post request**
+
+        {
+            "changePasswordToken": "string",
+            "newPassword": "string",
+            "username": "string"
+        }
 
 ## Getting data
 
 ### Carrier
 
-*/carriers*
+#### */carriers*
+
 > is the default end-point for getting full data of carriers and their assets.
 
-*/carriers/all-short*
+#### */carriers/all-short*
+
 > allows to get handy information about carriers themselves without collecting full assets data.
 
-*/carriers/sap*
+#### */carriers/sap*
+
 > allows to get carrier by its SAP number which is unique.
 
 ### Truck
 
-*/trucks*
+#### */trucks*
+
 > is the default end-point for getting full list of trucks available at all carriers.
 
-*/trucks/plates*
+#### */trucks/plates*
+
 > allows to get information about specific truck by its plate numbers.
 
 ### Tautliner
 
-*/tautliners*
+#### */tautliners*
+
 > is the default end-point for getting full list of tautliners available at all carriers and within organization.
 > Additional parameter can be used to get only organization's trucks:
 >> /tautliners?isXpo=true </br>
 >
 > parameter is false by default.
 
-*/tautliners/plates*
+#### */tautliners/plates*
+
 > allows to get information about specific truck by its plate numbers.
 
 ### Truck driver
 
-*/drivers*
+#### */drivers*
+
 > is the default end-point for getting full list of drivers available at all carriers.
 
-*/drivers/id*
+#### */drivers/id*
+
 > allows to get information about specific driver by **his database id**. Database Id should not be mistaken with
 > id document such as a passport!
 
