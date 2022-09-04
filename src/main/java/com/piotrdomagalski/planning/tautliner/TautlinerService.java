@@ -2,7 +2,7 @@ package com.piotrdomagalski.planning.tautliner;
 
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -19,10 +19,10 @@ class TautlinerService {
     private final TautlinerRepository tautlinerRepository;
     private final CarrierRepository carrierRepository;
     private final TautlinerTransformer transformer;
-    private final CarrierOperations carrierOperations;
+    private final CarrierActions carrierOperations;
 
     TautlinerService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                     TautlinerTransformer transformer, CarrierOperations carrierOperations) {
+                     TautlinerTransformer transformer, CarrierActions carrierOperations) {
         this.tautlinerRepository = tautlinerRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
@@ -78,7 +78,7 @@ class TautlinerService {
     TautlinerEntity deleteTautlinerByPlates(String plates) {
         TautlinerEntity tautlinerByPlates = tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)
                 .orElseThrow(() -> new NoSuchElementException("No tautliner found with plates: " + plates));
-        new ClearTautliner(tautlinerByPlates).execute();
+        new ClearTautlinerAction(tautlinerByPlates).execute();
         tautlinerRepository.delete(tautlinerByPlates);
         return tautlinerByPlates;
     }

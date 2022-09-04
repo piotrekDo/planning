@@ -26,7 +26,7 @@ class ClearTruckDriverTest {
         carrier.getDrivers().add(driver);
 
         //when
-        boolean result = new ClearTruckDriver(driver).execute();
+        boolean result = new ClearTruckDriverAction(driver).execute();
 
         //then
         assertTrue(result);

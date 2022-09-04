@@ -1,14 +1,10 @@
 package com.piotrdomagalski.planning.tautliner;
 
-public class ClearTautliner {
+public class ClearTautlinerAction {
 
     private TautlinerEntity tautliner;
 
-    public ClearTautliner(TautlinerEntity tautliner) {
-        this.tautliner = tautliner;
-    }
-
-    public void setTautliner(TautlinerEntity tautliner) {
+    public ClearTautlinerAction(TautlinerEntity tautliner) {
         this.tautliner = tautliner;
     }
 

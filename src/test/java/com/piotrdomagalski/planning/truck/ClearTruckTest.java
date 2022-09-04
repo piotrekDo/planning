@@ -30,7 +30,7 @@ class ClearTruckTest {
         tautliner.setTruck(truck);
 
         //when
-        boolean result = new ClearTruck(truck).execute();
+        boolean result = new ClearTruckAction(truck).execute();
 
         //then
         assertTrue(result);

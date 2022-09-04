@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.truck;
 
 import com.piotrdomagalski.planning.error.IllegalOperationException;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ class TruckRestServiceTest {
 
         @Bean
         TruckService truckRestService(TruckRepository truckRepository, CarrierRepository carrierRepository,
-                                      TruckTransformer transformer, CarrierOperations carrierOperations) {
+                                      TruckTransformer transformer, CarrierActions carrierOperations) {
             return new TruckService(truckRepository, carrierRepository, transformer, carrierOperations);
         }
     }
@@ -38,7 +38,7 @@ class TruckRestServiceTest {
     TruckService truckRestService;
 
     @MockBean
-    CarrierOperations carrierOperations;
+    CarrierActions carrierOperations;
 
     @MockBean
     TruckTransformer transformer;

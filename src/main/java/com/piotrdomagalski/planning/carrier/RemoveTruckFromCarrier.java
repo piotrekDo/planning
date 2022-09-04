@@ -1,6 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.truck.ClearTruck;
+import com.piotrdomagalski.planning.truck.ClearTruckAction;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
 import java.util.NoSuchElementException;
@@ -26,7 +26,7 @@ class RemoveTruckFromCarrier implements CarrierCommand {
                 () -> new NoSuchElementException(String.format("Truck with plates: %s doesn't exist at carrier %s",
                         truckPlates, carrier.getSap())));
         try {
-            new ClearTruck(truckEntity).execute();
+            new ClearTruckAction(truckEntity).execute();
         } catch (Exception e) {
             e.printStackTrace();
             return false;

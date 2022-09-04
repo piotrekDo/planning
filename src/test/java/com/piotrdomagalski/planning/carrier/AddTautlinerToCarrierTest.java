@@ -19,7 +19,7 @@ class AddTautlinerToCarrierTest {
         //given
         TautlinerEntity tautliner = new TautlinerEntity(69L, true, "TAUT321", LocalDateTime.now(), new CarrierEntity(), null);
         //when + then
-        assertThrows(IllegalOperationException.class, () -> new AddTautlinerToCarrier(new CarrierEntity(), tautliner).execute());
+        assertThrows(IllegalOperationException.class, () -> new AddTautlinerToCarrierAction(new CarrierEntity(), tautliner).execute());
     }
 
     @Test
@@ -30,7 +30,7 @@ class AddTautlinerToCarrierTest {
         TautlinerEntity tautliner = new TautlinerEntity(69L, true, "TAUT321", LocalDateTime.now(), null, null);
 
         //when
-        boolean result = new AddTautlinerToCarrier(carrier, tautliner).execute();
+        boolean result = new AddTautlinerToCarrierAction(carrier, tautliner).execute();
 
         //then
         assertTrue(result);

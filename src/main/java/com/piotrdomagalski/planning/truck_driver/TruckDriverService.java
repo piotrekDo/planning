@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.truck_driver;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -17,9 +17,9 @@ class TruckDriverService {
     private final TruckDriverRepository truckDriverRepository;
     private final CarrierRepository carrierRepository;
     private final TruckDriverTransformer transformer;
-    private final CarrierOperations carrierOperations;
+    private final CarrierActions carrierOperations;
 
-    TruckDriverService(TruckDriverRepository truckDriverRepository, CarrierRepository carrierRepository, TruckDriverTransformer transformer, CarrierOperations carrierOperations) {
+    TruckDriverService(TruckDriverRepository truckDriverRepository, CarrierRepository carrierRepository, TruckDriverTransformer transformer, CarrierActions carrierOperations) {
         this.truckDriverRepository = truckDriverRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
@@ -47,7 +47,7 @@ class TruckDriverService {
     TruckDriverEntity deleteTruckDriverById(Long id) {
         TruckDriverEntity truckDriverById = truckDriverRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("No driver found with id: " + id));
-        new ClearTruckDriver(truckDriverById).execute();
+        new ClearTruckDriverAction(truckDriverById).execute();
         truckDriverRepository.delete(truckDriverById);
         return truckDriverById;
     }

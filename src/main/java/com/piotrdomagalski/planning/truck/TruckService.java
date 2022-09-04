@@ -2,7 +2,7 @@ package com.piotrdomagalski.planning.truck;
 
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,9 +17,9 @@ class TruckService {
     private final TruckRepository truckRepository;
     private final CarrierRepository carrierRepository;
     private final TruckTransformer transformer;
-    private final CarrierOperations carrierOperations;
+    private final CarrierActions carrierOperations;
 
-    TruckService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierOperations carrierOperations) {
+    TruckService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierActions carrierOperations) {
         this.truckRepository = truckRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
@@ -56,7 +56,7 @@ class TruckService {
     TruckEntity deleteTruckByPlates(String plates) {
         TruckEntity truckByPlates = truckRepository.findByTruckPlatesIgnoreCase(plates).orElseThrow(() ->
                 new NoSuchElementException("No truck found with plates: " + plates));
-        new ClearTruck(truckByPlates).execute();
+        new ClearTruckAction(truckByPlates).execute();
         truckRepository.delete(truckByPlates);
         return truckByPlates;
     }

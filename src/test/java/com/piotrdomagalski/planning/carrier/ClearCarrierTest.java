@@ -25,7 +25,7 @@ class ClearCarrierTest {
         TruckEntity truck = carrier.getTrucks().get(0);
 
         //when
-        boolean result = new ClearCarrier(carrier).execute();
+        boolean result = new ClearCarrierAction(carrier).execute();
 
         //then
         assertTrue(result);

@@ -6,11 +6,11 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
 import java.util.Iterator;
 
- class ClearCarrier implements CarrierCommand {
+ class ClearCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;
 
-     ClearCarrier(CarrierEntity carrier) {
+     ClearCarrierAction(CarrierEntity carrier) {
         this.carrier = carrier;
     }
 

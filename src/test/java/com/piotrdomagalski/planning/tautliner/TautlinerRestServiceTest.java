@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.tautliner;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
-import com.piotrdomagalski.planning.carrier.CarrierOperations;
+import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TautlinerRestServiceTest {
 
     @MockBean
-    CarrierOperations carrierOperations;
+    CarrierActions carrierOperations;
     @MockBean
     TautlinerRepository tautlinerRepository;
     @MockBean
@@ -274,7 +274,7 @@ class TautlinerRestServiceTest {
 
         @Bean
         TautlinerService tautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                                              TautlinerTransformer transformer, CarrierOperations carrierOperations) {
+                                              TautlinerTransformer transformer, CarrierActions carrierOperations) {
             return new TautlinerService(tautlinerRepository, carrierRepository, transformer, carrierOperations);
         }
     }

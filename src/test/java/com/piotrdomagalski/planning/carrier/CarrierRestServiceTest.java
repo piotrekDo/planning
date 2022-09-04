@@ -28,7 +28,7 @@ class CarrierRestServiceTest {
     @MockBean
     CarrierRepository carrierRepository;
     @MockBean
-    CarrierOperations carrierOperations;
+    CarrierActions carrierOperations;
     @MockBean
     CarrierTransformer transformer;
     @MockBean
@@ -219,7 +219,7 @@ class CarrierRestServiceTest {
     static class CarrierServiceTestingConfiguration {
 
         @Bean
-        CarrierService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, CarrierOperations carrierOperations,
+        CarrierService carrierRestService(CarrierRepository carrierRepository, CarrierTransformer transformer, CarrierActions carrierOperations,
                                           TruckRepository truckRepository, TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
             return new CarrierService(carrierRepository, transformer, carrierOperations, truckRepository, driverRepository, tautlinerRepository);
         }

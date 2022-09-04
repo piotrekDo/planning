@@ -1,14 +1,10 @@
 package com.piotrdomagalski.planning.truck;
 
-public class ClearTruck {
+public class ClearTruckAction {
 
-    private TruckEntity truck;
+    private final TruckEntity truck;
 
-    public ClearTruck(TruckEntity truck) {
-        this.truck = truck;
-    }
-
-    public void setTruck(TruckEntity truck) {
+    public ClearTruckAction(TruckEntity truck) {
         this.truck = truck;
     }
 

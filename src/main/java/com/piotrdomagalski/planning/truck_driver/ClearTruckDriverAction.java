@@ -1,14 +1,10 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-public class ClearTruckDriver {
+public class ClearTruckDriverAction {
 
     private TruckDriverEntity driver;
 
-    public ClearTruckDriver(TruckDriverEntity driver) {
-        this.driver = driver;
-    }
-
-    public void setDriver(TruckDriverEntity driver) {
+    public ClearTruckDriverAction(TruckDriverEntity driver) {
         this.driver = driver;
     }
 

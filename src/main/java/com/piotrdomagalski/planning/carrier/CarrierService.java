@@ -16,13 +16,13 @@ class CarrierService {
 
     private final CarrierRepository carrierRepository;
     private final CarrierTransformer transformer;
-    private final CarrierOperations carrierOperations;
+    private final CarrierActions carrierOperations;
     private final TruckRepository truckRepository;
     private final TruckDriverRepository driverRepository;
     private final TautlinerRepository tautlinerRepository;
 
     public CarrierService(CarrierRepository carrierRepository, CarrierTransformer transformer,
-                          CarrierOperations carrierOperations, TruckRepository truckRepository,
+                          CarrierActions carrierOperations, TruckRepository truckRepository,
                           TruckDriverRepository driverRepository, TautlinerRepository tautlinerRepository) {
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;

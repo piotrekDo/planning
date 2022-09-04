@@ -1,17 +1,17 @@
 package com.piotrdomagalski.planning.carrier;
 
-import com.piotrdomagalski.planning.truck_driver.ClearTruckDriver;
+import com.piotrdomagalski.planning.truck_driver.ClearTruckDriverAction;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-class RemoveTruckDriverFromCarrier implements CarrierCommand {
+class RemoveTruckDriverFromCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;
     private Long driverId;
 
-    RemoveTruckDriverFromCarrier(CarrierEntity carrier, Long driverId) {
+    RemoveTruckDriverFromCarrierAction(CarrierEntity carrier, Long driverId) {
         this.carrier = carrier;
         this.driverId = driverId;
     }
@@ -27,7 +27,7 @@ class RemoveTruckDriverFromCarrier implements CarrierCommand {
                         driverId, carrier.getSap())));
 
         try {
-            new ClearTruckDriver(truckDriverEntity).execute();
+            new ClearTruckDriverAction(truckDriverEntity).execute();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
