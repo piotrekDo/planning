@@ -1,7 +1,7 @@
 package com.piotrdomagalski.planning.coupling_actions;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
@@ -17,6 +17,21 @@ class CoupleTruckWithTautliner implements CoupleCommand {
 
     @Override
     public boolean couple() {
+        if (tautliner == null) {
+            if (truck.getTautliner() != null)
+                truck.getTautliner().setTruck(null);
+            truck.setTautliner(null);
+            return true;
+        }
+
+        if (truck == null) {
+            if (tautliner.getTruck() != null)
+                tautliner.getTruck().setTautliner(null);
+            tautliner.setTruck(null);
+            return true;
+        }
+
+
         CarrierEntity tautCarrier = tautliner.getCarrier();
         CarrierEntity truckCarrier = truck.getCarrier();
         if (!tautliner.getXpo() && tautCarrier != null && !tautCarrier.getSap().equals(truckCarrier.getSap()))

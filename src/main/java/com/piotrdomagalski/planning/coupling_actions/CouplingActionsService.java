@@ -33,24 +33,47 @@ class CouplingActionsService {
     }
 
     TruckDriverCouple coupleTruckDriver(TruckDriverCouple couple) {
-        TruckDriverEntity driver = truckDriverRepository.findById(couple.getDriver()).orElseThrow(() ->
-                new NoSuchElementException("No driver found with id: " + couple.getDriver()));
-        TruckEntity truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
-                new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
+        TruckDriverEntity driver = null;
+        TruckEntity truck = null;
+
+        if (couple.getDriver() != null) {
+            driver = truckDriverRepository.findById(couple.getDriver()).orElseThrow(() ->
+                    new NoSuchElementException("No driver found with id: " + couple.getDriver()));
+        }
+        if (couple.getTruck() != null) {
+            truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
+                    new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
+        }
+
         couplingActions.coupleTruckWithDriver(driver, truck);
-        truckDriverRepository.save(driver);
-        truckRepository.save(truck);
+
+        if (driver != null)
+            truckDriverRepository.save(driver);
+        if (truck != null)
+            truckRepository.save(truck);
+
         return couple;
     }
 
     TruckTautlinerCouple coupleTruckTautliner(TruckTautlinerCouple couple) {
-        TruckEntity truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
-                new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
-        TautlinerEntity tautliner = tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
-                new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner()));
+        TruckEntity truck = null;
+        TautlinerEntity tautliner = null;
+
+        if (couple.getTruck() != null) {
+            truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
+                    new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
+        }
+        if (couple.getTautliner() != null) {
+            tautliner = tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
+                    new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner()));
+        }
+
         couplingActions.coupleTruckWithTautliner(truck, tautliner);
-        truckRepository.save(truck);
-        tautlinerRepository.save(tautliner);
+
+        if (truck != null)
+            truckRepository.save(truck);
+        if (tautliner != null)
+            tautlinerRepository.save(tautliner);
         return couple;
     }
 

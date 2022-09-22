@@ -16,19 +16,23 @@ class CoupleTruckWithDriver implements CoupleCommand {
 
     @Override
     public boolean couple() {
-        if (!driver.getCarrier().equals(truck.getCarrier()))
+        if (driver != null && truck != null && !driver.getCarrier().equals(truck.getCarrier()))
             throw new IllegalOperationException("Truck and driver must have the same carrier!");
 
         try {
-            if (driver.getTruck() != null) {
+            if (driver != null && driver.getTruck() != null) {
                 driver.getTruck().setTruckDriver(null);
             }
-            driver.setTruck(truck);
 
-            if (truck.getTruckDriver() != null) {
+            if (driver != null)
+                driver.setTruck(truck);
+
+            if (truck != null && truck.getTruckDriver() != null) {
                 truck.getTruckDriver().setTruck(null);
             }
-            truck.setTruckDriver(driver);
+
+            if (truck != null)
+                truck.setTruckDriver(driver);
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalOperationException(String.format("Could not couple truck: %s with driver id: %s", truck.getTruckPlates(), driver.getId()));

@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = PlanningApplication.class)
@@ -181,6 +182,124 @@ class CouplingIntegrationTest {
         TautlinerEntity tautlinerEntity = tautlinerRepository.findByTautlinerPlatesIgnoreCase("TAUT1234").get();
         assertEquals(carrierEntity.getSap(), tautlinerEntity.getCarrier().getSap());
         assertEquals(tautlinerEntity.getTautlinerPlates(), carrierEntity.getTautliners().get(0).getTautlinerPlates());
+    }
+
+    @Test
+    void coupleTautlinerWithDriver_should_return_200_and_set_driver_to_null_if_only_truck_was_given() throws Exception {
+        //given
+        CarrierEntity carrier = CarrierEntity.newCarrier("123456", "Test Trans", "Testland", 1.2);
+        carrierRepository.save(carrier);
+        TruckEntity truck = TruckEntity.newTruck("TRUCK1234", true);
+        truck.setCarrier(carrier);
+        truckRepository.save(truck);
+        TruckDriverEntity driver = TruckDriverEntity.newTruckDriver("Test Driver", "555-555-555", "ID123446");
+        driver.setCarrier(carrier);
+        truckDriverRepository.save(driver);
+        driver.setTruck(truck);
+        truck.setTruckDriver(driver);
+        truckRepository.save(truck);
+        truckDriverRepository.save(driver);
+
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/couple/truck-driver").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "truck": "TRUCK1234"
+                        }  
+                        """));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isOk());
+        TruckEntity truckEntity = truckRepository.findByTruckPlatesIgnoreCase("TRUCK1234").get();
+        TruckDriverEntity truckDriverEntity = truckDriverRepository.findById(3L).get();
+        assertNull(truckEntity.getTruckDriver());
+        assertNull(truckDriverEntity.getTruck());
+    }
+
+    @Test
+    void coupleTruckWithDriver_should_return_200_and_set_truck_to_null_if_only_driver_was_given() throws Exception {
+        //given
+        CarrierEntity carrier = CarrierEntity.newCarrier("123456", "Test Trans", "Testland", 1.2);
+        carrierRepository.save(carrier);
+        TruckEntity truck = TruckEntity.newTruck("TRUCK1234", true);
+        truck.setCarrier(carrier);
+        truckRepository.save(truck);
+        TruckDriverEntity driver = TruckDriverEntity.newTruckDriver("Test Driver", "555-555-555", "ID123446");
+        driver.setCarrier(carrier);
+        truckDriverRepository.save(driver);
+        driver.setTruck(truck);
+        truck.setTruckDriver(driver);
+        truckRepository.save(truck);
+        truckDriverRepository.save(driver);
+
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/couple/truck-driver").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "driver": 3
+                        }  
+                        """));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isOk());
+        TruckEntity truckEntity = truckRepository.findByTruckPlatesIgnoreCase("TRUCK1234").get();
+        TruckDriverEntity truckDriverEntity = truckDriverRepository.findById(3L).get();
+        assertNull(truckEntity.getTruckDriver());
+        assertNull(truckDriverEntity.getTruck());
+    }
+
+    @Test
+    void coupleTruckWithTautliner_should_return_code_200_and_set_tautliner_to_null_if_truck_only_was_given() throws Exception {
+        //given
+        TruckEntity truck = TruckEntity.newTruck("TRUCK1234", true);
+        TautlinerEntity tautliner = TautlinerEntity.newTautliner(true, "TAUT1234", LocalDateTime.of(2022, 10, 10, 0, 0, 0));
+        truckRepository.save(truck);
+        tautlinerRepository.save(tautliner);
+        truck.setTautliner(tautliner);
+        tautliner.setTruck(truck);
+        truckRepository.save(truck);
+        tautlinerRepository.save(tautliner);
+
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/couple/truck-tautliner").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "truck": "TRUCK1234"
+                        }
+                        """));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isOk());
+        TruckEntity truckEntity = truckRepository.findByTruckPlatesIgnoreCase("TRUCK1234").get();
+        TautlinerEntity tautlinerEntity = tautlinerRepository.findByTautlinerPlatesIgnoreCase("TAUT1234").get();
+        assertNull(truckEntity.getTautliner());
+        assertNull(tautlinerEntity.getTruck());
+    }
+
+    @Test
+    void coupleTruckWithTautliner_should_return_code_200_and_set_tautliner_to_null_if_tautliner_only_was_given() throws Exception {
+        //given
+        TruckEntity truck = TruckEntity.newTruck("TRUCK1234", true);
+        TautlinerEntity tautliner = TautlinerEntity.newTautliner(true, "TAUT1234", LocalDateTime.of(2022, 10, 10, 0, 0, 0));
+        truckRepository.save(truck);
+        tautlinerRepository.save(tautliner);
+        truck.setTautliner(tautliner);
+        tautliner.setTruck(truck);
+        truckRepository.save(truck);
+        tautlinerRepository.save(tautliner);
+
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.put("/couple/truck-tautliner").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "tautliner": "TAUT1234"
+                        }
+                        """));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isOk());
+        TruckEntity truckEntity = truckRepository.findByTruckPlatesIgnoreCase("TRUCK1234").get();
+        TautlinerEntity tautlinerEntity = tautlinerRepository.findByTautlinerPlatesIgnoreCase("TAUT1234").get();
+        assertNull(truckEntity.getTautliner());
+        assertNull(tautlinerEntity.getTruck());
     }
 
 }
