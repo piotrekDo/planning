@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
@@ -41,19 +42,19 @@ class CarrierRestServiceTest {
     @Test
     void getAllCarriers_should_return_an_empty_list_when_no_carriers_are_present() {
         //when
-        List<CarrierFullIDto> result = carrierService.getAllCarriers();
+        Page<CarrierFullIDto> result = carrierService.getAllCarriers(0, 10);
 
         //then
-        assertEquals(Collections.emptyList(), result);
+        assertEquals(Page.empty(), result);
     }
 
     @Test
-    void getCarriersShortInfo_should_return_an_empty_list_when_no_carriers_are_present() {
+    void getCarriersShortInfo_should_return_an_empty_page_when_no_carriers_are_present() {
         //when
-        List<CarrierShortInfoDTO> result = carrierService.getCarriersShortInfo();
+        Page<CarrierShortInfoDTO> result = carrierService.getCarriersShortInfo(0, 10);
 
         //then
-        assertEquals(Collections.emptyList(), result);
+        assertEquals(Page.empty(), result);
     }
 
     @Test

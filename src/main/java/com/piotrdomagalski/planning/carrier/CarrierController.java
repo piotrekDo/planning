@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.carrier;
 
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +17,15 @@ class CarrierController {
     }
 
     @GetMapping
-    List<CarrierFullIDto> getAllCarriersFull() {
-        return carrierService.getAllCarriers();
+    Page<CarrierFullIDto> getAllCarriersFull(@RequestParam(required = false) Integer page,
+                                             @RequestParam(required = false) Integer size) {
+        return carrierService.getAllCarriers(page, size);
     }
 
     @GetMapping("/all-short")
-    List<CarrierShortInfoDTO> getAllCarriersShort() {
-        return carrierService.getCarriersShortInfo();
+    Page<CarrierShortInfoDTO> getAllCarriersShort(@RequestParam(required = false) Integer page,
+                                                  @RequestParam(required = false) Integer size) {
+        return carrierService.getCarriersShortInfo(page, size);
     }
 
     @GetMapping("/{sap}")

@@ -4,12 +4,16 @@ import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckRepository;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
+import static com.piotrdomagalski.planning.app.ConfigurationLibrary.CARRIER_RESULT_PER_PAGE;
 
 @Service
 class CarrierService {
@@ -32,16 +36,21 @@ class CarrierService {
         this.tautlinerRepository = tautlinerRepository;
     }
 
-    List<CarrierFullIDto> getAllCarriers() {
-        return carrierRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
-                .map(transformer::toCarrierFullIDto)
-                .collect(Collectors.toList());
+    Page<CarrierFullIDto> getAllCarriers(Integer page, Integer size) {
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? CARRIER_RESULT_PER_PAGE : size;
+        Page<CarrierEntity> results = carrierRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name")));
+
+        return results == null ? Page.empty() : results.map(transformer::toCarrierFullIDto);
     }
 
-    List<CarrierShortInfoDTO> getCarriersShortInfo() {
-        return carrierRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
-                .map(transformer::entityToShortInfoDto)
-                .collect(Collectors.toList());
+    Page<CarrierShortInfoDTO> getCarriersShortInfo(Integer page, Integer size) {
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? CARRIER_RESULT_PER_PAGE : size;
+        Page<CarrierEntity> results = carrierRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name")));
+
+        return results == null ? Page.empty() : results.map(transformer::entityToShortInfoDto);
+
     }
 
     CarrierFullIDto getCarrierById(Long id) {

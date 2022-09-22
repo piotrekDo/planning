@@ -18,6 +18,8 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 ## Version Log
 
+- 3.0.0 Pagination added, reworked response upon login, tokens are now valid for 12hours, validation for trucks/
+  tautliners plates fixed.
 - 2.0.1 Uncoupling tuck/driver and truck/tautliner is now possible.
 - 2.0.0 Spring security added. Login required to use application.
 - 1.0.1 Posting new drivers and trucks requires now carrier's SAP instead of carrier's ID. Plus minor fixes.
@@ -26,7 +28,7 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 ## Security
 
 Since update 2.0.0 Spring Security was introduced. Security is handled by JWT tokens obtained at login. Access tokens
-are valid for 10 hours, <u>**refresh tokens**</u> are generated as well, but <u>**not supported yet**</u>
+are valid for 12 hours, <u>**refresh tokens**</u> are generated as well, but <u>**not supported yet**</u>
 > All user's passwords are encrypted.  
 > Username must be unique  
 > User email must be unique
@@ -56,10 +58,14 @@ user email, password is not known to creator. We urge to change password as soon
         }
 
 If everything went well, API will return JSON containing tokens:
+> Since update 3.0.0 respond contains also user roles and username
 
         {
-            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJyb2xlcyI6WyJVU0VSIiwiTU9ERVJBVE9SIiwiQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2xvZ2luIiwiZXhwIjoxNjYyMjc3MTk1fQ.GH78rE6tSJ2vwjVH8sjAywh6irUxsONWG_cDR5LlGv4",
-            "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvbG9naW4iLCJleHAiOjE2NjIzMjM5OTV9.4loHgX97dwGuupyug3T2TTM5wM-PrrLuzOZB6pZDypw"
+          "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJyb2xlcyI6WyJVU0VSIiwiTU9ERVJBVE9SIiwiQURNSU4iXSwiaXNzIjoiaHR0cHM6Ly9wbGFubmluZy1waW9kb20uaGVyb2t1YXBwLmNvbS9sb2dpbiIsImV4cCI6MTY2NTU0Nzk1M30.ft9n9h0qf4vYbWJDcB_go8MBoO3KaRpt506GaXuEuTk",
+          "access_token_expires_at": "2022-10-12T04:12:33.133453115",
+          "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpc3MiOiJodHRwczovL3BsYW5uaW5nLXBpb2RvbS5oZXJva3VhcHAuY29tL2xvZ2luIiwiZXhwIjoxNjY1NTg3NTUzfQ.XVd7Y6uCHko83wsKM3GjCqWbuPNe5nBp41rZ7puGtiA",
+          "roles": "[USER, MODERATOR, ADMIN]",
+          "username": "admin1"
         }
 
 ### Adding users
@@ -141,6 +147,42 @@ obtaining token send **post request**
 
 ## Getting data
 
+> Since update 3.0.0 pagination was introduced. Requests for getting all data will be wrapped in Page object like so:
+
+          {
+            "content": [],
+            "pageable": {
+            "sort": {
+            "empty": boolean,
+            "sorted": boolean,
+            "unsorted": boolean
+          },
+            "offset": number,
+            "pageNumber": number,
+            "pageSize": number,
+            "paged": boolean,
+            "unpaged": boolean
+          },
+            "totalPages": number,
+            "totalElements": number,
+            "last": boolean,
+            "size": number,
+            "number": number,
+            "sort": {
+            "empty": boolean,
+            "sorted": boolean,
+            "unsorted": boolean
+          },
+            "numberOfElements": number,
+            "first": boolean,
+            "empty": boolean
+          }
+
+default pagination values if not passed to method are:  
+50 per page for trucks, tautliners and drivers.  
+20 per page for carriers.  
+For tautliners if -1 is passed both for page and size, all records will be returned.
+
 ### Carrier
 
 #### */carriers*
@@ -214,7 +256,7 @@ and tautliners plates to keep united form. Driver's telephone number will be sep
 When posting a new truck, carrier's SAP must be provided- trucks cannot exist without a carrier.
 
 > Plates
->> Must be between 3 and 15 characters, starting with 2-3 letters. No blanks, or spaces/separators.
+>> Must be between 3 and 15 characters, starting with letter, no special characters, eg. PO23211.
 > > Plates are unique
 
 > Mega /standard
@@ -250,7 +292,7 @@ When posting a new driver, carrier's SAP must be provided- drivers cannot exist 
 
 ## Updating data
 
-Updating data takes place by sending an update object with null values for fields, we don't wish to update by put
+Updating data takes place by sending an update object with null values for fields we don't wish to update by put
 method. For example for editing only driver's telephone number a simple json will be enough:
 
     {
@@ -317,10 +359,11 @@ Coupling requires delvering special pair-object by **put** method.
 <br>
 
 ### If you wish to uncouple truck from driver or truck from tautliner simply pass only the object you wish to uncouple
-> In example below we want to 'clear' the truck so it doesn't have any driver connected to it  
+
+> In example below we want to 'clear' the truck so it doesn't have any driver connected to it
 >> */couple/truck-driver*
-> 
->you can do the same with   
+>
+>you can do the same with
 >> */couple/truck-tautliner*
 
     {

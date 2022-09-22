@@ -1,15 +1,17 @@
 package com.piotrdomagalski.planning.truck;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
+import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+
+import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TRUCK_RESULT_PER_PAGE;
 
 @Service
 class TruckService {
@@ -26,10 +28,12 @@ class TruckService {
         this.carrierOperations = carrierOperations;
     }
 
-    List<TruckInfoDTO> getAllTrucks() {
-        return truckRepository.findAll(Sort.by(Sort.Direction.ASC, "truckPlates")).stream()
-                .map(transformer::toinfoDto)
-                .collect(Collectors.toList());
+    Page<TruckInfoDTO> getAllTrucks(Integer page, Integer size) {
+        page = page == null || page < 0 ? 0 : page;
+        size = size == null || size < 1 ? TRUCK_RESULT_PER_PAGE : size;
+        Page<TruckEntity> results = truckRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "truckPlates")));
+
+        return results == null ? Page.empty() : results.map(transformer::toinfoDto);
     }
 
     TruckInfoDTO getTruckById(Long id) {

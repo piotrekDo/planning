@@ -19,7 +19,7 @@ class ControllerAddNewTruckArgumentsProvider implements ArgumentsProvider {
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with 2-3 letters, eg. PO23211"},
+                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with letter, no special characters, eg. PO23211"},
                         null
                 ),
                 Arguments.of(
@@ -43,19 +43,19 @@ class ControllerAddNewTruckArgumentsProvider implements ArgumentsProvider {
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Trucks's plates must start with 2-3 letters, eg. PO23211"},
+                        new String[]{"Trucks's plates must start with letter, no special characters, eg. PO23211"},
                         null
                 ),
                 Arguments.of(
                         """
                                 {
-                                  "truckPlates": "A327313BB",
+                                  "truckPlates": "3A27313BB",
                                   "mega": true
                                 }
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Trucks's plates must start with 2-3 letters, eg. PO23211"},
+                        new String[]{"Trucks's plates must start with letter, no special characters, eg. PO23211"},
                         null
                 ),
                 Arguments.of(
@@ -67,7 +67,7 @@ class ControllerAddNewTruckArgumentsProvider implements ArgumentsProvider {
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with 2-3 letters, eg. PO23211"},
+                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with letter, no special characters, eg. PO23211"},
                         null
                 )
         );

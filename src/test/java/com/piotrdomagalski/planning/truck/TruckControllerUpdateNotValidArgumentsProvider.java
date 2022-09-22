@@ -32,17 +32,17 @@ class TruckControllerUpdateNotValidArgumentsProvider implements ArgumentsProvide
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with 2-3 letters, eg. PO23211"}
+                        new String[]{"Truck's plates must be between 3 and 15 characters", "Trucks's plates must start with letter, no special characters, eg. PO23211"}
                 ),
                 Arguments.of(
                         """
                                 {
-                                "truckPlates": "A12345"
+                                "truckPlates": "1A12345"
                                 }
                                 """,
                         400,
                         "Bad Request",
-                        new String[]{"Trucks's plates must start with 2-3 letters, eg. PO23211"}
+                        new String[]{"Trucks's plates must start with letter, no special characters, eg. PO23211"}
                 ),
                 Arguments.of(
                         """
