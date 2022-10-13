@@ -6,6 +6,11 @@ import org.apache.commons.mail.HtmlEmail;
 
 import static org.apache.commons.mail.EmailConstants.UTF_8;
 
+/**
+ * Class used for sending email to user. Constructor requires and enum with corresponding mailbox
+ * since there are 2 available at the moment. One address for registration new users and another for sending password related messages.
+ */
+
 public class EmailSender {
 
     private final Mailbox mailbox;

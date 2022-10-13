@@ -17,6 +17,11 @@ import java.util.List;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+/**
+ * Spring Security main configuration file. Here I'm also counting for advise to implement better solution than
+ * deprecated WebSecurityConfigurerAdapter.
+ */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {

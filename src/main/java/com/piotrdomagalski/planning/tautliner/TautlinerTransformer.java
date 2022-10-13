@@ -11,6 +11,11 @@ import java.time.temporal.ChronoField;
 
 import static com.piotrdomagalski.planning.tautliner.TautlinerDTOdataParser.*;
 
+/**
+ * Transformation class allowing to transform DTO to entity and the other way around.
+ * There are parses implemented in entity transformers to ensure data cohesion- every plate should be upper case and without spaces.
+ */
+
 @Service
 public class TautlinerTransformer {
 

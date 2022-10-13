@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.app_user;
 
 import java.util.Objects;
 
+/**
+ * Simple DTO allowing to return message in JSON format
+ */
+
 public class MessageDto {
     private String message;
 

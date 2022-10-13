@@ -3,6 +3,9 @@ package com.piotrdomagalski.planning.mailing;
 
 import java.time.LocalDateTime;
 
+/**
+ * A generic template for e-mail messages sent to users.
+ */
 
 public abstract class EmailTemplate {
 

@@ -11,6 +11,10 @@ import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Entity class for tautliners.
+ */
+
 @Entity(name = "tautliners")
 public class TautlinerEntity extends DatabaseEntity implements Comparable<TautlinerEntity> {
     private Boolean isXpo;

@@ -4,6 +4,10 @@ import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 
+/**
+ * DTO class used for coupling request for carrier and tautliner.
+ */
+
 class TautlinerSwitchCarrier implements CoupleCommand {
 
     private final CarrierEntity carrier;

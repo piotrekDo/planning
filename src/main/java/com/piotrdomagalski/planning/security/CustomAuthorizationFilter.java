@@ -21,6 +21,10 @@ import static com.piotrdomagalski.planning.security.EncryptionConfiguration.getA
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+/**
+ * Filter used by Spring Security for authorization.
+ */
+
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override

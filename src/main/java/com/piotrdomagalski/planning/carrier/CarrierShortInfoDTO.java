@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.carrier;
 
+/**
+ * DTO class for carriers returning basic information about carrier and handful information about fleet.
+ */
+
 public class CarrierShortInfoDTO {
     private String sap;
     private String name;

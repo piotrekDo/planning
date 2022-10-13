@@ -6,6 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Objects;
 
+/**
+ * Entity for user roles awalibe within the program.
+ */
+
 @Entity(name = "user_roles")
 public class UserRole {
     @Id

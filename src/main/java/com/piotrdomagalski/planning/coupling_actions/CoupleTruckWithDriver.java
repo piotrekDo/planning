@@ -4,6 +4,11 @@ import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
+/**
+ * Command used to couple truck with driver. Can be also used to uncouple if passing with null.
+ * Will ensure that connected entity is uncoupled.
+ */
+
 class CoupleTruckWithDriver implements CoupleCommand {
 
     private TruckDriverEntity driver;

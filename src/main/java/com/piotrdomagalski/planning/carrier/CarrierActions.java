@@ -5,6 +5,12 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * Injectable library of actions to perform for carrier.
+ * Relative commands will add and remove entities to/from carrier.
+ * Used in CarriersService.
+ */
+
 @Service
 public class CarrierActions {
 

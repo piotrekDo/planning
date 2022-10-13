@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.tautliner;
 
+/**
+ * Command class used for uncouple tautliner from carrier and truck.
+ */
+
 public class ClearTautlinerAction {
 
     private TautlinerEntity tautliner;

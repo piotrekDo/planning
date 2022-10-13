@@ -3,6 +3,10 @@ package com.piotrdomagalski.planning.app_user;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity class allowing to store password reset tokens. Tokens last for 30 minutes. If expired user has to obtain another token
+ */
+
 @Entity
 public class PasswordResetToken {
 

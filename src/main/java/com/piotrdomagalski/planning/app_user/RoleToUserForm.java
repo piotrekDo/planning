@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.app_user;
 
 import java.util.Objects;
 
+/**
+ * DTO class used as request body in order to assign or remove role from user.
+ */
+
 public class RoleToUserForm {
     private String username;
     private String roleName;

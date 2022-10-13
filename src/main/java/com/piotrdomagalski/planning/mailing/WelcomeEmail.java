@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.mailing;
 
+/**
+ * E-mail message template used to greet newly registered users.
+ */
+
 public class WelcomeEmail extends EmailTemplate {
     private final String password;
 

@@ -8,6 +8,11 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+/**
+ * DTO class used for creating or updating requests for carrier.
+ * Contains only necessary information determining carriers themselves.
+ */
+
 public class CarrierNewUpdateDTO {
     @NotBlank(groups = {AddCarrier.class}, message = "Carrier SAP cannot be blank!")
     @Length(groups = {AddCarrier.class, UpdateCarrier.class}, min = 6, max = 6, message = "SAP must be 6 chracters long")

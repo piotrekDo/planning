@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller class for tautliner entity.
+ */
+
 @RestController
 @RequestMapping("/tautliners")
  class TautlinerController {
@@ -15,6 +19,14 @@ import java.util.List;
      TautlinerController(TautlinerService tautlinerService) {
         this.tautlinerService = tautlinerService;
     }
+
+    /**
+     *
+     * @param isXpo boolean determines if only organization's tautliner are wanted.
+     * @param page if not passed will return zeroth page.
+     * @param size if not passed will return default value.
+     * @return
+     */
 
     @GetMapping
     Page<TautlinerInfoDTO> getAllTautliners(@RequestParam(required = false) Boolean isXpo,

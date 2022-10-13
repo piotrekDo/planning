@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.coupling_actions;
 
 import java.util.Objects;
 
+/**
+ * DTO class required in coupling request to couple tautliner with carrier.
+ */
+
 public class TautlinerCarrierCouple {
 
     private String tautliner;

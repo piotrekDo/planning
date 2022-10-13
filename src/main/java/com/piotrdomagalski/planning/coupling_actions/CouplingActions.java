@@ -6,6 +6,10 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import org.springframework.stereotype.Component;
 
+/**
+ * Injectable library of all coupling actions possible, used in services.
+ */
+
 @Component
 class CouplingActions {
 

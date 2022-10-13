@@ -3,6 +3,10 @@ package com.piotrdomagalski.planning.carrier;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 
+/**
+ * Command class used to assign tautliner to specific carrier.
+ */
+
 class AddTautlinerToCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;

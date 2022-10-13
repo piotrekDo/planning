@@ -3,6 +3,10 @@ package com.piotrdomagalski.planning.truck;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * DTO class containing simplified information about not only the truck itself but also carrier, tautliner and driver.
+ */
+
 public class TruckInfoDTO {
     private String truckPlates;
     private Boolean isMega;

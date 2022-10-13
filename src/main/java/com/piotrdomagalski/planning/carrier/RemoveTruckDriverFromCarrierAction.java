@@ -6,6 +6,10 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Command class for deleting driver from carrier.
+ */
+
 class RemoveTruckDriverFromCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;

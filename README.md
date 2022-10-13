@@ -18,6 +18,7 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 ## Version Log
 
+- 3.1.0 Admins can now get access to user list.
 - 3.0.0 Pagination added, reworked response upon login, tokens are now valid for 12hours, validation for trucks/
   tautliners plates fixed.
 - 2.0.1 Uncoupling tuck/driver and truck/tautliner is now possible.
@@ -182,6 +183,10 @@ default pagination values if not passed to method are:
 50 per page for trucks, tautliners and drivers.  
 20 per page for carriers.  
 For tautliners if -1 is passed both for page and size, all records will be returned.
+
+### Users
+> since update 3.1.0 ADMIN users can access users list  
+#### */users*
 
 ### Carrier
 

@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.coupling_actions;
 
 import java.util.Objects;
 
+/**
+ * DTO class used for coupling requests for coupling truck with driver.
+ */
+
 public class TruckDriverCouple {
     private String truck;
     private Long driver;

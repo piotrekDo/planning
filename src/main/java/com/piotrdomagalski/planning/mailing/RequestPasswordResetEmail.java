@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.mailing;
 
+/**
+ * E-mail message template for sending password-reset tokens to users.
+ */
+
 public class RequestPasswordResetEmail extends EmailTemplate {
 
     private final String token;

@@ -6,6 +6,10 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 
+/**
+ * Just a super class to any entity within the program, so I don't have to duplicate ID annotation
+ */
+
 @MappedSuperclass
 public class DatabaseEntity {
     @Id
