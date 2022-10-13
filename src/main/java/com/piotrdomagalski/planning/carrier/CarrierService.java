@@ -9,11 +9,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.piotrdomagalski.planning.app.ConfigurationLibrary.CARRIER_RESULT_PER_PAGE;
+
+/**
+ * Service class for carrier entity
+ */
 
 @Service
 class CarrierService {
@@ -50,7 +53,6 @@ class CarrierService {
         Page<CarrierEntity> results = carrierRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name")));
 
         return results == null ? Page.empty() : results.map(transformer::entityToShortInfoDto);
-
     }
 
     CarrierFullIDto getCarrierById(Long id) {

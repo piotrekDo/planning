@@ -13,6 +13,10 @@ import java.util.NoSuchElementException;
 
 import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TRUCK_RESULT_PER_PAGE;
 
+/**
+ * Service class for truck entity.
+ */
+
 @Service
 class TruckService {
 

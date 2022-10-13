@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 
 import static com.piotrdomagalski.planning.truck_driver.TruckDriverDTOdataParser.*;
 
+/**
+ * Transformer class for drivers allowing to transform DTO to entity and entity to DTO.
+ * Method transforming to entity using parsers to ensure data cohesion.
+ */
 
 @Service
 public class TruckDriverTransformer {

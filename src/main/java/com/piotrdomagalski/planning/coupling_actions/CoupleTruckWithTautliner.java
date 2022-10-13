@@ -5,6 +5,11 @@ import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
+/**
+ * Command used to couple truck with tautliner. Can be also used to uncouple if passing with null.
+ * Will ensure that connected entity is uncoupled.
+ */
+
 class CoupleTruckWithTautliner implements CoupleCommand {
 
     private final TruckEntity truck;

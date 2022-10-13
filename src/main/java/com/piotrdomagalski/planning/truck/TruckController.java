@@ -4,6 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller class for truck entity.
+ */
+
 @RestController
 @RequestMapping("/trucks")
 class TruckController {
@@ -13,6 +17,13 @@ class TruckController {
     TruckController(TruckService truckService) {
         this.truckService = truckService;
     }
+
+    /**
+     *
+     * @param page if not passed will return zeroth page.
+     * @param size if not passed will return default value.
+     * @return
+     */
 
     @GetMapping
     Page<TruckInfoDTO> getAllTrucks(@RequestParam(required = false) Integer page,

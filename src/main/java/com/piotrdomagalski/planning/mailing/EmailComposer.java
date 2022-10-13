@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 import static com.piotrdomagalski.planning.mailing.Mailbox.MAILBOX_PASSWORD;
 import static com.piotrdomagalski.planning.mailing.Mailbox.MAILBOX_REGISTER;
 
+/**
+ * Utility class used for user registration and password management. Creates respective e-mail message.
+ * Used in AppUserService. 
+ */
+
 @Component
 public class EmailComposer {
     public void sendRegistrationMessage(AppUserCreateNewDto appUser, String password) {

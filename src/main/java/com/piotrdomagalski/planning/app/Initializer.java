@@ -15,10 +15,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
+/**
+ * Temporary initializing data for H2 database.
+ */
+
 @Component
 public class Initializer {
-
-
     private final CarrierRepository carrierRepository;
     private final TruckRepository truckRepository;
     private final TautlinerRepository tautlinerRepository;
@@ -226,6 +228,11 @@ public class Initializer {
         truckDriverRepository.save(charizard);
         truckDriverRepository.save(charmander);
         truckDriverRepository.save(candlestick);
+        po990U.setTruckDriver(frumblesnatch);
+        po8909.setTruckDriver(candycrush);
+        po99009.setTruckDriver(ampersand);
+        po123UI.setTruckDriver(charizard);
+        po0009U.setTruckDriver(charmander);
         truckRepository.save(po990U);
         truckRepository.save(po8909);
         truckRepository.save(po99009);

@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+/**
+ * Controller advice class for Spring- global exception handler to map errors for helpful response.
+ * reach method returns ResponseEntity.
+ */
+
 @ControllerAdvice
 public class ErrorHandler {
 

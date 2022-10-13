@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 
 import static com.piotrdomagalski.planning.tautliner.TautlinerDTOdataParser.platesParser;
 
+/**
+ * Transformer class for truck entity, allowing to transform dto to entity and the other way around.
+ * Using parsers in entity transform to ensure data cohesion.
+ */
+
 @Service
 public class TruckTransformer {
 

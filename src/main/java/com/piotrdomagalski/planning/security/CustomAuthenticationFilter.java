@@ -28,6 +28,11 @@ import static com.piotrdomagalski.planning.utlis.DateUtils.setHours;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * Filter used by Spring Security for user authentication. Sets custom response to JSON format containing information
+ * about logged user and tokens.
+ */
+
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;

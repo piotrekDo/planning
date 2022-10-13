@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO class for carriers returns full information about carrier and their fleet.
+ */
+
 public class CarrierFullIDto {
     private String sap;
     private String name;

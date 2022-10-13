@@ -6,6 +6,13 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
 import java.util.Iterator;
 
+/**
+ * Command used to clear carrier before deleting- removes all trucks, tautliners and drivers.
+ * Command need mostly for tautliners- these cannot be removed along by Hibernate cascade,
+ * because of organization's tautliners- these must remain within the program, so I applied iterator
+ * for trucks and drivers also for coherence reason.
+ */
+
  class ClearCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;

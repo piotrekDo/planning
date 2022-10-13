@@ -6,6 +6,10 @@ import com.piotrdomagalski.planning.truck.TruckEntity;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Command class for remove truck from carrier before deleting.
+ */
+
 class RemoveTruckFromCarrier implements CarrierCommand {
 
     private CarrierEntity carrier;

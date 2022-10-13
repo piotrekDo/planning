@@ -6,6 +6,10 @@ import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Command class used to remove tautliner from carrier before deleting.
+ */
+
 class RemoveTautlinerFromCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;

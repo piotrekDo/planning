@@ -1,5 +1,9 @@
 package com.piotrdomagalski.planning.truck_driver;
 
+/**
+ * DTO class for drivers containign information about driver, but also his carrier and truck.
+ */
+
 public class TruckDriverInfoDTO {
     private long id;
     private String fullName;

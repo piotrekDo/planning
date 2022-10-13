@@ -1,5 +1,10 @@
 package com.piotrdomagalski.planning.error;
 
+/**
+ * Error entity to map errors sending in response.
+ * @param <T> regarding details field- should be either a string or table of strings.
+ */
+
 public class ErrorEntity<T> {
     private int code;
     private String message;

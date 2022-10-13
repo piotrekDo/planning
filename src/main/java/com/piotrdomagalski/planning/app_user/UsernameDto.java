@@ -2,6 +2,10 @@ package com.piotrdomagalski.planning.app_user;
 
 import java.util.Objects;
 
+/**
+ * Simple DTO allowing to request/response username as JSON format.
+ */
+
 public class UsernameDto {
     private String username;
 
