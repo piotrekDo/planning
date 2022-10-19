@@ -24,7 +24,7 @@ public class CarrierEntity extends DatabaseEntity implements Comparable<CarrierE
     private String origin;
     private Double rate;
     @OneToMany(mappedBy = "carrier")
-    @JsonManagedReference
+    @JsonManagedReference(value = "carrier-truck")
     private List<TruckEntity> trucks = new ArrayList<>();
     @OneToMany(mappedBy = "carrier")
     @JsonManagedReference

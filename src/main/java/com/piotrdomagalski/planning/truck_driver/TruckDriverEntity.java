@@ -23,7 +23,7 @@ public class TruckDriverEntity extends DatabaseEntity implements Comparable<Truc
     @JsonBackReference
     private CarrierEntity carrier;
     @OneToOne
-    @JsonBackReference
+    @JsonBackReference(value = "truck-driver")
     private TruckEntity truck;
 
     public TruckDriverEntity() {

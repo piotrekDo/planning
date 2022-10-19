@@ -24,7 +24,7 @@ public class TautlinerEntity extends DatabaseEntity implements Comparable<Tautli
     @JsonBackReference
     private CarrierEntity carrier;
     @OneToOne
-    @JsonBackReference
+    @JsonBackReference(value = "truck-taut")
     private TruckEntity truck;
 
     public TautlinerEntity() {
