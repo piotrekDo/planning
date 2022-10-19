@@ -2,13 +2,17 @@ package com.piotrdomagalski.planning.truck;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.piotrdomagalski.planning.app.DatabaseEntity;
+import com.piotrdomagalski.planning.app_user.AppUser;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,6 +32,8 @@ public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntit
     @OneToOne
     @JsonBackReference
     private TautlinerEntity tautliner;
+    @ManyToMany(mappedBy = "favoritesTrucks")
+    List<AppUser> appUser = new ArrayList<>();
 
     public TruckEntity() {
     }
