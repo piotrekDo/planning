@@ -1,8 +1,12 @@
 package com.piotrdomagalski.planning.app_user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.piotrdomagalski.planning.truck.TruckEntity;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -19,6 +23,9 @@ public class AppUser {
     private String userPassword;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<UserRole> userRoles = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "favorites")
+    private List<TruckEntity> favoritesTrucks = new ArrayList<>();
 
     public AppUser() {
     }
@@ -47,19 +54,15 @@ public class AppUser {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, userEmail, userPassword, userRoles);
+        return Objects.hash(id, username, userEmail, userPassword, userRoles, favoritesTrucks);
     }
 
+    public void setFavoritesTrucks(List<TruckEntity> favoritesTrucks) {
+        this.favoritesTrucks = favoritesTrucks;
+    }
 
-    @Override
-    public String toString() {
-        return "AppUser{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userPassword='" + userPassword + '\'' +
-                ", userRoles=" + userRoles +
-                '}';
+    public List<TruckEntity> getFavoritesTrucks() {
+        return favoritesTrucks;
     }
 
     public Long getId() {
