@@ -3,6 +3,7 @@ package com.piotrdomagalski.planning.truck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +15,5 @@ public interface TruckRepository extends JpaRepository<TruckEntity, Long> {
 
     Optional<TruckEntity> findByTruckPlatesIgnoreCase(String plates);
 
+    List<TruckEntity> findByAppUser_username(String username);
 }

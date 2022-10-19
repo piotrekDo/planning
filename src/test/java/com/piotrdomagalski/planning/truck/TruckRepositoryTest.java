@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.truck;
 
+import com.piotrdomagalski.planning.app_user.AppUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,30 @@ class TruckRepositoryTest {
 
     @Autowired
     TestEntityManager testEntityManager;
+
+    @Test
+    void findAllByUser_username_should_return_favorites_truck_for_user() {
+        //given
+        TruckEntity abc123 = TruckEntity.newTruck("ABC123", true);
+        TruckEntity xyz456 = TruckEntity.newTruck("XYZ456", true);
+        TruckEntity ooo999 = TruckEntity.newTruck("OOO999", true);
+        AppUser appUser1 = new AppUser("user1", "user@example.com", "password");
+        AppUser appUser2 = new AppUser("user2", "user2@example.com", "password");
+        testEntityManager.persist(abc123);
+        testEntityManager.persist(xyz456);
+        testEntityManager.persist(ooo999);
+        testEntityManager.persist(appUser1);
+        testEntityManager.persist(appUser2);
+        appUser1.getFavoritesTrucks().add(abc123);
+        appUser1.getFavoritesTrucks().add(xyz456);
+        appUser2.getFavoritesTrucks().add(ooo999);
+
+        //when
+        List<TruckEntity> result = truckRepository.findByAppUser_username("user1");
+
+        //then
+        assertEquals(List.of(abc123, xyz456), result);
+    }
 
     @Test
     void findByTruckPlates_should_return_an_empty_optional_when_no_such_plates_found() {
