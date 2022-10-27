@@ -1,6 +1,7 @@
 package com.piotrdomagalski.planning.truck;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.piotrdomagalski.planning.app.DatabaseEntity;
 import com.piotrdomagalski.planning.app_user.AppUser;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
@@ -24,13 +25,13 @@ public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntit
     private String truckPlates;
     private Boolean isMega;
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "carrier-truck")
     private CarrierEntity carrier;
     @OneToOne
-    @JsonBackReference
+    @JsonBackReference(value = "truck-driver")
     private TruckDriverEntity truckDriver;
     @OneToOne
-    @JsonBackReference
+    @JsonBackReference(value = "truck-taut")
     private TautlinerEntity tautliner;
     @ManyToMany(mappedBy = "favoritesTrucks")
     List<AppUser> appUser = new ArrayList<>();
@@ -67,7 +68,7 @@ public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntit
                 ", isMega=" + isMega +
                 ", carrier=" + (carrier != null ? carrier.getName() : " no carrier") +
                 ", truckDriver=" + (truckDriver != null ? truckDriver.getFullName() : " no driver") +
-                ", tautliner=" + (tautliner != null ? tautliner.getTautlinerPlates() :" no tautliner")+
+                ", tautliner=" + (tautliner != null ? tautliner.getTautlinerPlates() : " no tautliner") +
                 '}';
     }
 
