@@ -18,6 +18,7 @@ All driver's names were generated with benedictcumberbatchgenerator.tumblr.com
 
 ## Version Log
 
+- 3.2.0 Adding favorites trucks is now possible for users.
 - 3.1.0 Admins can now get access to user list.
 - 3.0.0 Pagination added, reworked response upon login, tokens are now valid for 12hours, validation for trucks/
   tautliners plates fixed.
