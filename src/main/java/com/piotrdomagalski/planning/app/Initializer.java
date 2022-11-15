@@ -84,11 +84,18 @@ public class Initializer {
         TruckEntity abcd12345 = new TruckEntity("ABCD12345", false, test_carrier, null, null);
         TruckEntity po4378Y = new TruckEntity("PO4378Y", false, test_carrier, null, null);
         TruckEntity lol890KY = new TruckEntity("LOL890KY", false, test_carrier, null, null);
+
         LogEntity test123log = new NewEntityLogFactory().makeLog(test123.getTruckPlates(), "SYSTEM");
         logsRepository.save(test123log);
         truckRepository.save(test123);
+        LogEntity abcd12345log = new NewEntityLogFactory().makeLog(abcd12345.getTruckPlates(), "SYSTEM");
+        logsRepository.save(abcd12345log);
         truckRepository.save(abcd12345);
+        LogEntity po4378Ylog = new NewEntityLogFactory().makeLog(po4378Y.getTruckPlates(), "SYSTEM");
+        logsRepository.save(po4378Ylog);
         truckRepository.save(po4378Y);
+        LogEntity lol890KYlog = new NewEntityLogFactory().makeLog(lol890KY.getTruckPlates(), "SYSTEM");
+        logsRepository.save(lol890KYlog);
         truckRepository.save(lol890KY);
 
         TautlinerEntity fzi1245 = new TautlinerEntity(false, "TEA1245",
