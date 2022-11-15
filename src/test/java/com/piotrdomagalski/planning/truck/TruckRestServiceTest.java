@@ -1,8 +1,9 @@
 package com.piotrdomagalski.planning.truck;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
+import com.piotrdomagalski.planning.logs.LogsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +19,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 class TruckRestServiceTest {
@@ -28,8 +30,8 @@ class TruckRestServiceTest {
 
         @Bean
         TruckService truckRestService(TruckRepository truckRepository, CarrierRepository carrierRepository,
-                                      TruckTransformer transformer, CarrierActions carrierOperations) {
-            return new TruckService(truckRepository, carrierRepository, transformer, carrierOperations);
+                                      TruckTransformer transformer, CarrierActions carrierOperations, LogsService logsService) {
+            return new TruckService(truckRepository, carrierRepository, transformer, carrierOperations, logsService);
         }
     }
 
@@ -47,6 +49,9 @@ class TruckRestServiceTest {
 
     @MockBean
     CarrierRepository carrierRepository;
+
+    @MockBean
+    LogsService logsService;
 
     @Test
     void getAllTrucks_should_return_an_empty_list_when_no_trucks_present() {

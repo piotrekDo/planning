@@ -4,6 +4,7 @@ import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
+import com.piotrdomagalski.planning.logs.LogsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,12 +25,14 @@ class TruckService {
     private final CarrierRepository carrierRepository;
     private final TruckTransformer transformer;
     private final CarrierActions carrierOperations;
+    private final LogsService logsService;
 
-    TruckService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierActions carrierOperations) {
+    public TruckService(TruckRepository truckRepository, CarrierRepository carrierRepository, TruckTransformer transformer, CarrierActions carrierOperations, LogsService logsService) {
         this.truckRepository = truckRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
         this.carrierOperations = carrierOperations;
+        this.logsService = logsService;
     }
 
     Page<TruckInfoDTO> getAllTrucks(Integer page, Integer size) {
@@ -58,6 +61,7 @@ class TruckService {
         CarrierEntity carrierEntity = carrierRepository.findBySap(carrierSap).orElseThrow(
                 () -> new NoSuchElementException("No carrier with sap: " + carrierSap));
         carrierOperations.addTruck(carrierEntity, truckEntity);
+        logsService.createNewEntityLog(truckEntity.getTruckPlates());
         return transformer.toinfoDto(truckRepository.save(truckEntity));
     }
 
@@ -69,23 +73,31 @@ class TruckService {
         return truckByPlates;
     }
 
+    /**
+     * platesChanged variable represents state of corresponding logs.
+     * If not updated in logs table, then will not correspond anymore.
+     * When updating truck's plates, logs mus be updated as well.
+     */
+
     TruckNewUpdateDTO updateTruck(String plates, TruckNewUpdateDTO dto) {
         TruckEntity truckByPlates = truckRepository.findByTruckPlatesIgnoreCase(plates).orElseThrow(() ->
                 new NoSuchElementException("No truck found with plates: " + plates));
         TruckEntity truck = transformer.newUpdateToEntity(dto);
 
+        String platesChanged = null;
         if (truck.getTruckPlates() != null && !truck.getTruckPlates().equals(truckByPlates.getTruckPlates())) {
             truckRepository.findByTruckPlatesIgnoreCase(truck.getTruckPlates()).ifPresent(t -> {
                 throw new IllegalOperationException("Truck with provided plates already exists!, plates has to be unique");
             });
+            platesChanged = truckByPlates.getTruckPlates();
             truckByPlates.setTruckPlates(truck.getTruckPlates());
         }
-
         if (truck.getMega() != null && !truck.getMega().equals(truckByPlates.getMega())) {
             truckByPlates.setMega(truck.getMega());
         }
 
         TruckEntity savedTruck = truckRepository.save(truckByPlates);
+        logsService.createEditEntityLog(savedTruck.getTruckPlates(), platesChanged);
         return transformer.entityToNewUpdateDto(savedTruck);
     }
 

@@ -3,6 +3,7 @@ package com.piotrdomagalski.planning.app;
 import com.piotrdomagalski.planning.app_user.*;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.logs.*;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckEntity;
@@ -25,6 +26,7 @@ public class Initializer {
     private final TruckRepository truckRepository;
     private final TautlinerRepository tautlinerRepository;
     private final TruckDriverRepository truckDriverRepository;
+    private final LogsRepository logsRepository;
     private final AppUserService userService;
     private final AppUserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
@@ -32,12 +34,13 @@ public class Initializer {
 
     public Initializer(CarrierRepository carrierRepository, TruckRepository truckRepository,
                        TautlinerRepository tautlinerRepository, TruckDriverRepository truckDriverRepository,
-                       AppUserService userService, AppUserRepository userRepository,
+                       LogsRepository logsRepository, AppUserService userService, AppUserRepository userRepository,
                        UserRoleRepository userRoleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.carrierRepository = carrierRepository;
         this.truckRepository = truckRepository;
         this.tautlinerRepository = tautlinerRepository;
         this.truckDriverRepository = truckDriverRepository;
+        this.logsRepository = logsRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
@@ -81,6 +84,8 @@ public class Initializer {
         TruckEntity abcd12345 = new TruckEntity("ABCD12345", false, test_carrier, null, null);
         TruckEntity po4378Y = new TruckEntity("PO4378Y", false, test_carrier, null, null);
         TruckEntity lol890KY = new TruckEntity("LOL890KY", false, test_carrier, null, null);
+        LogEntity test123log = new NewEntityLogFactory().makeLog(test123.getTruckPlates(), "SYSTEM");
+        logsRepository.save(test123log);
         truckRepository.save(test123);
         truckRepository.save(abcd12345);
         truckRepository.save(po4378Y);
