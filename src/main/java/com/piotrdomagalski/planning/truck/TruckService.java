@@ -77,7 +77,7 @@ class TruckService {
     /**
      * platesChanged variable represents state of corresponding logs.
      * If not updated in logs table, then will not correspond anymore.
-     * When updating truck's plates, logs mus be updated as well.
+     * When updating truck's plates, logs must be updated as well.
      */
 
     TruckNewUpdateDTO updateTruck(String plates, TruckNewUpdateDTO dto) {

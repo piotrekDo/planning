@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class LogEntity extends DatabaseEntity implements LogBuilder{
+public abstract class LogEntity extends DatabaseEntity implements LogBuilder {
     protected String uniqueIdentifier;
     protected String message;
     protected LocalDateTime time;
@@ -31,6 +31,7 @@ public abstract class LogEntity extends DatabaseEntity implements LogBuilder{
         this.time = time;
     }
 
+    @Override
     public void withUniqueIdentity(String uniqueIdentity) {
         this.uniqueIdentifier = uniqueIdentity;
         this.time = LocalDateTime.now();

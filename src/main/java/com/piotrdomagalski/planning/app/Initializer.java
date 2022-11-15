@@ -3,7 +3,10 @@ package com.piotrdomagalski.planning.app;
 import com.piotrdomagalski.planning.app_user.*;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
-import com.piotrdomagalski.planning.logs.*;
+import com.piotrdomagalski.planning.logs.CoupleTruckTautlinerLogFactory;
+import com.piotrdomagalski.planning.logs.LogEntity;
+import com.piotrdomagalski.planning.logs.LogsRepository;
+import com.piotrdomagalski.planning.logs.NewEntityLogFactory;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckEntity;
@@ -108,15 +111,34 @@ public class Initializer {
                 LocalDateTime.of(2022, 8, 30, 0, 0, 0), test_carrier, po4378Y);
         TautlinerEntity koh890IIU = new TautlinerEntity(true, "KOH890IIU",
                 LocalDateTime.of(2022, 9, 1, 0, 0, 0), test_carrier, lol890KY);
+        LogEntity fzi1245log = new NewEntityLogFactory().makeLog(fzi1245.getTautlinerPlates(), "SYSTEM");
+        logsRepository.save(fzi1245log);
         tautlinerRepository.save(fzi1245);
+        LogEntity fzi65789log = new NewEntityLogFactory().makeLog(fzi65789.getTautlinerPlates(), "SYSTEM");
+        logsRepository.save(fzi65789log);
         tautlinerRepository.save(fzi65789);
+        LogEntity po890KIlog = new NewEntityLogFactory().makeLog(po890KI.getTautlinerPlates(), "SYSTEM");
+        logsRepository.save(po890KIlog);
         tautlinerRepository.save(po890KI);
+        LogEntity sb89089Qlog = new NewEntityLogFactory().makeLog(sb89089Q.getTautlinerPlates(), "SYSTEM");
+        logsRepository.save(sb89089Qlog);
         tautlinerRepository.save(sb89089Q);
+        LogEntity koh890IIUlog = new NewEntityLogFactory().makeLog(koh890IIU.getTautlinerPlates(), "SYSTEM");
+        logsRepository.save(koh890IIUlog);
         tautlinerRepository.save(koh890IIU);
         test123.setTautliner(fzi65789);
         abcd12345.setTautliner(po890KI);
         po4378Y.setTautliner(sb89089Q);
         lol890KY.setTautliner(koh890IIU);
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(fzi65789.getTautlinerPlates(), "SYSTEM", test123.getTruckPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(test123.getTruckPlates(), "SYSTEM", fzi65789.getTautlinerPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(po890KI.getTautlinerPlates(), "SYSTEM", abcd12345.getTruckPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(abcd12345.getTruckPlates(), "SYSTEM", po890KI.getTautlinerPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(sb89089Q.getTautlinerPlates(), "SYSTEM", po4378Y.getTruckPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(po4378Y.getTruckPlates(), "SYSTEM", sb89089Q.getTautlinerPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(koh890IIU.getTautlinerPlates(), "SYSTEM", lol890KY.getTruckPlates()));
+        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(lol890KY.getTruckPlates(), "SYSTEM", koh890IIU.getTautlinerPlates()));
+
 
         TruckDriverEntity kryptonite = new TruckDriverEntity("Boilerdang Kryptonite", "555-545-909", "ID123456", test_carrier, test123);
         TruckDriverEntity coggleswort = new TruckDriverEntity("Boilerdang Coggleswort", "234-123-789", "AXV891789", test_carrier, abcd12345);

@@ -4,6 +4,7 @@ import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
+import com.piotrdomagalski.planning.logs.LogsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +35,9 @@ class TautlinerRestServiceTest {
     CarrierRepository carrierRepository;
     @MockBean
     TautlinerTransformer transformer;
+    @MockBean
+    LogsService logsService;
+
     @Autowired
     TautlinerService tautlinerRestService;
 
@@ -267,12 +271,12 @@ class TautlinerRestServiceTest {
     }
 
     @TestConfiguration
-    static class ReservationTestConfig {
+    static class TautlinersTestConfig {
 
         @Bean
         TautlinerService tautlinerRestService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                                              TautlinerTransformer transformer, CarrierActions carrierOperations) {
-            return new TautlinerService(tautlinerRepository, carrierRepository, transformer, carrierOperations);
+                                              TautlinerTransformer transformer, CarrierActions carrierOperations, LogsService logsService) {
+            return new TautlinerService(tautlinerRepository, carrierRepository, transformer, carrierOperations, logsService);
         }
     }
 
