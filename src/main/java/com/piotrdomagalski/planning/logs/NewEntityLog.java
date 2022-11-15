@@ -14,12 +14,6 @@ public class NewEntityLog extends LogEntity {
     }
 
     @Override
-    public void withUniqueIdentity(String uniqueIdentity) {
-        this.uniqueIdentifier = uniqueIdentity;
-        this.time = LocalDateTime.now();
-    }
-
-    @Override
     public LogEntity withMessage(String username, String relatedTo) {
         this.message = String.format("%s was created by %s",
                 this.uniqueIdentifier, username);

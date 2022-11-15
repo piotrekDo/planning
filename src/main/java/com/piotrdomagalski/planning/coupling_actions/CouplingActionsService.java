@@ -2,6 +2,7 @@ package com.piotrdomagalski.planning.coupling_actions;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.logs.LogsService;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckEntity;
@@ -24,15 +25,16 @@ class CouplingActionsService {
     private final TruckDriverRepository truckDriverRepository;
     private final TruckRepository truckRepository;
     private final TautlinerRepository tautlinerRepository;
+    private final LogsService logsService;
 
 
-    CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository,
-                           TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository) {
+    public CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository, TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository, LogsService logsService) {
         this.couplingActions = couplingActions;
         this.carrierRepository = carrierRepository;
         this.truckDriverRepository = truckDriverRepository;
         this.truckRepository = truckRepository;
         this.tautlinerRepository = tautlinerRepository;
+        this.logsService = logsService;
     }
 
     TruckDriverCouple coupleTruckDriver(TruckDriverCouple couple) {
@@ -71,12 +73,13 @@ class CouplingActionsService {
                     new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner()));
         }
 
+        logTruckTautlinerChanges(truck, tautliner);
         couplingActions.coupleTruckWithTautliner(truck, tautliner);
-
         if (truck != null)
             truckRepository.save(truck);
         if (tautliner != null)
             tautlinerRepository.save(tautliner);
+
         return couple;
     }
 
@@ -87,6 +90,23 @@ class CouplingActionsService {
         couplingActions.switchTautlinerCarrier(carrier, tautliner);
         tautlinerRepository.save(tautliner);
         return couple;
+    }
+
+    private void logTruckTautlinerChanges(TruckEntity truck, TautlinerEntity tautliner) {
+        String truckPlates = truck != null ? truck.getTruckPlates() : null;
+        String tautlinerPlates = tautliner != null ? tautliner.getTautlinerPlates() : null;
+        String currentTautliner = truck != null ? truck.getTautliner().getTautlinerPlates() : null;
+        String currentTruck = tautliner != null ? tautliner.getTruck().getTruckPlates() : null;
+
+        if (truckPlates != null)
+            logsService.createTruckTautlinerCoupleLog(truckPlates, tautlinerPlates);
+        if (tautlinerPlates != null)
+            logsService.createTruckTautlinerCoupleLog(tautlinerPlates, truckPlates);
+        if (currentTautliner != null)
+            logsService.createTruckTautlinerCoupleLog(currentTautliner, null);
+        if (currentTruck != null)
+            logsService.createTruckTautlinerCoupleLog(currentTruck, null);
+
     }
 
     private CarrierEntity getCarrier(TautlinerCarrierCouple couple) {

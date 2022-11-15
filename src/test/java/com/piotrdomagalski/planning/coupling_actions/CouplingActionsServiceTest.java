@@ -3,6 +3,7 @@ package com.piotrdomagalski.planning.coupling_actions;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.logs.LogsService;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckEntity;
@@ -33,8 +34,8 @@ class CouplingActionsServiceTest {
         @Bean
         CouplingActionsService couplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository,
                                                       TruckDriverRepository truckDriverRepository, TruckRepository truckRepository,
-                                                      TautlinerRepository tautlinerRepository) {
-            return new CouplingActionsService(couplingActions, carrierRepository, truckDriverRepository, truckRepository, tautlinerRepository);
+                                                      TautlinerRepository tautlinerRepository, LogsService logsService) {
+            return new CouplingActionsService(couplingActions, carrierRepository, truckDriverRepository, truckRepository, tautlinerRepository, logsService);
         }
     }
 
@@ -55,6 +56,9 @@ class CouplingActionsServiceTest {
 
     @MockBean
     TautlinerRepository tautlinerRepository;
+
+    @MockBean
+    LogsService logsService;
 
 
     @Test

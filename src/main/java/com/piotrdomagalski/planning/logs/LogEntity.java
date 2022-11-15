@@ -31,6 +31,11 @@ public abstract class LogEntity extends DatabaseEntity implements LogBuilder{
         this.time = time;
     }
 
+    public void withUniqueIdentity(String uniqueIdentity) {
+        this.uniqueIdentifier = uniqueIdentity;
+        this.time = LocalDateTime.now();
+    }
+
     public String getUniqueIdentifier() {
         return uniqueIdentifier;
     }

@@ -70,6 +70,7 @@ class TruckService {
                 new NoSuchElementException("No truck found with plates: " + plates));
         new ClearTruckAction(truckByPlates).execute();
         truckRepository.delete(truckByPlates);
+        logsService.createDeleteEntityLog(plates);
         return truckByPlates;
     }
 
