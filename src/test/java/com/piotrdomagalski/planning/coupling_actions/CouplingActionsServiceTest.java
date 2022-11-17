@@ -1,8 +1,8 @@
 package com.piotrdomagalski.planning.coupling_actions;
 
-import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.logs.LogsService;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
@@ -12,6 +12,8 @@ import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -23,7 +25,8 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 class CouplingActionsServiceTest {
@@ -335,5 +338,31 @@ class CouplingActionsServiceTest {
         Mockito.verify(carrierRepository).findBySap(couple.getCarrierSap());
         Mockito.verify(couplingActions).switchTautlinerCarrier(carrier, tautliner);
         Mockito.verify(tautlinerRepository, Mockito.never()).save(Mockito.any());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(TruckTautlinerCoupleLoggingArgumentsProvider.class)
+    void coupling_truck_with_driver_should_create_respective_logs(TruckTautlinerCouple couple, TruckEntity truck, TautlinerEntity tautliner,
+                                                                  TautlinerEntity trucksCurrentTaut, TruckEntity tautsCurrentTruck,
+                                                                  int logTruck, int logTaut, int logCurrentTaut, int logCurrentTruck) {
+        //given
+        truck.setTautliner(trucksCurrentTaut);
+        if (tautliner != null)
+            tautliner.setTruck(tautsCurrentTruck);
+        Mockito.when(truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck())).thenReturn(Optional.ofNullable(truck));
+        Mockito.when(tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner())).thenReturn(Optional.ofNullable(tautliner));
+
+        //when
+        couplingActionsService.coupleTruckTautliner(couple);
+
+        //then
+        if (tautliner != null) {
+            Mockito.verify(logsService, Mockito.times(logTruck)).createTruckTautlinerCoupleLog(truck.getTruckPlates(), tautliner.getTautlinerPlates());
+            Mockito.verify(logsService, Mockito.times(logTaut)).createTruckTautlinerCoupleLog(tautliner.getTautlinerPlates(), truck.getTruckPlates());
+        }
+        if (trucksCurrentTaut != null)
+            Mockito.verify(logsService, Mockito.times(logCurrentTaut)).createTruckTautlinerCoupleLog(trucksCurrentTaut.getTautlinerPlates(), null);
+        if (tautsCurrentTruck != null)
+            Mockito.verify(logsService, Mockito.times(logCurrentTruck)).createTruckTautlinerCoupleLog(tautsCurrentTruck.getTruckPlates(), null);
     }
 }

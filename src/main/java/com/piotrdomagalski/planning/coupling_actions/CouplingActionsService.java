@@ -61,17 +61,14 @@ class CouplingActionsService {
     }
 
     TruckTautlinerCouple coupleTruckTautliner(TruckTautlinerCouple couple) {
-        TruckEntity truck = null;
-        TautlinerEntity tautliner = null;
+        TruckEntity truck = couple.getTruck() != null ? truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + couple.getTruck())) : null;
 
-        if (couple.getTruck() != null) {
-            truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
-                    new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
-        }
-        if (couple.getTautliner() != null) {
-            tautliner = tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
-                    new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner()));
-        }
+        if (truck != null && truck.getTautliner() != null && couple.getTautliner() != null && truck.getTautliner().getTautlinerPlates().equalsIgnoreCase(couple.getTautliner()))
+            return couple;
+
+        TautlinerEntity tautliner = couple.getTautliner() != null ? tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
+                new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner())) : null;
 
         logTruckTautlinerChanges(truck, tautliner);
         couplingActions.coupleTruckWithTautliner(truck, tautliner);
@@ -95,8 +92,11 @@ class CouplingActionsService {
     private void logTruckTautlinerChanges(TruckEntity truck, TautlinerEntity tautliner) {
         String truckPlates = truck != null ? truck.getTruckPlates() : null;
         String tautlinerPlates = tautliner != null ? tautliner.getTautlinerPlates() : null;
-        String currentTautliner = truck != null ? truck.getTautliner().getTautlinerPlates() : null;
-        String currentTruck = tautliner != null ? tautliner.getTruck().getTruckPlates() : null;
+        String currentTautliner = truck != null && truck.getTautliner() != null ? truck.getTautliner().getTautlinerPlates() : null;
+        String currentTruck = tautliner != null && tautliner.getTruck() != null ? tautliner.getTruck().getTruckPlates() : null;
+
+        if (tautlinerPlates != null && currentTautliner != null && tautlinerPlates.equals(currentTautliner))
+            return;
 
         if (truckPlates != null)
             logsService.createTruckTautlinerCoupleLog(truckPlates, tautlinerPlates);
@@ -106,7 +106,6 @@ class CouplingActionsService {
             logsService.createTruckTautlinerCoupleLog(currentTautliner, null);
         if (currentTruck != null)
             logsService.createTruckTautlinerCoupleLog(currentTruck, null);
-
     }
 
     private CarrierEntity getCarrier(TautlinerCarrierCouple couple) {

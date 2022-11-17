@@ -1,7 +1,9 @@
 package com.piotrdomagalski.planning.logs;
 
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
+@Entity
 public class DeleteEntityLog extends LogEntity {
 
     public DeleteEntityLog() {
