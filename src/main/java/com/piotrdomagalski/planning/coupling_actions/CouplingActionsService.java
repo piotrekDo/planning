@@ -93,14 +93,21 @@ class CouplingActionsService {
 
         String driverData = driver != null ? driver.getFullName() + " " + driver.getIdDocument() : null;
         String currentDriverData = currentDriver != null ? truck.getTruckDriver().getFullName() + " " + truck.getTruckDriver().getIdDocument() : null;
-        if (truckPlates != null)
-            logsService.createCoupleLog(truckPlates, driverData);
-        if (driversId != null)
-            logsService.createCoupleLog(driverData, truckPlates);
+        if (truckPlates != null) {
+            if (driversId != null)
+                logsService.createCoupleLog(truckPlates, driverData);
+            else
+                logsService.createUnCoupleLog(truckPlates, currentDriverData);
+        }
+        if (driversId != null) {
+            if (truckPlates != null)
+                logsService.createCoupleLog(driverData, truckPlates);
+            else logsService.createUnCoupleLog(driverData, currentTruck);
+        }
         if (currentDriver != null)
-            logsService.createCoupleLog(currentDriverData, null);
+            logsService.createUnCoupleLog(currentDriverData, truckPlates);
         if (currentTruck != null)
-            logsService.createCoupleLog(currentTruck, null);
+            logsService.createUnCoupleLog(currentTruck, driverData);
     }
 
     private void logTruckTautlinerChanges(TruckEntity truck, TautlinerEntity tautliner) {
@@ -112,14 +119,22 @@ class CouplingActionsService {
         if (tautlinerPlates != null && currentTautliner != null && tautlinerPlates.equals(currentTautliner))
             return;
 
-        if (truckPlates != null)
-            logsService.createCoupleLog(truckPlates, tautlinerPlates);
-        if (tautlinerPlates != null)
-            logsService.createCoupleLog(tautlinerPlates, truckPlates);
+        if (truckPlates != null) {
+            if (tautlinerPlates != null)
+                logsService.createCoupleLog(truckPlates, tautlinerPlates);
+            else
+                logsService.createUnCoupleLog(truckPlates, currentTautliner);
+        }
+        if (tautlinerPlates != null) {
+            if (truckPlates != null)
+                logsService.createCoupleLog(tautlinerPlates, truckPlates);
+            else
+                logsService.createUnCoupleLog(tautlinerPlates, currentTruck);
+        }
         if (currentTautliner != null)
-            logsService.createCoupleLog(currentTautliner, null);
+            logsService.createUnCoupleLog(currentTautliner, truckPlates);
         if (currentTruck != null)
-            logsService.createCoupleLog(currentTruck, null);
+            logsService.createUnCoupleLog(currentTruck, tautlinerPlates);
     }
 
     private CarrierEntity getCarrier(TautlinerCarrierCouple couple) {

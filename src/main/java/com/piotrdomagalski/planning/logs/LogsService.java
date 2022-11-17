@@ -46,6 +46,12 @@ public class LogsService {
         return logsRepository.save(logEntity);
     }
 
+    public LogEntity createUnCoupleLog(String uniqueIdentifier, String relatedTo) {
+        String currentUserName = getUserName();
+        LogEntity logEntity = new UncoupleLogFactory().makeLog(uniqueIdentifier, currentUserName, relatedTo);
+        return logsRepository.save(logEntity);
+    }
+
     private void updateLogsUniqueIdentifier(String previousUniqueIdentifier, String newUniqueIdentifier) {
         List<LogEntity> logs = logsRepository.findAllByUniqueIdentifierIgnoreCase(previousUniqueIdentifier);
         logs.forEach(log -> log.setUniqueIdentifier(newUniqueIdentifier));
