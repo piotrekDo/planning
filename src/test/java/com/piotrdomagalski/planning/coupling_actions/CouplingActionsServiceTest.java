@@ -357,12 +357,12 @@ class CouplingActionsServiceTest {
 
         //then
         if (tautliner != null) {
-            Mockito.verify(logsService, Mockito.times(logTruck)).createTruckTautlinerCoupleLog(truck.getTruckPlates(), tautliner.getTautlinerPlates());
-            Mockito.verify(logsService, Mockito.times(logTaut)).createTruckTautlinerCoupleLog(tautliner.getTautlinerPlates(), truck.getTruckPlates());
+            Mockito.verify(logsService, Mockito.times(logTruck)).createCoupleLog(truck.getTruckPlates(), tautliner.getTautlinerPlates());
+            Mockito.verify(logsService, Mockito.times(logTaut)).createCoupleLog(tautliner.getTautlinerPlates(), truck.getTruckPlates());
         }
         if (trucksCurrentTaut != null)
-            Mockito.verify(logsService, Mockito.times(logCurrentTaut)).createTruckTautlinerCoupleLog(trucksCurrentTaut.getTautlinerPlates(), null);
+            Mockito.verify(logsService, Mockito.times(logCurrentTaut)).createCoupleLog(trucksCurrentTaut.getTautlinerPlates(), null);
         if (tautsCurrentTruck != null)
-            Mockito.verify(logsService, Mockito.times(logCurrentTruck)).createTruckTautlinerCoupleLog(tautsCurrentTruck.getTruckPlates(), null);
+            Mockito.verify(logsService, Mockito.times(logCurrentTruck)).createCoupleLog(tautsCurrentTruck.getTruckPlates(), null);
     }
 }

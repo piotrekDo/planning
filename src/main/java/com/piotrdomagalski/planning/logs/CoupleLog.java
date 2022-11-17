@@ -4,12 +4,12 @@ import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Entity
-public class CoupleTruckTautlinerLog extends LogEntity {
+public class CoupleLog extends LogEntity {
 
-    public CoupleTruckTautlinerLog() {
+    public CoupleLog() {
     }
 
-    private CoupleTruckTautlinerLog(String uniqueIdentifier, String message, LocalDateTime time) {
+    private CoupleLog(String uniqueIdentifier, String message, LocalDateTime time) {
         super(uniqueIdentifier, message, time);
     }
 
@@ -20,6 +20,6 @@ public class CoupleTruckTautlinerLog extends LogEntity {
                         this.uniqueIdentifier, relatedTo, username) :
                 String.format("%s was uncoupled by %s",
                         this.uniqueIdentifier, username);
-        return new CoupleTruckTautlinerLog(uniqueIdentifier, message, time);
+        return new CoupleLog(uniqueIdentifier, message, time);
     }
 }

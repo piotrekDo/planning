@@ -3,7 +3,7 @@ package com.piotrdomagalski.planning.app;
 import com.piotrdomagalski.planning.app_user.*;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
-import com.piotrdomagalski.planning.logs.CoupleTruckTautlinerLogFactory;
+import com.piotrdomagalski.planning.logs.CoupleLogFactory;
 import com.piotrdomagalski.planning.logs.LogEntity;
 import com.piotrdomagalski.planning.logs.LogsRepository;
 import com.piotrdomagalski.planning.logs.NewEntityLogFactory;
@@ -130,14 +130,14 @@ public class Initializer {
         abcd12345.setTautliner(po890KI);
         po4378Y.setTautliner(sb89089Q);
         lol890KY.setTautliner(koh890IIU);
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(fzi65789.getTautlinerPlates(), "SYSTEM", test123.getTruckPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(test123.getTruckPlates(), "SYSTEM", fzi65789.getTautlinerPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(po890KI.getTautlinerPlates(), "SYSTEM", abcd12345.getTruckPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(abcd12345.getTruckPlates(), "SYSTEM", po890KI.getTautlinerPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(sb89089Q.getTautlinerPlates(), "SYSTEM", po4378Y.getTruckPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(po4378Y.getTruckPlates(), "SYSTEM", sb89089Q.getTautlinerPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(koh890IIU.getTautlinerPlates(), "SYSTEM", lol890KY.getTruckPlates()));
-        logsRepository.save(new CoupleTruckTautlinerLogFactory().makeLog(lol890KY.getTruckPlates(), "SYSTEM", koh890IIU.getTautlinerPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(fzi65789.getTautlinerPlates(), "SYSTEM", test123.getTruckPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(test123.getTruckPlates(), "SYSTEM", fzi65789.getTautlinerPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(po890KI.getTautlinerPlates(), "SYSTEM", abcd12345.getTruckPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(abcd12345.getTruckPlates(), "SYSTEM", po890KI.getTautlinerPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(sb89089Q.getTautlinerPlates(), "SYSTEM", po4378Y.getTruckPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(po4378Y.getTruckPlates(), "SYSTEM", sb89089Q.getTautlinerPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(koh890IIU.getTautlinerPlates(), "SYSTEM", lol890KY.getTruckPlates()));
+        logsRepository.save(new CoupleLogFactory().makeLog(lol890KY.getTruckPlates(), "SYSTEM", koh890IIU.getTautlinerPlates()));
 
 
         TruckDriverEntity kryptonite = new TruckDriverEntity("Boilerdang Kryptonite", "555-545-909", "ID123456", test_carrier, test123);

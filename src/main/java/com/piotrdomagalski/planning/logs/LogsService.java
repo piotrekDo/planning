@@ -40,9 +40,9 @@ public class LogsService {
         return logsRepository.save(logEntity);
     }
 
-    public LogEntity createTruckTautlinerCoupleLog(String uniqueIdentifier, String relatedTo) {
+    public LogEntity createCoupleLog(String uniqueIdentifier, String relatedTo) {
         String currentUserName = getUserName();
-        LogEntity logEntity = new CoupleTruckTautlinerLogFactory().makeLog(uniqueIdentifier, currentUserName, relatedTo);
+        LogEntity logEntity = new CoupleLogFactory().makeLog(uniqueIdentifier, currentUserName, relatedTo);
         return logsRepository.save(logEntity);
     }
 

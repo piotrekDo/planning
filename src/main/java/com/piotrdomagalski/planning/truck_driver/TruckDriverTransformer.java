@@ -44,4 +44,14 @@ public class TruckDriverTransformer {
         );
     }
 
+    String transformToPreviousNameAndId(String nameChanged, String idDocumentChanged, String originalName, String originalId) {
+        if (nameChanged != null && idDocumentChanged == null)
+            return nameChanged + " " + originalId;
+        else if (nameChanged == null && idDocumentChanged != null)
+            return originalName + " " + idDocumentChanged;
+        else if (nameChanged != null && idDocumentChanged != null)
+            return nameChanged + " " + idDocumentChanged;
+        else return null;
+    }
+
 }
