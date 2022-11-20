@@ -4,6 +4,7 @@ import com.piotrdomagalski.planning.carrier.CarrierActions;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
 import com.piotrdomagalski.planning.error.IllegalOperationException;
+import com.piotrdomagalski.planning.logs.LogsService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,14 @@ class TautlinerService {
     private final CarrierRepository carrierRepository;
     private final TautlinerTransformer transformer;
     private final CarrierActions carrierOperations;
+    private final LogsService logsService;
 
-    TautlinerService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository,
-                     TautlinerTransformer transformer, CarrierActions carrierOperations) {
+    public TautlinerService(TautlinerRepository tautlinerRepository, CarrierRepository carrierRepository, TautlinerTransformer transformer, CarrierActions carrierOperations, LogsService logsService) {
         this.tautlinerRepository = tautlinerRepository;
         this.carrierRepository = carrierRepository;
         this.transformer = transformer;
         this.carrierOperations = carrierOperations;
+        this.logsService = logsService;
     }
 
     Page<TautlinerInfoDTO> getAllTautliners(Boolean isXpo, Integer page, Integer size) {
@@ -64,7 +66,6 @@ class TautlinerService {
         tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates()).ifPresent(t -> {
             throw new IllegalOperationException(String.format("Tautliner with plates %s already exists!", t.getTautlinerPlates()));
         });
-
         TautlinerEntity tautlinerEntity;
         try {
             if ((carrierSap == null && !tautliner.getXpo()) || (carrierSap != null && Long.parseLong(carrierSap) <= 0 && !tautliner.getXpo())) {
@@ -72,7 +73,6 @@ class TautlinerService {
             }
 
             tautlinerEntity = transformer.newUpdateDTOtoEntity(tautliner);
-
             if (carrierSap != null && Long.parseLong(carrierSap) > 0) {
                 CarrierEntity carrier = carrierRepository.findBySap(carrierSap).orElseThrow(
                         () -> new NoSuchElementException("No carrier found with sap: " + carrierSap));
@@ -83,6 +83,7 @@ class TautlinerService {
         }
 
         TautlinerEntity savedEntity = tautlinerRepository.save(tautlinerEntity);
+        logsService.createNewEntityLog(tautlinerEntity.getTautlinerPlates());
         return transformer.entityToInfoDTO(savedEntity);
     }
 
@@ -91,8 +92,15 @@ class TautlinerService {
                 .orElseThrow(() -> new NoSuchElementException("No tautliner found with plates: " + plates));
         new ClearTautlinerAction(tautlinerByPlates).execute();
         tautlinerRepository.delete(tautlinerByPlates);
+        logsService.createDeleteEntityLog(tautlinerByPlates.getTautlinerPlates());
         return tautlinerByPlates;
     }
+
+    /**
+     * platesChanged variable represents state of corresponding logs.
+     * If not updated in logs table, then will not correspond anymore.
+     * When updating tautliner's plates, logs must be updated as well.
+     */
 
     TautlinerNewUpdateDTO updateTautlinerByPlates(String plates, TautlinerNewUpdateDTO tautlinerDto) {
         TautlinerEntity tautlinerByPlates = tautlinerRepository.findByTautlinerPlatesIgnoreCase(plates)
@@ -101,11 +109,12 @@ class TautlinerService {
         if (tautliner.getXpo() != null && !tautliner.getXpo().equals(tautlinerByPlates.getXpo())) {
             tautlinerByPlates.setXpo(tautliner.getXpo());
         }
-
+        String platesChanged = null;
         if (tautliner.getTautlinerPlates() != null && !tautliner.getTautlinerPlates().equals(tautlinerByPlates.getTautlinerPlates())) {
             tautlinerRepository.findByTautlinerPlatesIgnoreCase(tautliner.getTautlinerPlates()).ifPresent(t -> {
                 throw new IllegalOperationException(String.format("Tautliner with plates: %s already exists", tautliner.getTautlinerPlates()));
             });
+            platesChanged = tautlinerByPlates.getTautlinerPlates();
             tautlinerByPlates.setTautlinerPlates(tautliner.getTautlinerPlates());
         }
 
@@ -114,6 +123,7 @@ class TautlinerService {
         }
 
         TautlinerEntity saved = tautlinerRepository.save(tautlinerByPlates);
+        logsService.createEditEntityLog(saved.getTautlinerPlates(), platesChanged);
         return transformer.entityToNewUpdateDTO(saved);
     }
 }

@@ -40,6 +40,7 @@ import java.util.Iterator;
             TruckEntity truck = it.next();
             if (truck.getCarrier() != null) {
                 truck.setCarrier(null);
+                truck.getAppUser().forEach(user -> user.getFavoritesTrucks().remove(truck));
             }
         }
     }
