@@ -2,6 +2,7 @@ package com.piotrdomagalski.planning.coupling_actions;
 
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.logs.LogsService;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerRepository;
 import com.piotrdomagalski.planning.truck.TruckEntity;
@@ -24,32 +25,26 @@ class CouplingActionsService {
     private final TruckDriverRepository truckDriverRepository;
     private final TruckRepository truckRepository;
     private final TautlinerRepository tautlinerRepository;
+    private final LogsService logsService;
 
 
-    CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository,
-                           TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository) {
+    public CouplingActionsService(CouplingActions couplingActions, CarrierRepository carrierRepository, TruckDriverRepository truckDriverRepository, TruckRepository truckRepository, TautlinerRepository tautlinerRepository, LogsService logsService) {
         this.couplingActions = couplingActions;
         this.carrierRepository = carrierRepository;
         this.truckDriverRepository = truckDriverRepository;
         this.truckRepository = truckRepository;
         this.tautlinerRepository = tautlinerRepository;
+        this.logsService = logsService;
     }
 
     TruckDriverCouple coupleTruckDriver(TruckDriverCouple couple) {
-        TruckDriverEntity driver = null;
-        TruckEntity truck = null;
+        TruckDriverEntity driver = couple.getDriver() != null ? truckDriverRepository.findById(couple.getDriver()).orElseThrow(() ->
+                new NoSuchElementException("No driver found with id: " + couple.getDriver())) : null;
+        TruckEntity truck = couple.getTruck() != null ? truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + couple.getTruck())) : null;
 
-        if (couple.getDriver() != null) {
-            driver = truckDriverRepository.findById(couple.getDriver()).orElseThrow(() ->
-                    new NoSuchElementException("No driver found with id: " + couple.getDriver()));
-        }
-        if (couple.getTruck() != null) {
-            truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
-                    new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
-        }
-
+        logTruckDriverChanges(truck, driver);
         couplingActions.coupleTruckWithDriver(driver, truck);
-
         if (driver != null)
             truckDriverRepository.save(driver);
         if (truck != null)
@@ -59,24 +54,22 @@ class CouplingActionsService {
     }
 
     TruckTautlinerCouple coupleTruckTautliner(TruckTautlinerCouple couple) {
-        TruckEntity truck = null;
-        TautlinerEntity tautliner = null;
+        TruckEntity truck = couple.getTruck() != null ? truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
+                new NoSuchElementException("No truck found with plates: " + couple.getTruck())) : null;
 
-        if (couple.getTruck() != null) {
-            truck = truckRepository.findByTruckPlatesIgnoreCase(couple.getTruck()).orElseThrow(() ->
-                    new NoSuchElementException("No truck found with plates: " + couple.getTruck()));
-        }
-        if (couple.getTautliner() != null) {
-            tautliner = tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
-                    new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner()));
-        }
+        if (truck != null && truck.getTautliner() != null && couple.getTautliner() != null && truck.getTautliner().getTautlinerPlates().equalsIgnoreCase(couple.getTautliner()))
+            return couple;
 
+        TautlinerEntity tautliner = couple.getTautliner() != null ? tautlinerRepository.findByTautlinerPlatesIgnoreCase(couple.getTautliner()).orElseThrow(() ->
+                new NoSuchElementException("No tautliner found with plates: " + couple.getTautliner())) : null;
+
+        logTruckTautlinerChanges(truck, tautliner);
         couplingActions.coupleTruckWithTautliner(truck, tautliner);
-
         if (truck != null)
             truckRepository.save(truck);
         if (tautliner != null)
             tautlinerRepository.save(tautliner);
+
         return couple;
     }
 
@@ -87,6 +80,61 @@ class CouplingActionsService {
         couplingActions.switchTautlinerCarrier(carrier, tautliner);
         tautlinerRepository.save(tautliner);
         return couple;
+    }
+
+    private void logTruckDriverChanges(TruckEntity truck, TruckDriverEntity driver) {
+        String truckPlates = truck != null ? truck.getTruckPlates() : null;
+        Long driversId = driver != null ? driver.getId() : null;
+        Long currentDriver = truck != null && truck.getTruckDriver() != null ? truck.getTruckDriver().getId() : null;
+        String currentTruck = driver != null && driver.getTruck() != null ? driver.getTruck().getTruckPlates() : null;
+
+        if (driversId != null && currentDriver != null && driversId.equals(currentDriver))
+            return;
+
+        String driverData = driver != null ? driver.getFullName() + " " + driver.getIdDocument() : null;
+        String currentDriverData = currentDriver != null ? truck.getTruckDriver().getFullName() + " " + truck.getTruckDriver().getIdDocument() : null;
+        if (truckPlates != null) {
+            if (driversId != null)
+                logsService.createCoupleLog(truckPlates, driverData);
+            else
+                logsService.createUnCoupleLog(truckPlates, currentDriverData);
+        }
+        if (driversId != null) {
+            if (truckPlates != null)
+                logsService.createCoupleLog(driverData, truckPlates);
+            else logsService.createUnCoupleLog(driverData, currentTruck);
+        }
+        if (currentDriver != null)
+            logsService.createUnCoupleLog(currentDriverData, truckPlates);
+        if (currentTruck != null)
+            logsService.createUnCoupleLog(currentTruck, driverData);
+    }
+
+    private void logTruckTautlinerChanges(TruckEntity truck, TautlinerEntity tautliner) {
+        String truckPlates = truck != null ? truck.getTruckPlates() : null;
+        String tautlinerPlates = tautliner != null ? tautliner.getTautlinerPlates() : null;
+        String currentTautliner = truck != null && truck.getTautliner() != null ? truck.getTautliner().getTautlinerPlates() : null;
+        String currentTruck = tautliner != null && tautliner.getTruck() != null ? tautliner.getTruck().getTruckPlates() : null;
+
+        if (tautlinerPlates != null && currentTautliner != null && tautlinerPlates.equals(currentTautliner))
+            return;
+
+        if (truckPlates != null) {
+            if (tautlinerPlates != null)
+                logsService.createCoupleLog(truckPlates, tautlinerPlates);
+            else
+                logsService.createUnCoupleLog(truckPlates, currentTautliner);
+        }
+        if (tautlinerPlates != null) {
+            if (truckPlates != null)
+                logsService.createCoupleLog(tautlinerPlates, truckPlates);
+            else
+                logsService.createUnCoupleLog(tautlinerPlates, currentTruck);
+        }
+        if (currentTautliner != null)
+            logsService.createUnCoupleLog(currentTautliner, truckPlates);
+        if (currentTruck != null)
+            logsService.createUnCoupleLog(currentTruck, tautlinerPlates);
     }
 
     private CarrierEntity getCarrier(TautlinerCarrierCouple couple) {

@@ -27,6 +27,9 @@ public class ClearTruckAction {
                 truck.getCarrier().getTrucks().remove(truck);
                 truck.setCarrier(null);
             }
+
+            truck.getAppUser().forEach(x -> x.getFavoritesTrucks().remove(truck));
+            truck.getAppUser().clear();
         } catch (Exception e) {
             e.printStackTrace();
             return false;

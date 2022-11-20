@@ -1,12 +1,13 @@
 package com.piotrdomagalski.planning.truck;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.piotrdomagalski.planning.app.DatabaseEntity;
 import com.piotrdomagalski.planning.app_user.AppUser;
 import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.tautliner.TautlinerEntity;
 import com.piotrdomagalski.planning.truck_driver.TruckDriverEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -129,5 +130,13 @@ public class TruckEntity extends DatabaseEntity implements Comparable<TruckEntit
 
     public void setTautliner(TautlinerEntity tautliner) {
         this.tautliner = tautliner;
+    }
+
+    public List<AppUser> getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(List<AppUser> appUser) {
+        this.appUser = appUser;
     }
 }

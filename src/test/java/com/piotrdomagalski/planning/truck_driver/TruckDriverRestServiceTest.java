@@ -1,8 +1,10 @@
 package com.piotrdomagalski.planning.truck_driver;
 
-import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierActions;
+import com.piotrdomagalski.planning.carrier.CarrierEntity;
 import com.piotrdomagalski.planning.carrier.CarrierRepository;
+import com.piotrdomagalski.planning.coupling_actions.TruckTautlinerCoupleLoggingArgumentsProvider;
+import com.piotrdomagalski.planning.logs.LogsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +17,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,8 +33,8 @@ class TruckDriverRestServiceTest {
         @Bean
         TruckDriverService tautlinerRestService(TruckDriverRepository truckDriverRepository,
                                                 CarrierRepository carrierRepository, TruckDriverTransformer transformer,
-                                                CarrierActions carrierOperations) {
-            return new TruckDriverService(truckDriverRepository, carrierRepository, transformer, carrierOperations);
+                                                CarrierActions carrierOperations, LogsService logsService) {
+            return new TruckDriverService(truckDriverRepository, carrierRepository, transformer, carrierOperations, logsService);
         }
     }
 
@@ -45,6 +49,9 @@ class TruckDriverRestServiceTest {
 
     @MockBean
     CarrierActions carrierOperations;
+
+    @MockBean
+    LogsService logsService;
 
     @Autowired
     TruckDriverService truckDriverRestService;
@@ -185,7 +192,5 @@ class TruckDriverRestServiceTest {
         Mockito.verify(transformer).newUpdatDriverDtoToEntity(provided);
         Mockito.verify(truckDriverRepository).save(foundById);
         Mockito.verify(transformer).entityToNewUpdateDriverDto(foundById);
-
     }
-
 }
