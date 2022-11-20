@@ -13,6 +13,17 @@ public class TautlinerInfoDTO {
     private String carrierName;
     private String carrierSap;
     private String truckPlates;
+    private boolean truckIsMega;
+
+    public TautlinerInfoDTO(String tautlinerPlates, LocalDateTime techInspection, boolean isXpo, String carrierName, String carrierSap, String truckPlates, boolean truckIsMega) {
+        this.tautlinerPlates = tautlinerPlates;
+        this.techInspection = techInspection;
+        this.isXpo = isXpo;
+        this.carrierName = carrierName;
+        this.carrierSap = carrierSap;
+        this.truckPlates = truckPlates;
+        this.truckIsMega = truckIsMega;
+    }
 
     public TautlinerInfoDTO(String tautlinerPlates, LocalDateTime techInspection, boolean isXpo, String carrierName, String carrierSap, String truckPlates) {
         this.tautlinerPlates = tautlinerPlates;
@@ -69,5 +80,13 @@ public class TautlinerInfoDTO {
 
     public void setTruckPlates(String truckPlates) {
         this.truckPlates = truckPlates;
+    }
+
+    public boolean isTruckIsMega() {
+        return truckIsMega;
+    }
+
+    public void setTruckIsMega(boolean truckIsMega) {
+        this.truckIsMega = truckIsMega;
     }
 }

@@ -1,6 +1,5 @@
 package com.piotrdomagalski.planning.app_user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 
 import javax.persistence.*;
@@ -55,10 +54,6 @@ public class AppUser {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, userEmail, userPassword, userRoles, favoritesTrucks);
-    }
-
-    public void setFavoritesTrucks(List<TruckEntity> favoritesTrucks) {
-        this.favoritesTrucks = favoritesTrucks;
     }
 
     public List<TruckEntity> getFavoritesTrucks() {

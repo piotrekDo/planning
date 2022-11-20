@@ -35,7 +35,8 @@ public class TautlinerTransformer {
                 entity.getXpo(),
                 carrier != null ? carrier.getName() : null,
                 carrier != null ? carrier.getSap() : null,
-                truck != null ? truck.getTruckPlates() : null
+                truck != null ? truck.getTruckPlates() : null,
+                truck != null ? truck.getMega() : false
         );
     }
 

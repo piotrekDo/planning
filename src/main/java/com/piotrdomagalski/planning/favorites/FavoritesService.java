@@ -2,6 +2,7 @@ package com.piotrdomagalski.planning.favorites;
 
 import com.piotrdomagalski.planning.app_user.AppUser;
 import com.piotrdomagalski.planning.app_user.AppUserRepository;
+import com.piotrdomagalski.planning.error.IllegalOperationException;
 import com.piotrdomagalski.planning.truck.TruckEntity;
 import com.piotrdomagalski.planning.truck.TruckInfoDTO;
 import com.piotrdomagalski.planning.truck.TruckRepository;
@@ -35,6 +36,8 @@ public class FavoritesService {
                 new NoSuchElementException("No user found with username " + newFavorites.getUsername()));
         TruckEntity truck = truckRepository.findByTruckPlatesIgnoreCase(newFavorites.getTruck()).orElseThrow(() ->
                 new NoSuchElementException("No truck found with plates " + newFavorites.getTruck()));
+        if (appUser.getFavoritesTrucks().contains(truck))
+            throw new IllegalOperationException(String.format("Truck %s is already on favorites list", truck.getTruckPlates()));
         appUser.getFavoritesTrucks().add(truck);
         appUserRepository.save(appUser);
         return newFavorites;
