@@ -103,6 +103,7 @@ public class AppUserService implements UserDetailsService {
     UsernameDto deleteUser(UsernameDto username) {
         AppUser appUser = userRepository.findByUsernameIgnoreCase(username.getUsername()).orElseThrow(() ->
                 new NoSuchElementException("No user found with username " + username.getUsername()));
+        appUser.getFavoritesTrucks().clear();
         userRepository.delete(appUser);
         return username;
     }

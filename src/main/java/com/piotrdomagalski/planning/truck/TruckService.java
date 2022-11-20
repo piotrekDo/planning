@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import static com.piotrdomagalski.planning.app.ConfigurationLibrary.TRUCK_RESULT_PER_PAGE;

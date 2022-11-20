@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.logs;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +18,7 @@ public class LogsService {
     }
 
     public List<LogEntity> getAllLogsByUniqueIdentifier(String uniqueIdentifier) {
-        return logsRepository.findAllByUniqueIdentifierIgnoreCase(uniqueIdentifier);
+        return logsRepository.findAllByUniqueIdentifierIgnoreCase(uniqueIdentifier, Sort.by(Sort.Direction.DESC, "time"));
     }
 
     public LogEntity createNewEntityLog(String uniqueIdentifier) {
@@ -53,12 +54,13 @@ public class LogsService {
     }
 
     private void updateLogsUniqueIdentifier(String previousUniqueIdentifier, String newUniqueIdentifier) {
-        List<LogEntity> logs = logsRepository.findAllByUniqueIdentifierIgnoreCase(previousUniqueIdentifier);
+        List<LogEntity> logs = logsRepository.findAllByUniqueIdentifierIgnoreCase(previousUniqueIdentifier, Sort.by(Sort.Direction.DESC, "time"));
         logs.forEach(log -> log.setUniqueIdentifier(newUniqueIdentifier));
         logsRepository.saveAll(logs);
     }
 
     private String getUserName() {
+//        @AuthenticationPrincipal UserPrincipal principal
         String currentUserName;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken))

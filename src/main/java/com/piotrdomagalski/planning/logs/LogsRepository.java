@@ -1,5 +1,6 @@
 package com.piotrdomagalski.planning.logs;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,6 @@ public interface LogsRepository extends JpaRepository<LogEntity, Long> {
      * @return
      */
 
-    List<LogEntity> findAllByUniqueIdentifierIgnoreCase(String identifier);
+    List<LogEntity> findAllByUniqueIdentifierIgnoreCase(String identifier, Sort sort);
 
 }
