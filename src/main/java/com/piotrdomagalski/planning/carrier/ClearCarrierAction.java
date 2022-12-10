@@ -13,11 +13,11 @@ import java.util.Iterator;
  * for trucks and drivers also for coherence reason.
  */
 
- class ClearCarrierAction implements CarrierCommand {
+class ClearCarrierAction implements CarrierCommand {
 
     private CarrierEntity carrier;
 
-     ClearCarrierAction(CarrierEntity carrier) {
+    ClearCarrierAction(CarrierEntity carrier) {
         this.carrier = carrier;
     }
 
@@ -36,7 +36,7 @@ import java.util.Iterator;
     }
 
     private void clearTrucks() {
-        for (Iterator<TruckEntity> it = carrier.getTrucks().iterator(); it.hasNext();) {
+        for (Iterator<TruckEntity> it = carrier.getTrucks().iterator(); it.hasNext(); ) {
             TruckEntity truck = it.next();
             if (truck.getCarrier() != null) {
                 truck.setCarrier(null);
@@ -46,7 +46,7 @@ import java.util.Iterator;
     }
 
     private void clearTautliners() {
-        for (Iterator<TautlinerEntity> it = carrier.getTautliners().iterator(); it.hasNext();) {
+        for (Iterator<TautlinerEntity> it = carrier.getTautliners().iterator(); it.hasNext(); ) {
             TautlinerEntity tautliner = it.next();
             if (tautliner.getTruck() != null) {
                 tautliner.getTruck().setTautliner(null);
@@ -59,7 +59,7 @@ import java.util.Iterator;
     }
 
     private void clearTruckDrivers() {
-        for (Iterator<TruckDriverEntity> it = carrier.getDrivers().iterator(); it.hasNext();) {
+        for (Iterator<TruckDriverEntity> it = carrier.getDrivers().iterator(); it.hasNext(); ) {
             TruckDriverEntity driver = it.next();
             if (driver.getTruck() != null) {
                 driver.getTruck().setTruckDriver(null);

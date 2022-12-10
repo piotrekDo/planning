@@ -14,8 +14,8 @@ public class WelcomeEmail extends EmailTemplate {
     @Override
     String setMessage() {
         return String.format("""
-                        <p>Twoje nowe hasło to: <span style="color:green;font-size:1.5rem">%s</span></p>
-                        <p>Zmień je niezwłocznie po otrzymaniu tej wiadomości </p>
+                        <p>Your new password: <span style="color:green;font-size:1.5rem">%s</span></p>
+                        <p>Please change it immediately after receiving this message </p>
                 """, password);
     }
 }

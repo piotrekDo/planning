@@ -15,8 +15,8 @@ public class RequestPasswordResetEmail extends EmailTemplate {
     @Override
     String setMessage() {
         return String.format("""
-                       <p> Twój kod do zmiany hasła to : %s </p>
-                       <p> Kod jest ważny 30 minut od wygenerowania. </p>
+                       <p> Your token required to change password : %s </p>
+                       <p> Token is valid for the next 30 minutes. </p>
                 """, token);
     }
 }

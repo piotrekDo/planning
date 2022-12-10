@@ -13,9 +13,9 @@ public abstract class EmailTemplate {
 
     private String greet() {
         if (LocalDateTime.now().getHour() > 18)
-            return "Dobry wieczór";
+            return "Good afternoon";
         else
-            return "Dzień dobry";
+            return "Good morning";
     }
 
     public String create(String reciverName) {
@@ -36,7 +36,7 @@ public abstract class EmailTemplate {
                             <section class="myClass">%s</section>
                             </br>        
                             </br>
-                            <p>Pozdrawiamy, zespół Planning</p>        
+                            <p>Regards, Planning team</p>        
                            </body>
                         </html>
                         """,
