@@ -20,7 +20,7 @@ public class EmailComposer {
         String message = mail.create(appUser.getUsername());
 
         EmailSender emailSender = new EmailSender(MAILBOX_REGISTER);
-        emailSender.sendMail("Potwierdzenie rejestracji konta w serwisie Planning",
+        emailSender.sendMail("Planning account registration confirmation",
                 message,
                 appUser.getUserEmail());
     }
@@ -30,7 +30,7 @@ public class EmailComposer {
         String message = mail.create(request.getUsername());
 
         EmailSender emailSender = new EmailSender(MAILBOX_PASSWORD);
-        emailSender.sendMail("Zmiana hasła logowania w serwisie Planning",
+        emailSender.sendMail("Changing your Planning login password",
                 message,
                 request.getEmail());
     }
@@ -40,7 +40,7 @@ public class EmailComposer {
         String message = mail.create(appUser.getUsername());
 
         EmailSender emailSender = new EmailSender(MAILBOX_PASSWORD);
-        emailSender.sendMail("Zmiana hasła logowania w serwisie Planning",
+        emailSender.sendMail("Changing your Planning login password",
                 message,
                 appUser.getUserEmail());
     }
